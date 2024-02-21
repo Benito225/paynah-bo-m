@@ -85,8 +85,8 @@ export default function AuthSendOtpForm({ lang }: AuthSendOtpFormProps) {
                 <div>
                     <Form {...sendOtpForm}>
                         <form onSubmit={sendOtpForm.handleSubmit(onSubmit)} className="space-y-5">
-                            <div className={`grid grid-cols-4 gap-4`}>
-                                <div className={`col-span-3`}>
+                            <div className={`grid grid-cols-4 gap-4 relative`}>
+                                <div className={`col-span-4`}>
                                     <FormField
                                         control={sendOtpForm.control}
                                         name="username"
@@ -106,7 +106,7 @@ export default function AuthSendOtpForm({ lang }: AuthSendOtpFormProps) {
                                     />
                                     <p className={`text-sm`}>Plus la peine, <Link href={Routes.auth.login.replace("{lang}", lang)} className={`text-sm font-medium hover:font-semibold inline-block mt-3 duration-100`}>{`J'ai retrouvé ma clé`}</Link></p>
                                 </div>
-                                <Button type={`submit`} className={`!mb-1 h-[3.3rem] w-[3.3rem] col-span-1`}>
+                                <Button type={`submit`} className={`!mb-1 h-[3.3rem] w-[3.3rem] col-span-1 absolute top-[0] right-[-4.2rem]`}>
                                     <svg className={`fill-white stroke-white`} viewBox="0 0 35.108 27.574">
                                         <path d="M22.5,5.664a1.413,1.413,0,0,0,0,2l8.889,8.89H4.663a1.413,1.413,0,1,0,0,2.825H31.388L22.5,28.266a1.413,1.413,0,0,0,2,2l11.3-11.3a1.413,1.413,0,0,0,0-2L24.5,5.664A1.413,1.413,0,0,0,22.5,5.664Z" transform="translate(-2.25 -4.104)" strokeWidth="2.5" fillRule="evenodd"/>
                                     </svg>

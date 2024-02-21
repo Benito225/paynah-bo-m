@@ -4,7 +4,7 @@ import * as z from "zod"
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {Button} from "@/components/ui/button";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {signIn} from "next-auth/react";
 import toast from "react-hot-toast";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
@@ -12,6 +12,7 @@ import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import Routes from "@/components/Routes";
 import {useRouter} from "next13-progressbar";
+import { useInputMask } from '@code-forge/react-input-mask';
 
 interface AuthValidateOtpFormProps {
     lang: Locale
@@ -24,13 +25,17 @@ const formSchema = z.object({
     c4: z.string().max(1),
     c5: z.string().max(1),
     c6: z.string().max(1),
+    cAll: z.string().max(1),
 })
 
 export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) {
 
+    const { getInputProps } = useInputMask({ mask: '9' });
+
     const [isLoading, setLoading] = useState(false);
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
+
     const router = useRouter();
 
     const sendOtpForm = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +47,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
             c4: "",
             c5: "",
             c6: "",
+            cAll: "",
         }
     });
 
@@ -62,6 +68,28 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
             }, 1500);
         // }
     }
+
+
+
+    const handleKeyUp = (e: any) => {
+        if (e.keyCode === 8 || e.keyCode === 37) {
+            console.log("special");
+        } else if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 96 && e.keyCode <= 105) || e.keyCode === 39) {
+            const currentInputNumber = parseInt(e.target.id.replace('c', ''));
+
+            if (currentInputNumber < 6) {
+                const nextfield: HTMLElement | null = document.querySelector(
+                    `input[name=c${currentInputNumber + 1}]`
+                );
+
+                if (nextfield !== null) {
+                    nextfield.focus();
+                }
+            }
+        }
+    }
+
+
 
     return (
         <div>
@@ -92,7 +120,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
 
                 <div>
                     <Form {...sendOtpForm}>
-                        <form onSubmit={sendOtpForm.handleSubmit(onSubmit)} className="space-y-5">
+                        <form id="formSubmit" onSubmit={sendOtpForm.handleSubmit(onSubmit)} className="space-y-5">
                             <div className={`grid grid-cols-6 gap-4`}>
                                 <div className={``}>
                                     <FormField
@@ -102,10 +130,11 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                             <FormItem>
                                                 <FormControl>
                                                     <div>
-                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                        <Input maxLength={1} onKeyUp={handleKeyUp} id={"c1"} type={`text`}
+                                                               className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
                                                                placeholder="" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                        }} />
+                                                        }}/>
                                                     </div>
                                                 </FormControl>
                                             </FormItem>
@@ -120,7 +149,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                             <FormItem>
                                                 <FormControl>
                                                     <div>
-                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                        <Input maxLength={1} onKeyUp={handleKeyUp} id={"c2"} type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
                                                                placeholder="" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                         }} />
@@ -138,7 +167,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                             <FormItem>
                                                 <FormControl>
                                                     <div>
-                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                        <Input maxLength={1} onKeyUp={handleKeyUp} id={"c3"} type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
                                                                placeholder="" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                         }} />
@@ -156,7 +185,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                             <FormItem>
                                                 <FormControl>
                                                     <div>
-                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                        <Input maxLength={1} onKeyUp={handleKeyUp} id={"c4"} type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
                                                                placeholder="" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                         }} />
@@ -174,7 +203,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                             <FormItem>
                                                 <FormControl>
                                                     <div>
-                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                        <Input maxLength={1} onKeyUp={handleKeyUp} id={"c5"} type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
                                                                placeholder="" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                         }} />
@@ -192,7 +221,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                             <FormItem>
                                                 <FormControl>
                                                     <div>
-                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                        <Input maxLength={1} onKeyUp={handleKeyUp} id={"c6"} type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
                                                                placeholder="" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                         }} />
