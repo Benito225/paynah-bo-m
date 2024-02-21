@@ -1,0 +1,12 @@
+{
+  "navigation": {
+
+  },
+  "page": {
+    "auth": {
+      "login": {
+        "title": "Salut,"
+      }
+    }
+  }
+}
