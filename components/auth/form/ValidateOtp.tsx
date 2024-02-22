@@ -43,6 +43,26 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
 
     const router = useRouter();
 
+    const formatCountDown = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `0${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    };
+
+    const sendOtpForm = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            c1: "",
+            c2: "",
+            c3: "",
+            c4: "",
+            c5: "",
+            c6: "",
+        }
+    });
+
+    const formValues = sendOtpForm.getValues(['c1', 'c2', 'c3', 'c4', 'c5', 'c6']).filter(element => element !== null && element !== undefined && element !== '');
+
     useEffect(() => {
         const interval = setInterval(() => {
             if (countDown > 0) {
@@ -65,27 +85,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
         }
 
         return () => clearInterval(interval);
-    }, [countDown, clickTriggered, alreadyClickTriggered]);
-
-    const formatCountDown = (seconds: number) => {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `0${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-    };
-
-    const sendOtpForm = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            c1: "",
-            c2: "",
-            c3: "",
-            c4: "",
-            c5: "",
-            c6: "",
-        }
-    });
-
-    const formValues = sendOtpForm.getValues(['c1', 'c2', 'c3', 'c4', 'c5', 'c6']).filter(element => element !== null && element !== undefined && element !== '');
+    }, [countDown, formValues, clickTriggered, alreadyClickTriggered]);
 
     const errorsArray = Object.values(sendOtpForm.formState.errors);
 
