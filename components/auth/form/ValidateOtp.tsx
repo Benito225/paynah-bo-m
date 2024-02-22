@@ -4,7 +4,7 @@ import * as z from "zod"
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {Button} from "@/components/ui/button";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {signIn} from "next-auth/react";
 import toast from "react-hot-toast";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
@@ -26,18 +26,52 @@ const formSchema = z.object({
     c4: z.string().max(1),
     c5: z.string().max(1),
     c6: z.string().max(1),
-    cAll: z.string().max(1),
 })
 
 export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) {
 
-    const { getInputProps } = useInputMask({ mask: '9' });
+    // const { getInputProps } = useInputMask({ mask: '9' });
 
     const [isLoading, setLoading] = useState(false);
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
+    const [countDown, setCountDown] = useState(180);
+    const [clickTriggered, setClickTriggered] = useState(false);
+    const [alreadyClickTriggered, setAlreadyClickTriggered] = useState(false);
+
+    const formRef = useRef<HTMLButtonElement>(null);
 
     const router = useRouter();
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (countDown > 0) {
+                setCountDown(countDown - 1);
+            } else {
+                clearInterval(interval);
+            }
+        }, 1000);
+
+        if (formValues.length == 6) {
+            setClickTriggered(true);
+        } else {
+            setClickTriggered(false);
+            setAlreadyClickTriggered(false);
+        }
+
+        if (clickTriggered && !alreadyClickTriggered) {
+            formRef.current?.click();
+            setAlreadyClickTriggered(true);
+        }
+
+        return () => clearInterval(interval);
+    }, [countDown, clickTriggered, alreadyClickTriggered]);
+
+    const formatCountDown = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `0${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    };
 
     const sendOtpForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -48,29 +82,28 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
             c4: "",
             c5: "",
             c6: "",
-            cAll: "",
         }
     });
+
+    const formValues = sendOtpForm.getValues(['c1', 'c2', 'c3', 'c4', 'c5', 'c6']).filter(element => element !== null && element !== undefined && element !== '');
 
     const errorsArray = Object.values(sendOtpForm.formState.errors);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
+
         setLoading(true);
 
-        setShowConError(true);
+        // setShowConError(true);
 
-        // router.push(Routes.auth.validateOtp.replace('{lang}', lang));
+        router.push(Routes.auth.resetAccess.replace('{lang}', lang));
 
         // if (errorsArray.length > 0) {
-            setShowError(true);
-            setTimeout(() => {
-                setShowError(false);
-            }, 1500);
+        //     setShowError(true);
+        //     setTimeout(() => {
+        //         setShowError(false);
+        //     }, 1500);
         // }
     }
-
-
 
     const handleKeyUp = (e: any) => {
         if (e.keyCode === 8 || e.keyCode === 37) {
@@ -103,8 +136,8 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
 
 
     return (
-        <div>
-            <div className={`px-10 mb-[10.5rem]`}>
+        <div className={`mb-[10.5rem]`}>
+            <div className={`px-10 mb-6`}>
                 <div className={`flex items-center flex-col space-y-2 mb-4`}>
                     <div className={`${showError ? 'animate-rotation-left' : 'animate-rotation-right'}`}>
                         <svg className={`w-5 h-5 ${showError && 'fill-[#ff0000]'}`} viewBox="0 0 21.656 27.07">
@@ -256,10 +289,16 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                     </div>
                                 </div>
                             </div>
+                            <button ref={formRef} className={`hidden`} type={"submit"}>submit</button>
                         </form>
                     </Form>
                 </div>
             </div>
+            <div className={`font-semibold text-center mb-1.5`}>
+                {formatCountDown(countDown)}
+                {/*<span>02</span>:<span>14</span>*/}
+            </div>
+            <p className={`text-base text-center font-light`}>{`Vous n'avez rien reçu ?`} <a className={`duration-200 hover:font-semibold font-medium`} href="#">Renvoyer le code</a> </p>
         </div>
     );
 }
