@@ -173,7 +173,6 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
                                                         </Select>
                                                     </div>
                                                 </FormControl>
-                                                {/*<FormMessage className={`text-xs`}/>*/}
                                             </FormItem>
                                         )}
                                     />

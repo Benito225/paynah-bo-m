@@ -4,7 +4,7 @@ import * as z from "zod"
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {Button} from "@/components/ui/button";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {signIn} from "next-auth/react";
 import toast from "react-hot-toast";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
@@ -26,9 +26,9 @@ const formSchema = z.object({
 })
 
 const formSchemaTwo = z.object({
-    profileType: z.string().min(1, {
-        message: "Veuillez choisir un profil SVP"
-    }),
+    profileType: z.enum(["individual", "company", "ong"], {
+        required_error: "Veuillez choisir un profil SVP",
+    })
 })
 
 export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
@@ -51,10 +51,7 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
     });
 
     const stepTwo = useForm<z.infer<typeof formSchemaTwo>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            profileType: "",
-        }
+        resolver: zodResolver(formSchemaTwo)
     });
 
     const errorsArray = Object.values(stepOne.formState.errors);
@@ -105,13 +102,17 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         // }
     }
 
+    // async function triggerProfileInput(value: "individual" | "company" | "ong") {
+    //     stepTwo.setValue('profileType', value);
+    // }
+
     return (
         <div>
             <div className={`duration-200 ${step == 1 ? 'block fade-in' : 'hidden fade-out'}`}>
                 <SignUpCountryChoice onSubmit={onSubmit} lang={lang} showError={showError} errorsArray={errorsArray} stepOne={stepOne} showConError={showConError} />
             </div>
             <div className={`duration-200 ${step == 2 ? 'block fade-in' : 'hidden fade-out'}`}>
-                <SignUpProfileChoice showErrorTwo={showErrorTwo} errorsArrayTwo={errorsArrayTwo} stepTwo={stepTwo} showConErrorTwo={showConErrorTwo} lang={lang} onSubmitTwo={showConErrorTwo} handleGoToBack={handleGoToBack} />
+                <SignUpProfileChoice showErrorTwo={showErrorTwo} errorsArrayTwo={errorsArrayTwo} stepTwo={stepTwo} showConErrorTwo={showConErrorTwo} lang={lang} onSubmitTwo={onSubmitTwo} handleGoToBack={handleGoToBack} />
             </div>
         </div>
     );
