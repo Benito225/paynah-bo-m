@@ -15,6 +15,7 @@ import SignUpCountryChoice from "@/components/auth/form/SignUpCountryChoice";
 import SignUpProfileChoice from "@/components/auth/form/SignUpProfilChoice";
 import SignUpIndividualProfile from "@/components/auth/form/SignUpIndividualProfileForm";
 import { PhoneNumberUtil } from 'google-libphonenumber';
+import SignUpCreateAccess from "@/components/auth/form/SignUpCreateAccess";
 
 interface AuthSignUpFormProps {
     lang: Locale
@@ -73,6 +74,15 @@ const formSchemaThreeIndividualProfile = z.object({
     }),
 })
 
+const formSchemaFour = z.object({
+    password: z.string().min(1, {
+        message: "Le champ clé d'accès est requis"
+    }),
+    password_confirmation: z.string().min(1, {
+        message: "Le champ confirmation clé d'accès est requis"
+    })
+})
+
 const phoneUtil = PhoneNumberUtil.getInstance();
 
 const isPhoneValid = (phone: string) => {
@@ -86,7 +96,7 @@ const isPhoneValid = (phone: string) => {
 export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
 
     const [isLoading, setLoading] = useState(false);
-    const [step, setStep] = useState(3);
+    const [step, setStep] = useState(1);
     const [stepThreeForm, setStepThreeForm] = useState('individual');
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
@@ -97,6 +107,9 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
     // step 3
     const [showErrorIndividualProfile, setShowErrorIndividualProfile] = useState(false);
     const [showConErrorIndividualProfile, setShowConErrorIndividualProfile] = useState(false);
+
+    const [showErrorCreateAccess, setShowErrorCreateAccess] = useState(false);
+    const [showConErrorCreateAccess, setShowConErrorCreateAccess] = useState(false);
 
     const router = useRouter();
 
@@ -115,9 +128,19 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         resolver: zodResolver(formSchemaThreeIndividualProfile)
     });
 
+    const stepFour = useForm<z.infer<typeof formSchemaFour>>({
+        resolver: zodResolver(formSchemaFour),
+        defaultValues: {
+            password: "",
+            password_confirmation: "",
+        }
+
+    });
+
     const errorsArray = Object.values(stepOne.formState.errors);
     const errorsArrayTwo = Object.values(stepTwo.formState.errors);
     const errorsArrayThreeIndividualProfile = Object.values(stepThreeIndividualProfile.formState.errors);
+    const errorsArrayCreateAccess = Object.values(stepFour.formState.errors);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values)
@@ -175,23 +198,46 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         console.log(values)
         setLoading(true);
 
-        setShowConErrorTwo(true);
+        // setShowConErrorIndividualProfile(true);
 
-        // setStep(4);
-
-        // router.push(Routes.auth.validateOtp.replace('{lang}', lang));
+        setStep(4);
 
         // if (errorsArray.length > 0) {
-        setShowErrorTwo(true);
-        setTimeout(() => {
-            setShowError(false);
-        }, 1500);
+        // setShowErrorIndividualProfile(true);
+        // setTimeout(() => {
+        //     setShowError(false);
+        // }, 1500);
         // }
     }
 
-    // async function triggerProfileInput(value: "individual" | "company" | "ong") {
-    //     stepTwo.setValue('profileType', value);
-    // }
+    async function onSubmitStepFour(values: z.infer<typeof formSchemaFour>) {
+        console.log(values)
+        setLoading(true);
+
+        // setShowConErrorCreateAccess(true);
+
+        // if (errorsArray.length > 0) {
+        // setShowErrorCreateAccess(true);
+        // setTimeout(() => {
+        //     setShowErrorCreateAccess(false);
+        // }, 1500);
+        // }
+
+        // const res = await signIn("client", {
+        //     username: values.username,
+        //     password: values.password,
+        //     redirect: false
+        // });
+
+        // if (res?.error) {
+        //     setLoading(false);
+        //     return toast.error(res.error, {
+        //         className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+        //     });
+        // }
+
+        router.push(Routes.auth.validateAccount.replace('{lang}', lang));
+    }
 
     return (
         <div>
@@ -211,6 +257,9 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
                 {stepThreeForm == "ong" &&
                     <div>ong</div>
                 }
+            </div>
+            <div className={`duration-200 ${step == 4 ? 'block fade-in' : 'hidden fade-out'}`}>
+                <SignUpCreateAccess showErrorCreateAccess={showErrorCreateAccess} errorsArrayCreateAccess={errorsArrayCreateAccess} stepFour={stepFour} showConErrorCreateAccess={showConErrorCreateAccess} lang={lang} onSubmitStepFour={onSubmitStepFour} handleGoToBack={handleGoToBack} />
             </div>
         </div>
     );
