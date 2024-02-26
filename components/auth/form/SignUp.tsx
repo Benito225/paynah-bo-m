@@ -16,6 +16,8 @@ import SignUpProfileChoice from "@/components/auth/form/SignUpProfilChoice";
 import SignUpIndividualProfile from "@/components/auth/form/SignUpIndividualProfileForm";
 import { PhoneNumberUtil } from 'google-libphonenumber';
 import SignUpCreateAccess from "@/components/auth/form/SignUpCreateAccess";
+import SignUpCompanyProfile from "@/components/auth/form/SignUpCompanyProfileForm";
+import SignUpONGProfile from "@/components/auth/form/SignUpONGProfileForm";
 
 interface AuthSignUpFormProps {
     lang: Locale
@@ -74,6 +76,82 @@ const formSchemaThreeIndividualProfile = z.object({
     }),
 })
 
+const formSchemaThreeCompanyProfile = z.object({
+    position: z.string({
+        required_error: "Veuillez selectionner votre type d'activité SVP"
+    }).min(1, {
+        message: "Veuillez selectionner votre type d'activité SVP"
+    }),
+    denomination: z.string({
+        required_error: "Veuillez renseigner une dénomination SVP"
+    }).min(1, {
+        message: "Veuillez renseigner une dénomination SVP"
+    }),
+    occupation: z.string({
+        required_error: "Veuillez selectionner une fonction SVP"
+    }).min(1, {
+        message: "Veuillez selectionner une fonction SVP"
+    }),
+    lastname: z.string({
+        required_error: "Veuillez renseigner votre nom de famille SVP"
+    }).min(1, {
+        message: "Veuillez renseigner votre nom de famille SVP"
+    }),
+    firstname: z.string({
+        required_error: "Veuillez renseigner vos prénoms SVP"
+    }).min(1, {
+        message: "Veuillez renseigner vos prénoms SVP"
+    }),
+    tel: z.string({
+        required_error: "Veuillez renseigner un numéro de Téléphone SVP"
+    }).min(1, {
+        message: "Veuillez renseigner un numéro de Téléphone SVP"
+    }),
+    email: z.string({
+        required_error: "Veuillez renseigner un email SVP"
+    }).min(1, {
+        message: "Veuillez renseigner un email SVP"
+    }).email(),
+})
+
+const formSchemaThreeONGProfile = z.object({
+    position: z.string({
+        required_error: "Veuillez selectionner votre type d'activité SVP"
+    }).min(1, {
+        message: "Veuillez selectionner votre type d'activité SVP"
+    }),
+    denomination: z.string({
+        required_error: "Veuillez renseigner une dénomination SVP"
+    }).min(1, {
+        message: "Veuillez renseigner une dénomination SVP"
+    }),
+    occupation: z.string({
+        required_error: "Veuillez selectionner une fonction SVP"
+    }).min(1, {
+        message: "Veuillez selectionner une fonction SVP"
+    }),
+    lastname: z.string({
+        required_error: "Veuillez renseigner votre nom de famille SVP"
+    }).min(1, {
+        message: "Veuillez renseigner votre nom de famille SVP"
+    }),
+    firstname: z.string({
+        required_error: "Veuillez renseigner vos prénoms SVP"
+    }).min(1, {
+        message: "Veuillez renseigner vos prénoms SVP"
+    }),
+    tel: z.string({
+        required_error: "Veuillez renseigner un numéro de Téléphone SVP"
+    }).min(1, {
+        message: "Veuillez renseigner un numéro de Téléphone SVP"
+    }),
+    email: z.string({
+        required_error: "Veuillez renseigner un email SVP"
+    }).min(1, {
+        message: "Veuillez renseigner un email SVP"
+    }).email(),
+})
+
 const formSchemaFour = z.object({
     password: z.string().min(1, {
         message: "Le champ clé d'accès est requis"
@@ -107,7 +185,12 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
     // step 3
     const [showErrorIndividualProfile, setShowErrorIndividualProfile] = useState(false);
     const [showConErrorIndividualProfile, setShowConErrorIndividualProfile] = useState(false);
+    const [showErrorCompanyProfile, setShowErrorCompanyProfile] = useState(false);
+    const [showConErrorCompanyProfile, setShowConErrorCompanyProfile] = useState(false);
+    const [showErrorONGProfile, setShowErrorONGProfile] = useState(false);
+    const [showConErrorONGProfile, setShowConErrorONGProfile] = useState(false);
 
+    // Step 4
     const [showErrorCreateAccess, setShowErrorCreateAccess] = useState(false);
     const [showConErrorCreateAccess, setShowConErrorCreateAccess] = useState(false);
 
@@ -128,6 +211,14 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         resolver: zodResolver(formSchemaThreeIndividualProfile)
     });
 
+    const stepThreeCompanyProfile = useForm<z.infer<typeof formSchemaThreeCompanyProfile>>({
+        resolver: zodResolver(formSchemaThreeCompanyProfile)
+    });
+
+    const stepThreeONGProfile = useForm<z.infer<typeof formSchemaThreeONGProfile>>({
+        resolver: zodResolver(formSchemaThreeONGProfile)
+    });
+
     const stepFour = useForm<z.infer<typeof formSchemaFour>>({
         resolver: zodResolver(formSchemaFour),
         defaultValues: {
@@ -140,6 +231,8 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
     const errorsArray = Object.values(stepOne.formState.errors);
     const errorsArrayTwo = Object.values(stepTwo.formState.errors);
     const errorsArrayThreeIndividualProfile = Object.values(stepThreeIndividualProfile.formState.errors);
+    const errorsArrayThreeCompanyProfile = Object.values(stepThreeCompanyProfile.formState.errors);
+    const errorsArrayThreeONGProfile = Object.values(stepThreeONGProfile.formState.errors);
     const errorsArrayCreateAccess = Object.values(stepFour.formState.errors);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -210,6 +303,54 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         // }
     }
 
+    async function onSubmitThreeCompanyProfile(values: z.infer<typeof formSchemaThreeCompanyProfile>) {
+        const isValidPhone = isPhoneValid(values.tel);
+
+        if (!isValidPhone) {
+            setShowConErrorTwo(true);
+            console.log('valid fail ok')
+            return;
+        }
+
+        console.log(values)
+        setLoading(true);
+
+        // setShowConErrorIndividualProfile(true);
+
+        setStep(4);
+
+        // if (errorsArray.length > 0) {
+        // setShowErrorIndividualProfile(true);
+        // setTimeout(() => {
+        //     setShowError(false);
+        // }, 1500);
+        // }
+    }
+
+    async function onSubmitThreeONGProfile(values: z.infer<typeof formSchemaThreeCompanyProfile>) {
+        const isValidPhone = isPhoneValid(values.tel);
+
+        if (!isValidPhone) {
+            setShowConErrorTwo(true);
+            console.log('valid fail ok')
+            return;
+        }
+
+        console.log(values)
+        setLoading(true);
+
+        // setShowConErrorIndividualProfile(true);
+
+        setStep(4);
+
+        // if (errorsArray.length > 0) {
+        // setShowErrorIndividualProfile(true);
+        // setTimeout(() => {
+        //     setShowError(false);
+        // }, 1500);
+        // }
+    }
+
     async function onSubmitStepFour(values: z.infer<typeof formSchemaFour>) {
         console.log(values)
         setLoading(true);
@@ -252,10 +393,10 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
                   <SignUpIndividualProfile showErrorIndividualProfile={showErrorIndividualProfile} errorsArrayIndividualProfile={errorsArrayThreeIndividualProfile} stepThreeIndividualProfile={stepThreeIndividualProfile} showConErrorIndividualProfile={showConErrorIndividualProfile} lang={lang} onSubmitThreeIndividualProfile={onSubmitThreeIndividualProfile} handleGoToBack={handleGoToBack} />
                 }
                 {stepThreeForm == "company" &&
-                    <div>company</div>
+                    <SignUpCompanyProfile showErrorCompanyProfile={showErrorCompanyProfile} errorsArrayCompanyProfile={errorsArrayThreeCompanyProfile} stepThreeCompanyProfile={stepThreeCompanyProfile} showConErrorCompanyProfile={showConErrorCompanyProfile} lang={lang} onSubmitThreeCompanyProfile={onSubmitThreeCompanyProfile} handleGoToBack={handleGoToBack} />
                 }
                 {stepThreeForm == "ong" &&
-                    <div>ong</div>
+                    <SignUpONGProfile showErrorONGProfile={showErrorONGProfile} errorsArrayONGProfile={errorsArrayThreeONGProfile} stepThreeONGProfile={stepThreeONGProfile} showConErrorONGProfile={showConErrorONGProfile} lang={lang} onSubmitThreeONGProfile={onSubmitThreeONGProfile} handleGoToBack={handleGoToBack} />
                 }
             </div>
             <div className={`duration-200 ${step == 4 ? 'block fade-in' : 'hidden fade-out'}`}>

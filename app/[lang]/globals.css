@@ -109,7 +109,7 @@
 }
 
 .padlock-arc {
-  @apply relative w-[70%] h-[7rem] border-b-0 mx-auto translate-y-[32px] rounded-t-full border-[1.9rem] border-[#f0f0f0] bg-transparent z-[6];
+  @apply relative w-[70%] h-[7rem] border-b-[0px] mx-auto translate-y-[32px] rounded-t-full border-[1.9rem] border-[#f0f0f0] bg-transparent z-[6];
   transition: all 300ms linear;
 }
 
