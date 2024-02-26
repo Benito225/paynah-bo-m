@@ -5,7 +5,6 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {Button} from "@/components/ui/button";
 import {useEffect, useState} from "react";
-import {signIn} from "next-auth/react";
 import toast from "react-hot-toast";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
@@ -14,6 +13,8 @@ import Routes from "@/components/Routes";
 import {useRouter} from "next13-progressbar";
 import SignUpCountryChoice from "@/components/auth/form/SignUpCountryChoice";
 import SignUpProfileChoice from "@/components/auth/form/SignUpProfilChoice";
+import SignUpIndividualProfile from "@/components/auth/form/SignUpIndividualProfileForm";
+import { PhoneNumberUtil } from 'google-libphonenumber';
 
 interface AuthSignUpFormProps {
     lang: Locale
@@ -31,15 +32,71 @@ const formSchemaTwo = z.object({
     })
 })
 
+const formSchemaThreeIndividualProfile = z.object({
+    position: z.string({
+        required_error: "Veuillez selectionner votre type d'activité SVP"
+    }).min(1, {
+        message: "Veuillez selectionner votre type d'activité SVP"
+    }),
+    accountName: z.string({
+        required_error: "Veuillez renseigner un nom de compte SVP"
+    }).min(1, {
+        message: "Veuillez renseigner un nom de compte SVP"
+    }),
+    activitySector: z.string({
+        required_error: "Veuillez selectionner un secteur d'activité SVP"
+    }).min(1, {
+        message: "Veuillez selectionner un secteur d'activité SVP"
+    }),
+    lastname: z.string({
+        required_error: "Veuillez renseigner votre nom de famille SVP"
+    }).min(1, {
+        message: "Veuillez renseigner votre nom de famille SVP"
+    }),
+    firstname: z.string({
+        required_error: "Veuillez renseigner vos prénoms SVP"
+    }).min(1, {
+        message: "Veuillez renseigner vos prénoms SVP"
+    }),
+    tel: z.string({
+        required_error: "Veuillez renseigner un numéro de Téléphone SVP"
+    }).min(1, {
+        message: "Veuillez renseigner un numéro de Téléphone SVP"
+    }),
+    email: z.string({
+        required_error: "Veuillez renseigner un email SVP"
+    }).min(1, {
+        message: "Veuillez renseigner un email SVP"
+    }).email(),
+    companyStatus: z.enum(["new-company", "existing-company"], {
+        required_error: "Veuillez choisir le status de votre entreprise",
+    }),
+})
+
+const phoneUtil = PhoneNumberUtil.getInstance();
+
+const isPhoneValid = (phone: string) => {
+    try {
+        return phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phone));
+    } catch (error) {
+        return false;
+    }
+};
+
 export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
 
     const [isLoading, setLoading] = useState(false);
-    const [step, setStep] = useState(2);
+    const [step, setStep] = useState(3);
+    const [stepThreeForm, setStepThreeForm] = useState('individual');
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
 
     const [showErrorTwo, setShowErrorTwo] = useState(false);
     const [showConErrorTwo, setShowConErrorTwo] = useState(false);
+
+    // step 3
+    const [showErrorIndividualProfile, setShowErrorIndividualProfile] = useState(false);
+    const [showConErrorIndividualProfile, setShowConErrorIndividualProfile] = useState(false);
 
     const router = useRouter();
 
@@ -54,8 +111,13 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         resolver: zodResolver(formSchemaTwo)
     });
 
+    const stepThreeIndividualProfile = useForm<z.infer<typeof formSchemaThreeIndividualProfile>>({
+        resolver: zodResolver(formSchemaThreeIndividualProfile)
+    });
+
     const errorsArray = Object.values(stepOne.formState.errors);
     const errorsArrayTwo = Object.values(stepTwo.formState.errors);
+    const errorsArrayThreeIndividualProfile = Object.values(stepThreeIndividualProfile.formState.errors);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values)
@@ -86,11 +148,36 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         console.log(values)
         setLoading(true);
 
-        console.log("two");
+        setShowConErrorTwo(true);
+
+        setStep(3);
+        setStepThreeForm(values.profileType);
+
+        // router.push(Routes.auth.validateOtp.replace('{lang}', lang));
+
+        // if (errorsArray.length > 0) {
+        setShowErrorTwo(true);
+        setTimeout(() => {
+            setShowError(false);
+        }, 1500);
+        // }
+    }
+
+    async function onSubmitThreeIndividualProfile(values: z.infer<typeof formSchemaThreeIndividualProfile>) {
+        const isValidPhone = isPhoneValid(values.tel);
+
+        if (!isValidPhone) {
+            setShowConErrorTwo(true);
+            console.log('valid fail ok')
+            return;
+        }
+
+        console.log(values)
+        setLoading(true);
 
         setShowConErrorTwo(true);
 
-        // setStep(3);
+        // setStep(4);
 
         // router.push(Routes.auth.validateOtp.replace('{lang}', lang));
 
@@ -113,6 +200,17 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
             </div>
             <div className={`duration-200 ${step == 2 ? 'block fade-in' : 'hidden fade-out'}`}>
                 <SignUpProfileChoice showErrorTwo={showErrorTwo} errorsArrayTwo={errorsArrayTwo} stepTwo={stepTwo} showConErrorTwo={showConErrorTwo} lang={lang} onSubmitTwo={onSubmitTwo} handleGoToBack={handleGoToBack} />
+            </div>
+            <div className={`duration-200 ${step == 3 ? 'block fade-in' : 'hidden fade-out'}`}>
+                {stepThreeForm == "individual" &&
+                  <SignUpIndividualProfile showErrorIndividualProfile={showErrorIndividualProfile} errorsArrayIndividualProfile={errorsArrayThreeIndividualProfile} stepThreeIndividualProfile={stepThreeIndividualProfile} showConErrorIndividualProfile={showConErrorIndividualProfile} lang={lang} onSubmitThreeIndividualProfile={onSubmitThreeIndividualProfile} handleGoToBack={handleGoToBack} />
+                }
+                {stepThreeForm == "company" &&
+                    <div>company</div>
+                }
+                {stepThreeForm == "ong" &&
+                    <div>ong</div>
+                }
             </div>
         </div>
     );

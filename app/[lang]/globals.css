@@ -118,3 +118,11 @@
   transform: rotate(-5deg);
   /*transform: translateY(10px);*/
 }
+
+.react-international-phone-input-container .react-international-phone-input {
+  @apply w-full;
+}
+
+.react-international-phone-input-container .react-international-phone-country-selector-button {
+  @apply w-[3.5rem];
+}
