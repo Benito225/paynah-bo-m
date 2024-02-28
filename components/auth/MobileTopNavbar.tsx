@@ -11,7 +11,7 @@ interface AuthMobileTopNavBarProps {
 export default function AuthMobileTopNavBar({lang}: AuthMobileTopNavBarProps) {
     return (
         <nav className={`block md:hidden`}>
-            <div className={`max-w-screen-2xl bg-[#f4f4f4] mx-auto pt-4 pb-3 px-4 md:px-6 lg:px-8`}>
+            <div className={`max-w-screen-2xl border-b border-[#efefef] bg-[#fbfbfb] mx-auto pt-4 pb-3 px-4 md:px-6 lg:px-8`}>
                 <div className={`flex space-x-2 justify-between`}>
                     <div className={`inline-flex space-x-2`}>
                         {/*<Link className={`block brand-logo relative h-[2.2rem] w-[2.2rem]`} href={Routes.auth.login.replace("{lang}", lang)}>*/}
