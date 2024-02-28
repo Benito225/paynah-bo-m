@@ -75,7 +75,7 @@ export default function AuthFormConnexion({ lang }: AuthFormConnexionProps) {
 
     return (
         <div>
-            <div className={`px-16 py-5 bg-white border border-[#ededed] rounded-3xl`}>
+            <div className={`px-4 md:px-16 py-5 bg-white border border-[#ededed] rounded-3xl`}>
                 <div className={`flex items-center flex-col space-y-2 mb-4`}>
                     <div className={`${showError ? 'animate-rotation-left' : 'animate-rotation-right'}`}>
                         <svg className={`w-5 h-5 ${showError && 'fill-[#ff0000]'}`} viewBox="0 0 21.656 27.07">

@@ -136,8 +136,8 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
 
 
     return (
-        <div className={`mb-[10.5rem]`}>
-            <div className={`px-10 mb-6`}>
+        <div className={`mb-[7rem] md:mb-[10.5rem]`}>
+            <div className={`px-1 md:px-10 mb-6`}>
                 <div className={`flex items-center flex-col space-y-2 mb-4`}>
                     <div className={`${showError ? 'animate-rotation-left' : 'animate-rotation-right'}`}>
                         <svg className={`w-5 h-5 ${showError && 'fill-[#ff0000]'}`} viewBox="0 0 21.656 27.07">
@@ -165,9 +165,9 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                 <div>
                     <Form {...sendOtpForm}>
                         <form id="formSubmit" onSubmit={sendOtpForm.handleSubmit(onSubmit)} className="space-y-5">
-                            <div className={`flex flex-row`}>
+                            <div className={`flex flex-row justify-center`}>
                                 <div className={`grow-0`}>
-                                    <div className={`grid grid-cols-3 gap-4`}>
+                                    <div className={`grid grid-cols-3 gap-1 md:gap-2`}>
                                         <div className={``}>
                                             <FormField
                                                 control={sendOtpForm.control}
@@ -177,7 +177,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                         <FormControl>
                                                             <div>
                                                                 <Input maxLength={1} onKeyUp={handleKeyUp} id={"c1"} type={`text`}
-                                                                       className={`font-medium text-xl ${showConError && "border-[#e95d5d]"}`}
+                                                                       className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                                 }}/>
@@ -195,7 +195,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                     <FormItem>
                                                         <FormControl>
                                                             <div>
-                                                                <Input maxLength={1} onKeyUp={handleKeyUp} id={"c2"} type={`text`} className={`font-medium text-xl ${showConError && "border-[#e95d5d]"}`}
+                                                                <Input maxLength={1} onKeyUp={handleKeyUp} id={"c2"} type={`text`} className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                                 }} />
@@ -213,7 +213,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                     <FormItem>
                                                         <FormControl>
                                                             <div>
-                                                                <Input maxLength={1} onKeyUp={handleKeyUp} id={"c3"} type={`text`} className={`font-medium text-xl ${showConError && "border-[#e95d5d]"}`}
+                                                                <Input maxLength={1} onKeyUp={handleKeyUp} id={"c3"} type={`text`} className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                                 }} />
@@ -225,13 +225,13 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                         </div>
                                     </div>
                                 </div>
-                                <div className={`mx-2 grow-0`}>
+                                <div className={`mx-1 md:mx-3.5 grow-0`}>
                                     <div className={`h-full flex items-center justify-center`}>
                                         <Minus strokeWidth={3} className={`w-5`} />
                                     </div>
                                 </div>
                                 <div className={`grow-0`}>
-                                    <div className={`grid grid-cols-3 gap-4`}>
+                                    <div className={`grid grid-cols-3 gap-1 md:gap-2`}>
                                         <div className={``}>
                                             <FormField
                                                 control={sendOtpForm.control}
@@ -240,7 +240,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                     <FormItem>
                                                         <FormControl>
                                                             <div>
-                                                                <Input maxLength={1} onKeyUp={handleKeyUp} id={"c4"} type={`text`} className={`font-medium text-xl ${showConError && "border-[#e95d5d]"}`}
+                                                                <Input maxLength={1} onKeyUp={handleKeyUp} id={"c4"} type={`text`} className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                                 }} />
@@ -258,7 +258,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                     <FormItem>
                                                         <FormControl>
                                                             <div>
-                                                                <Input maxLength={1} onKeyUp={handleKeyUp} id={"c5"} type={`text`} className={`font-medium text-xl ${showConError && "border-[#e95d5d]"}`}
+                                                                <Input maxLength={1} onKeyUp={handleKeyUp} id={"c5"} type={`text`} className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                                 }} />
@@ -276,7 +276,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                     <FormItem>
                                                         <FormControl>
                                                             <div>
-                                                                <Input maxLength={1} onKeyUp={handleKeyUp} id={"c6"} type={`text`} className={`font-medium text-xl ${showConError && "border-[#e95d5d]"}`}
+                                                                <Input maxLength={1} onKeyUp={handleKeyUp} id={"c6"} type={`text`} className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                                 }} />
@@ -298,7 +298,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                 {formatCountDown(countDown)}
                 {/*<span>02</span>:<span>14</span>*/}
             </div>
-            <p className={`text-base text-center font-light`}>{`Vous n'avez rien reçu ?`} <a className={`duration-200 hover:font-semibold font-medium`} href="#">Renvoyer le code</a> </p>
+            <p className={`text-sm md:text-base text-center font-light`}>{`Vous n'avez rien reçu ?`} <a className={`duration-200 hover:font-semibold font-medium`} href="#">Renvoyer le code</a> </p>
         </div>
     );
 }

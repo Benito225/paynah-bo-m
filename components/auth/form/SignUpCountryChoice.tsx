@@ -22,9 +22,9 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
     return (
         <div className={`formContainer mx-auto max-w-lg`}>
             <div className={`text-center mb-28`}>
-                <h2 className={`font-semibold text-center text-3xl mb-3`}>Sélectionnez votre pays</h2>
+                <h2 className={`font-semibold text-center text-2xl md:text-3xl mb-3`}>Sélectionnez votre pays</h2>
             </div>
-            <div className={`px-16 mb-[10.5rem]`}>
+            <div className={`px-4 md:px-16 mb-[8.5rem] md:mb-[10.5rem]`}>
                 <div className={`flex items-center flex-col space-y-2 mb-4`}>
                     <div>
                         {errorsArray.length > 0 && (
@@ -42,8 +42,8 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
                 <div>
                     <Form {...stepOne}>
                         <form onSubmit={stepOne.handleSubmit(onSubmit)} className="space-y-5">
-                            <div className={`grid grid-cols-4 gap-4 relative`}>
-                                <div className={`col-span-4`}>
+                            <div className={`grid grid-cols-6 gap-4 relative`}>
+                                <div className={`col-span-5 md:col-span-6`}>
                                     <FormField
                                         control={stepOne.control}
                                         name="country"
@@ -63,7 +63,7 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
                                                                 <SelectValue  placeholder="Choisir un pays"/>
                                                             </SelectTrigger>
                                                             <SelectContent className={`bg-[#f0f0f0]`}>
-                                                                <SelectItem className={`h-[3.1rem] inline-flex items-center font-light focus:bg-accent`} value="Côte d'Ivoire">
+                                                                <SelectItem className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`} value="Côte d'Ivoire">
                                                                     <div className={`inline-flex items-center space-x-2.5`}>
                                                                         <svg className={`w-7`} viewBox="0 0 38 25">
                                                                             <defs>
@@ -82,7 +82,7 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
                                                                         <span className={`mt-[2px]`}>{`Côte d'Ivoire`}</span>
                                                                     </div>
                                                                 </SelectItem>
-                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-accent`} value="Bénin">
+                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-gray-100 cursor-pointer`} value="Bénin">
                                                                     <div className={`inline-flex items-center space-x-2.5`}>
                                                                         <svg className={`w-7`} viewBox="0 0 38 24">
                                                                             <defs>
@@ -101,7 +101,7 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
                                                                         <span className={`mt-[2px]`}>{`Bénin`}</span>
                                                                     </div>
                                                                 </SelectItem>
-                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-accent`} value="Cameroun">
+                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-gray-100 cursor-pointer`} value="Cameroun">
                                                                     <div
                                                                         className={`inline-flex items-center space-x-2.5`}>
                                                                         <svg className={`w-7`} viewBox="0 0 38 24">
@@ -131,7 +131,7 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
                                                                         <span className={`mt-[2px]`}>{`Cameroun`}</span>
                                                                     </div>
                                                                 </SelectItem>
-                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-accent`} value="Guinée">
+                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-gray-100 cursor-pointer`} value="Guinée">
                                                                     <div className={`inline-flex items-center space-x-2.5`}>
                                                                         <svg className={`w-7`} viewBox="0 0 38 24">
                                                                             <defs>
@@ -150,7 +150,7 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
                                                                         <span className={`mt-[2px]`}>{`Guinée`}</span>
                                                                     </div>
                                                                 </SelectItem>
-                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-accent`} value="Sénégal">
+                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-gray-100 cursor-pointer`} value="Sénégal">
                                                                     <div className={`inline-flex items-center space-x-2.5`}>
                                                                         <svg className={`w-7`} viewBox="0 0 38 24">
                                                                             <defs>
@@ -178,11 +178,14 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
                                     />
                                 </div>
 
-                                <Button type={`submit`} className={`!mb-1 h-[3.3rem] w-[3.3rem] col-span-1 absolute top-[0] right-[-4.2rem]`}>
-                                    <svg className={`fill-white h-5 w-6 stroke-white`} viewBox="0 0 35.108 27.574">
-                                        <path d="M22.5,5.664a1.413,1.413,0,0,0,0,2l8.889,8.89H4.663a1.413,1.413,0,1,0,0,2.825H31.388L22.5,28.266a1.413,1.413,0,0,0,2,2l11.3-11.3a1.413,1.413,0,0,0,0-2L24.5,5.664A1.413,1.413,0,0,0,22.5,5.664Z" transform="translate(-2.25 -4.104)" strokeWidth="2.5" fillRule="evenodd"/>
-                                    </svg>
-                                </Button>
+                                <div className={`col-span-1 text-center`}>
+                                    <Button type={`submit`} className={`!mb-1 h-[3.3rem] w-[3.3rem] col-span-1 md:absolute md:top-[0] md:right-[-4.2rem]`}>
+                                        <svg className={`fill-white h-5 w-6 stroke-white`} viewBox="0 0 35.108 27.574">
+                                            <path d="M22.5,5.664a1.413,1.413,0,0,0,0,2l8.889,8.89H4.663a1.413,1.413,0,1,0,0,2.825H31.388L22.5,28.266a1.413,1.413,0,0,0,2,2l11.3-11.3a1.413,1.413,0,0,0,0-2L24.5,5.664A1.413,1.413,0,0,0,22.5,5.664Z" transform="translate(-2.25 -4.104)" strokeWidth="2.5" fillRule="evenodd"/>
+                                        </svg>
+                                    </Button>
+                                </div>
+
                             </div>
                         </form>
                     </Form>

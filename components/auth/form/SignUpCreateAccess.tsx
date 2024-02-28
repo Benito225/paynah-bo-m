@@ -30,11 +30,11 @@ export default function SignUpCreateAccess({ showErrorCreateAccess, errorsArrayC
         <div className={`max-w-screen-2xl mx-auto py-5 px-4 md:px-6 lg:px-8`}>
             <div className={`formContainer mx-auto max-w-lg`}>
                 <div className={`text-center mb-16`}>
-                    <h2 className={`font-semibold text-center text-3xl mb-3`}>Création de votre clé {`d'accès`}</h2>
+                    <h2 className={`font-semibold text-center text-2xl md:text-3xl mb-3`}>Création de votre clé {`d'accès`}</h2>
                     {/*<p className={`text-[#626262] text-base`}>{`Veuillez refaire une nouvelle clé pour l'accès à la sérénité financière`}</p>*/}
                 </div>
                 <div>
-                    <div className={`px-16 py-5 mb-[10.5rem]`}>
+                    <div className={`px-0 md:px-16 py-5 mb-[4.5rem] md:mb-[10.5rem]`}>
                         <div className={`flex items-center flex-col space-y-2 mb-4`}>
                             <div className={`${showErrorCreateAccess ? 'animate-rotation-left' : 'animate-rotation-right'}`}>
                                 <svg className={`w-5 h-5 ${showErrorCreateAccess && 'fill-[#ff0000]'}`} viewBox="0 0 21.656 27.07">
@@ -109,12 +109,20 @@ export default function SignUpCreateAccess({ showErrorCreateAccess, errorsArrayC
                                             />
                                         </div>
                                     </div>
-                                    <div  className={`flex justify-center items-center space-x-5 mt-[5rem]`}>
-                                        <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-[9rem] h-[2.8rem]`}>
+                                    {/*<div  className={`flex justify-center items-center space-x-5 mt-[5rem]`}>*/}
+                                    {/*    <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-[9rem] h-[2.8rem]`}>*/}
+                                    {/*        Retour*/}
+                                    {/*    </Button>*/}
+                                    {/*    <Button type={`submit`} className={`!mb-1 w-[14rem] h-[2.8rem]`}>*/}
+                                    {/*        Demande {`d'inscription`}*/}
+                                    {/*    </Button>*/}
+                                    {/*</div>*/}
+                                    <div className={`flex flex-col md:flex-row justify-center items-center space-y-1 md:space-x-5 mt-[4rem] md:mt-[5rem]`}>
+                                        <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`}>
                                             Retour
                                         </Button>
-                                        <Button type={`submit`} className={`!mb-1 w-[14rem] h-[2.8rem]`}>
-                                            Demande {`d'inscription`}
+                                        <Button type={`submit`} className={`!mb-1 w-full md:w-[10rem] h-[2.8rem]`}>
+                                            Valider
                                         </Button>
                                     </div>
                                 </form>

@@ -7,7 +7,7 @@ interface AuthFooterProps {
 
 export default function AuthFooter({lang}: AuthFooterProps) {
     return (
-        <footer>
+        <footer className={`hidden md:block`}>
             <div className={`max-w-screen-2xl mx-auto py-5 px-4 mt-[2.401rem] md:px-6 lg:px-8`}>
                 <div className={`flex space-x-3 items-center justify-between`}>
                     <div className={`langSwitch cursor-pointer group inline-flex items-center space-x-1`}>

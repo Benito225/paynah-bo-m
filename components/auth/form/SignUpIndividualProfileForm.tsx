@@ -39,9 +39,9 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
     return (
         <div className={`formContainer mx-auto max-w-2xl`}>
             <div className={`text-center mb-10`}>
-                <h2 className={`font-semibold text-center text-3xl mb-3`}>Création de compte individuel</h2>
+                <h2 className={`font-semibold text-center text-2xl md:text-3xl mb-3`}>Création de compte individuel</h2>
             </div>
-            <div className={`px-4 mb-[5.5rem]`}>
+            <div className={`px-4 mb-[0rem] md:mb-[5.5rem]`}>
                 <div className={`flex items-center flex-col space-y-2 mb-4`}>
                     <div>
                         {errorsArrayIndividualProfile.length > 0 && (
@@ -76,7 +76,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                                             </SelectTrigger>
                                                             <SelectContent className={`bg-[#f0f0f0]`}>
                                                                 {positions.map((position, index) =>
-                                                                    <SelectItem key={index} className={`font-light px-7 focus:bg-accent`} value={position.key}>
+                                                                    <SelectItem key={index} className={`font-light px-7 focus:bg-gray-100`} value={position.key}>
                                                                         {position.value}
                                                                     </SelectItem>
                                                                 )}
@@ -88,7 +88,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                         )}
                                     />
                                 </div>
-                                <div>
+                                <div className={`col-span-2 md:col-span-1`}>
                                     <FormField
                                         control={stepThreeIndividualProfile.control}
                                         name="accountName"
@@ -106,7 +106,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                         )}
                                     />
                                 </div>
-                                <div>
+                                <div className={`col-span-2 md:col-span-1`}>
                                     <FormField
                                         control={stepThreeIndividualProfile.control}
                                         name="activitySector"
@@ -122,7 +122,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                                             </SelectTrigger>
                                                             <SelectContent className={`bg-[#f0f0f0]`}>
                                                                 {activitySectors.map((activitySector, index) =>
-                                                                    <SelectItem key={index} className={`font-light px-7 focus:bg-accent`} value={activitySector.key}>
+                                                                    <SelectItem key={index} className={`font-light px-7 focus:bg-gray-100`} value={activitySector.key}>
                                                                         {activitySector.value}
                                                                     </SelectItem>
                                                                 )}
@@ -170,7 +170,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                         )}
                                     />
                                 </div>
-                                <div>
+                                <div className={`col-span-2 md:col-span-1`}>
                                     <FormField
                                         control={stepThreeIndividualProfile.control}
                                         name="tel"
@@ -197,7 +197,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                         )}
                                     />
                                 </div>
-                                <div>
+                                <div className={`col-span-2 md:col-span-1`}>
                                     <FormField
                                         control={stepThreeIndividualProfile.control}
                                         name="email"
@@ -224,7 +224,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                                 <RadioGroup
                                                     onValueChange={field.onChange}
                                                     defaultValue={field.value}
-                                                    className="grid grid-cols-2 gap-4 mt-3"
+                                                    className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mt-3"
                                                 >
                                                     <FormItem className="inline-flex items-start space-x-3 space-y-0">
                                                         <FormControl>
@@ -248,12 +248,12 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                     )}
                                 />
                             </div>
-                            <div  className={`flex justify-center items-center space-x-5 mt-[5rem]`}>
-                                <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-[9rem] h-[2.8rem]`}>
+                            <div className={`flex flex-col md:flex-row justify-center items-center space-y-1 md:space-x-5 mt-[4rem] md:mt-[5rem]`}>
+                                <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`}>
                                     Retour
                                 </Button>
-                                <Button type={`submit`} className={`!mb-1 w-[9rem] h-[2.8rem]`}>
-                                   Continuer
+                                <Button type={`submit`} className={`!mb-1 w-full md:w-[9rem] h-[2.8rem]`}>
+                                    Continuer
                                 </Button>
                             </div>
                         </form>
