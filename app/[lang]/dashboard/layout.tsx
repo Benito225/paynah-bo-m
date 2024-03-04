@@ -4,6 +4,7 @@ import "../globals.css";
 import NavigationLoadingProviders from "@/app/[lang]/navigation-loading-providers";
 import {i18n, Locale} from "@/i18n.config";
 import {Toaster} from "react-hot-toast";
+import AuthProvider from "@/components/auth-provider";
 
 const fontPaynah = Poppins({
   weight: ['100', '300', '400', '500', '600', '800'],
@@ -39,13 +40,15 @@ export default function RootLayout({
   params: { lang: Locale };
 }>) {
   return (
-    <html lang={params.lang}>
-      <body className={fontPaynah.className}>
-      <NavigationLoadingProviders>
-        {children}
-        <Toaster />
-      </NavigationLoadingProviders>
-      </body>
-    </html>
+      <AuthProvider>
+        <html lang={params.lang}>
+        <body className={fontPaynah.className}>
+        <NavigationLoadingProviders>
+          {children}
+          <Toaster/>
+        </NavigationLoadingProviders>
+        </body>
+        </html>
+      </AuthProvider>
   );
 }

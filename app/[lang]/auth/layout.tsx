@@ -9,6 +9,7 @@ import AuthFooter from "@/components/auth/Footer";
 import {Toaster} from "react-hot-toast";
 import AuthMobileTopNavBar from "@/components/auth/MobileTopNavbar";
 import AuthMobileFooter from "@/components/auth/MobileFooter";
+import AuthProvider from "@/components/auth-provider";
 
 const fontPaynah = Poppins({
     weight: ['100', '300', '400', '500', '600', '800'],
@@ -41,23 +42,27 @@ export default function RootLayout({children, params}: Readonly<{
     params: { lang: Locale }
 }>) {
     return (
-        <html lang={params.lang}>
-        <body className={fontPaynah.className}>
-        <NavigationLoadingProviders>
-            <div className={`min-h-screen flex flex-col justify-between relative`}>
-                <Image className={`z-[-1] object-cover object-center hidden md:block`} src={`/svg/cover-light-mode.svg`} alt={`Cover Light`} fill priority={true} />
-                <Image className={`z-[-1] object-cover object-center block md:hidden`} src={`/svg/cover-white-mobile.svg`} alt={`Cover mobile Light`} fill priority={true} />
-                <AuthTopNavBar lang={params.lang} />
-                <AuthMobileTopNavBar lang={params.lang} />
-                <div>
-                    {children}
+        <AuthProvider>
+            <html lang={params.lang}>
+            <body className={fontPaynah.className}>
+            <NavigationLoadingProviders>
+                <div className={`min-h-screen flex flex-col justify-between relative`}>
+                    <Image className={`z-[-1] object-cover object-center hidden md:block`}
+                           src={`/svg/cover-light-mode.svg`} alt={`Cover Light`} fill priority={true}/>
+                    <Image className={`z-[-1] object-cover object-center block md:hidden`}
+                           src={`/svg/cover-white-mobile.svg`} alt={`Cover mobile Light`} fill priority={true}/>
+                    <AuthTopNavBar lang={params.lang}/>
+                    <AuthMobileTopNavBar lang={params.lang}/>
+                    <div>
+                        {children}
+                    </div>
+                    <AuthFooter lang={params.lang}/>
+                    <AuthMobileFooter lang={params.lang}/>
                 </div>
-                <AuthFooter lang={params.lang} />
-                <AuthMobileFooter lang={params.lang} />
-            </div>
-            <Toaster />
-        </NavigationLoadingProviders>
-        </body>
-        </html>
+                <Toaster/>
+            </NavigationLoadingProviders>
+            </body>
+            </html>
+        </AuthProvider>
     );
 }

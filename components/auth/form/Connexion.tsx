@@ -5,12 +5,14 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
-import {signIn} from "next-auth/react";
 import toast from "react-hot-toast";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import Routes from "@/components/Routes";
+import {signIn} from "@/auth";
+import {login} from "@/core/apis/login";
+import {BeatLoader, DotLoader, ScaleLoader} from "react-spinners";
 
 interface AuthFormConnexionProps {
     lang: Locale
@@ -50,27 +52,24 @@ export default function AuthFormConnexion({ lang }: AuthFormConnexionProps) {
         console.log(values)
         setLoading(true);
 
-        setShowConError(true);
+        try {
+            const res: any = await login(values);
 
-        // if (errorsArray.length > 0) {
+            setShowConError(false);
+            setShowError(false);
+        } catch (e: any) {
+            setLoading(false);
+            setShowConError(true);
+
             setShowError(true);
             setTimeout(() => {
                 setShowError(false);
             }, 1500);
-        // }
 
-        // const res = await signIn("client", {
-        //     username: values.username,
-        //     password: values.password,
-        //     redirect: false
-        // });
-
-        // if (res?.error) {
-        //     setLoading(false);
-        //     return toast.error(res.error, {
-        //         className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
-        //     });
-        // }
+            // return toast.error(e.message.split(' .Read')[0], {
+            //     className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+            // });
+        }
     }
 
     return (
@@ -154,8 +153,9 @@ export default function AuthFormConnexion({ lang }: AuthFormConnexionProps) {
                                     <Link href={Routes.auth.sendOtp.replace("{lang}", lang)} className={`text-sm hover:font-medium inline-block mt-3 duration-100`}>{`J'ai perdu ma clé`}</Link>
                                 </div>
                             </div>
-                            <Button type={`submit`} className={`w-full !mb-1`}>
-                                Déverouiller
+                            <Button type={`submit`} className={`w-full !mb-1`} disabled={isLoading}>
+                                {isLoading ?
+                                    <ScaleLoader color="#fff" height={15} width={3} /> : 'Déverouiller'}
                             </Button>
                         </form>
                     </Form>
