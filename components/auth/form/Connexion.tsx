@@ -49,7 +49,6 @@ export default function AuthFormConnexion({ lang }: AuthFormConnexionProps) {
     const errorsArray = Object.values(connexionForm.formState.errors);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
         setLoading(true);
 
         try {

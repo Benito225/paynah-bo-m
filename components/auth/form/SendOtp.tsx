@@ -12,6 +12,9 @@ import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import Routes from "@/components/Routes";
 import {useRouter} from "next13-progressbar";
+import {sendOtp} from "@/core/apis/login";
+import {useCookies} from "react-cookie";
+import {ScaleLoader} from "react-spinners";
 
 interface AuthSendOtpFormProps {
     lang: Locale
@@ -28,7 +31,9 @@ export default function AuthSendOtpForm({ lang }: AuthSendOtpFormProps) {
     const [isLoading, setLoading] = useState(false);
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
+
     const router = useRouter();
+    const [cookies, setCookie, removeCookie] = useCookies(['username-token']);
 
     const sendOtpForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -40,19 +45,31 @@ export default function AuthSendOtpForm({ lang }: AuthSendOtpFormProps) {
     const errorsArray = Object.values(sendOtpForm.formState.errors);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
         setLoading(true);
+        const sendOtpRes = await sendOtp(values);
 
-        // setShowConError(true);
+        if (!sendOtpRes.success) {
+            setLoading(false);
+            setShowConError(true);
 
-        router.push(Routes.auth.validateOtp.replace('{lang}', lang));
+            removeCookie('username-token');
 
-        // if (errorsArray.length > 0) {
-        //     setShowError(true);
-        //     setTimeout(() => {
-        //         setShowError(false);
-        //     }, 1500);
-        // }
+            setShowError(true);
+            setTimeout(() => {
+                setShowError(false);
+            }, 1500);
+
+            return toast.error(sendOtpRes.message, {
+                className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+            });
+        } else {
+            setShowConError(false);
+            setShowError(false);
+
+            setCookie('username-token', sendOtpRes.data);
+
+            router.push(Routes.auth.validateOtp.replace('{lang}', lang));
+        }
     }
 
     return (
@@ -67,18 +84,18 @@ export default function AuthSendOtpForm({ lang }: AuthSendOtpFormProps) {
                         </svg>
                     </div>
                     <div>
-                        {showConError && (
-                            <p className={`text-xs text-[#e00000]`}>{`Cet identifiant ne correspond à aucun compte, réessayez !`}</p>
-                        )}
-                        {errorsArray.length > 0 && (
-                            <div className={`text-center`}>
-                                <ul className={`text-xs text-[#e00000]`}>
-                                    {errorsArray.map((error, index) => (
-                                        <li key={index}>{error.message}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
+                        {/*{showConError && (*/}
+                        {/*    <p className={`text-xs text-[#e00000]`}>{`Cet identifiant ne correspond à aucun compte, réessayez !`}</p>*/}
+                        {/*)}*/}
+                        {/*{errorsArray.length > 0 && (*/}
+                        {/*    <div className={`text-center`}>*/}
+                        {/*        <ul className={`text-xs text-[#e00000]`}>*/}
+                        {/*            {errorsArray.map((error, index) => (*/}
+                        {/*                <li key={index}>{error.message}</li>*/}
+                        {/*            ))}*/}
+                        {/*        </ul>*/}
+                        {/*    </div>*/}
+                        {/*)}*/}
                     </div>
                 </div>
 
@@ -108,10 +125,10 @@ export default function AuthSendOtpForm({ lang }: AuthSendOtpFormProps) {
                                 </div>
 
                                 <div className={`col-span-1 text-center`}>
-                                    <Button type={`submit`} className={`!mb-1 h-[3.3rem] w-[3.3rem] md:absolute md:top-[0] md:right-[-4.2rem]`}>
-                                        <svg className={`fill-white h-5 w-6 stroke-white`} viewBox="0 0 35.108 27.574">
+                                    <Button type={`submit`} className={`!mb-1 h-[3.3rem] w-[3.3rem] md:absolute md:top-[0] md:right-[-4.2rem]`} disabled={isLoading}>
+                                        {isLoading ? <ScaleLoader color="#fff" height={10} width={2} /> : <svg className={`fill-white h-5 w-6 stroke-white`} viewBox="0 0 35.108 27.574">
                                             <path d="M22.5,5.664a1.413,1.413,0,0,0,0,2l8.889,8.89H4.663a1.413,1.413,0,1,0,0,2.825H31.388L22.5,28.266a1.413,1.413,0,0,0,2,2l11.3-11.3a1.413,1.413,0,0,0,0-2L24.5,5.664A1.413,1.413,0,0,0,22.5,5.664Z" transform="translate(-2.25 -4.104)" strokeWidth="2.5" fillRule="evenodd"/>
-                                        </svg>
+                                        </svg>}
                                     </Button>
                                 </div>
                             </div>

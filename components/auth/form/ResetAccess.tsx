@@ -11,6 +11,12 @@ import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import Routes from "@/components/Routes";
+import {resetPassword} from "@/core/apis/login";
+import {useCookies} from "react-cookie";
+import {useRouter} from "next13-progressbar";
+import {decodeToken} from "react-jwt";
+import {IUser} from "@/core/interfaces/user";
+import {ScaleLoader} from "react-spinners";
 
 interface AuthResetAccessFormProps {
     lang: Locale
@@ -23,7 +29,9 @@ const formSchema = z.object({
     password_confirmation: z.string().min(1, {
         message: "Le champ confirmation clé d'accès est requis"
     })
-})
+}).refine(data => data.password === data.password_confirmation, {
+    message: "Les mots de passe ne correspondent pas",
+});
 
 export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) {
 
@@ -31,6 +39,10 @@ export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) 
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+
+    const [cookies, setCookie, removeCookie] = useCookies(['username-token']);
+
+    const router = useRouter();
 
     const connexionForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -47,30 +59,44 @@ export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) 
     const errorsArray = Object.values(connexionForm.formState.errors);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
         setLoading(true);
 
-        setShowConError(true);
+        setShowConError(false);
+        setShowError(false);
 
-        // if (errorsArray.length > 0) {
+        const userToken = cookies["username-token"];
+
+        if (!userToken) {
+            return router.push(Routes.auth.sendOtp.replace('{lang}', lang));
+        }
+
+        const resetPasswordRes = await resetPassword(values, userToken);
+
+        if (!resetPasswordRes.success) {
+            setLoading(false);
+            setShowConError(true);
+
             setShowError(true);
             setTimeout(() => {
                 setShowError(false);
             }, 1500);
-        // }
 
-        // const res = await signIn("client", {
-        //     username: values.username,
-        //     password: values.password,
-        //     redirect: false
-        // });
+            return toast.error(resetPasswordRes.message, {
+                className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+            });
+        } else {
+            toast.success("Réinitialisation réussite", {
+                className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
+            });
 
-        // if (res?.error) {
-        //     setLoading(false);
-        //     return toast.error(res.error, {
-        //         className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
-        //     });
-        // }
+            const userInfo = decodeToken(userToken) as IUser;
+
+            await signIn("merchant", {
+                username: userInfo.login,
+                password: values.password,
+                redirect: true
+            });
+        }
     }
 
     return (
@@ -152,8 +178,9 @@ export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) 
                                     />
                                 </div>
                             </div>
-                            <Button type={`submit`} className={`w-full !mb-1`}>
-                                Déverouiller maintenant
+                            <Button type={`submit`} className={`w-full !mb-1`} disabled={isLoading}>
+                                {isLoading ?
+                                    <ScaleLoader color="#fff" height={15} width={3} /> : 'Déverouiller maintenant'}
                             </Button>
                         </form>
                     </Form>

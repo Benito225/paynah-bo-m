@@ -12,8 +12,10 @@ import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import Routes from "@/components/Routes";
 import {useRouter} from "next13-progressbar";
-import { useInputMask } from '@code-forge/react-input-mask';
+import { decodeToken } from "react-jwt";
 import {Minus} from "lucide-react";
+import {useCookies} from "react-cookie";
+import {validateOtp} from "@/core/apis/login";
 
 interface AuthValidateOtpFormProps {
     lang: Locale
@@ -35,9 +37,11 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
     const [isLoading, setLoading] = useState(false);
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
-    const [countDown, setCountDown] = useState(180);
+    const [countDown, setCountDown] = useState(300);
     const [clickTriggered, setClickTriggered] = useState(false);
     const [alreadyClickTriggered, setAlreadyClickTriggered] = useState(false);
+
+    const [cookies, setCookie, removeCookie] = useCookies(['username-token']);
 
     const formRef = useRef<HTMLButtonElement>(null);
 
@@ -49,7 +53,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
         return `0${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     };
 
-    const sendOtpForm = useForm<z.infer<typeof formSchema>>({
+    const validateOtpForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             c1: "",
@@ -61,7 +65,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
         }
     });
 
-    const formValues = sendOtpForm.getValues(['c1', 'c2', 'c3', 'c4', 'c5', 'c6']).filter(element => element !== null && element !== undefined && element !== '');
+    const formValues = validateOtpForm.getValues(['c1', 'c2', 'c3', 'c4', 'c5', 'c6']).filter(element => element !== null && element !== undefined && element !== '');
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -87,22 +91,40 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
         return () => clearInterval(interval);
     }, [countDown, formValues, clickTriggered, alreadyClickTriggered]);
 
-    const errorsArray = Object.values(sendOtpForm.formState.errors);
+    const errorsArray = Object.values(validateOtpForm.formState.errors);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-
         setLoading(true);
 
-        // setShowConError(true);
+        setShowConError(false);
+        setShowError(false);
 
-        router.push(Routes.auth.resetAccess.replace('{lang}', lang));
+        const userToken = cookies["username-token"];
 
-        // if (errorsArray.length > 0) {
-        //     setShowError(true);
-        //     setTimeout(() => {
-        //         setShowError(false);
-        //     }, 1500);
-        // }
+        if (!userToken) {
+            return router.push(Routes.auth.sendOtp.replace('{lang}', lang));
+        }
+
+        const validateOtpRes = await validateOtp(values, userToken);
+
+        if (!validateOtpRes.success) {
+            setLoading(false);
+            setShowConError(true);
+
+            setShowError(true);
+            setTimeout(() => {
+                setShowError(false);
+            }, 1500);
+
+            return toast.error(validateOtpRes.message, {
+                className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+            });
+        } else {
+            setShowConError(false);
+            setShowError(false);
+
+            router.push(Routes.auth.resetAccess.replace('{lang}', lang));
+        }
     }
 
     const handleKeyUp = (e: any) => {
@@ -163,14 +185,14 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                 </div>
 
                 <div>
-                    <Form {...sendOtpForm}>
-                        <form id="formSubmit" onSubmit={sendOtpForm.handleSubmit(onSubmit)} className="space-y-5">
+                    <Form {...validateOtpForm}>
+                        <form id="formSubmit" onSubmit={validateOtpForm.handleSubmit(onSubmit)} className="space-y-5">
                             <div className={`flex flex-row justify-center`}>
                                 <div className={`grow-0`}>
                                     <div className={`grid grid-cols-3 gap-1 md:gap-2`}>
                                         <div className={``}>
                                             <FormField
-                                                control={sendOtpForm.control}
+                                                control={validateOtpForm.control}
                                                 name="c1"
                                                 render={({field}) => (
                                                     <FormItem>
@@ -180,7 +202,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                                        className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                }}/>
+                                                                }} disabled={isLoading}/>
                                                             </div>
                                                         </FormControl>
                                                     </FormItem>
@@ -189,7 +211,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                         </div>
                                         <div className={``}>
                                             <FormField
-                                                control={sendOtpForm.control}
+                                                control={validateOtpForm.control}
                                                 name="c2"
                                                 render={({field}) => (
                                                     <FormItem>
@@ -198,7 +220,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                                 <Input maxLength={1} onKeyUp={handleKeyUp} id={"c2"} type={`text`} className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                }} />
+                                                                }} disabled={isLoading} />
                                                             </div>
                                                         </FormControl>
                                                     </FormItem>
@@ -207,7 +229,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                         </div>
                                         <div className={``}>
                                             <FormField
-                                                control={sendOtpForm.control}
+                                                control={validateOtpForm.control}
                                                 name="c3"
                                                 render={({field}) => (
                                                     <FormItem>
@@ -216,7 +238,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                                 <Input maxLength={1} onKeyUp={handleKeyUp} id={"c3"} type={`text`} className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                }} />
+                                                                }} disabled={isLoading} />
                                                             </div>
                                                         </FormControl>
                                                     </FormItem>
@@ -234,7 +256,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                     <div className={`grid grid-cols-3 gap-1 md:gap-2`}>
                                         <div className={``}>
                                             <FormField
-                                                control={sendOtpForm.control}
+                                                control={validateOtpForm.control}
                                                 name="c4"
                                                 render={({field}) => (
                                                     <FormItem>
@@ -243,7 +265,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                                 <Input maxLength={1} onKeyUp={handleKeyUp} id={"c4"} type={`text`} className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                }} />
+                                                                }} disabled={isLoading} />
                                                             </div>
                                                         </FormControl>
                                                     </FormItem>
@@ -252,7 +274,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                         </div>
                                         <div className={``}>
                                             <FormField
-                                                control={sendOtpForm.control}
+                                                control={validateOtpForm.control}
                                                 name="c5"
                                                 render={({field}) => (
                                                     <FormItem>
@@ -261,7 +283,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                                 <Input maxLength={1} onKeyUp={handleKeyUp} id={"c5"} type={`text`} className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                }} />
+                                                                }} disabled={isLoading} />
                                                             </div>
                                                         </FormControl>
                                                     </FormItem>
@@ -270,7 +292,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                         </div>
                                         <div className={``}>
                                             <FormField
-                                                control={sendOtpForm.control}
+                                                control={validateOtpForm.control}
                                                 name="c6"
                                                 render={({field}) => (
                                                     <FormItem>
@@ -279,7 +301,7 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                                                                 <Input maxLength={1} onKeyUp={handleKeyUp} id={"c6"} type={`text`} className={`font-medium aspect-square text-lg px-2 text-center md:text-xl ${showConError && "border-[#e95d5d]"}`}
                                                                        placeholder="" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                }} />
+                                                                }} disabled={isLoading} />
                                                             </div>
                                                         </FormControl>
                                                     </FormItem>
@@ -299,6 +321,9 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
                 {/*<span>02</span>:<span>14</span>*/}
             </div>
             <p className={`text-sm md:text-base text-center font-light`}>{`Vous n'avez rien reçu ?`} <a className={`duration-200 hover:font-semibold font-medium`} href="#">Renvoyer le code</a> </p>
+            <div className={`mt-6 text-center`}>
+                <Link href={Routes.auth.sendOtp.replace('{lang}', lang)} className={`text-xs md:text-sm hover:underline underline-offset-1 font-medium duration-300`}>{`< Retour`}</Link>
+            </div>
         </div>
     );
 }
