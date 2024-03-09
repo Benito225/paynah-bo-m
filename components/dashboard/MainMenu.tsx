@@ -346,7 +346,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                             <Link
                                                 className={`inline-flex bg-[#fafafa] hover:bg-[#EAEAEA] duration-200 p-3 rounded-xl aspect-square justify-center items-center`}
                                                 href={`#`}>
-                                                <svg className={`w-[1.1rem] fill-[#afafaf]`} viewBox="0 0 20.683 20.683">
+                                                <svg className={`w-[1.3rem] fill-[#afafaf]`} viewBox="0 0 20.683 20.683">
                                                     <g transform="translate(-1878 -1779.116)">
                                                         <path
                                                             d="M20.7,13.81a.984.984,0,0,0-.984.984v3.937a.984.984,0,0,1-.984.984H4.953a.984.984,0,0,1-.984-.984V14.794a.984.984,0,1,0-1.968,0v3.937a2.953,2.953,0,0,0,2.953,2.953H18.731a2.953,2.953,0,0,0,2.953-2.953V14.794A.984.984,0,0,0,20.7,13.81Zm-9.556,1.683a.984.984,0,0,0,.325.207.925.925,0,0,0,.748,0,.984.984,0,0,0,.325-.207l3.937-3.937a.988.988,0,0,0-1.4-1.4l-2.254,2.264V2.984a.984.984,0,1,0-1.968,0v9.438L8.6,10.159a.988.988,0,0,0-1.4,1.4Z"
@@ -371,7 +371,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                             <Link
                                                 className={`inline-flex bg-[#fafafa] hover:bg-[#EAEAEA] duration-200 p-3 rounded-xl aspect-square justify-center items-center`}
                                                 href={`#`}>
-                                                <svg className={`w-[1.3rem] fill-[#afafaf]`} viewBox="0 0 19.138 17.674">
+                                                <svg className={`w-[1.4rem] fill-[#afafaf]`} viewBox="0 0 19.138 17.674">
                                                     <g transform="translate(-1879 -1747.58)">
                                                         <path
                                                             d="M-1030.109-6085.327h-8.643a5.253,5.253,0,0,1-5.247-5.248v-7.177a5.254,5.254,0,0,1,5.247-5.249h8.643a5.254,5.254,0,0,1,5.247,5.249v7.177A5.253,5.253,0,0,1-1030.109-6085.327Zm-3.322-5.675a1,1,0,0,0-1,1,1,1,0,0,0,1,1h3a1,1,0,0,0,1-1,1,1,0,0,0-1-1Zm-5-5a.992.992,0,0,0-.707.293.993.993,0,0,0-.293.707.993.993,0,0,0,.293.707l1.794,1.793-1.794,1.792a.993.993,0,0,0-.292.707.994.994,0,0,0,.292.707,1,1,0,0,0,.708.294.989.989,0,0,0,.706-.294l2.5-2.5a.992.992,0,0,0,.293-.707.994.994,0,0,0-.293-.707l-2.5-2.5A.992.992,0,0,0-1038.431-6096Z"
