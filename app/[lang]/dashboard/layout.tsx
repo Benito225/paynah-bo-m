@@ -5,6 +5,11 @@ import NavigationLoadingProviders from "@/app/[lang]/navigation-loading-provider
 import {i18n, Locale} from "@/i18n.config";
 import {Toaster} from "react-hot-toast";
 import AuthProvider from "@/components/auth-provider";
+import Link from "next/link";
+import Routes from "@/components/Routes";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import DashboardMainMenuFooter from "@/components/dashboard/MainMenu";
 
 const fontPaynah = Poppins({
   weight: ['100', '300', '400', '500', '600', '800'],
@@ -42,9 +47,20 @@ export default function RootLayout({
   return (
       <AuthProvider>
         <html lang={params.lang}>
-        <body className={fontPaynah.className}>
+        <body className={`${fontPaynah.className} bg-[#f4f4f7]`}>
         <NavigationLoadingProviders>
-          {children}
+          {/*{children}*/}
+            <div className={`min-h-screen`}>
+                <div>
+                    <div>
+                        Nav
+                    </div>
+                    <div className={``}>
+                        Main content
+                    </div>
+                </div>
+                <DashboardMainMenuFooter lang={params.lang} />
+            </div>
           <Toaster/>
         </NavigationLoadingProviders>
         </body>
