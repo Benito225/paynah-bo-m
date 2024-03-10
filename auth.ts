@@ -52,11 +52,11 @@ const config = {
                     return Response.redirect(new URL('/auth/login', request.nextUrl));
                 }
             } else if (isLoggedIn) {
-                if (request.nextUrl.pathname.startsWith(`/en/dashboard`)) {
-                    return Response.redirect(new URL(`/en/dashboard`, request.nextUrl));
-                } else {
-                    return Response.redirect(new URL(`/fr/dashboard`, request.nextUrl));
-                }
+                // if (request.nextUrl.pathname.startsWith(`/en/dashboard`)) {
+                //     return Response.redirect(new URL(`/en/dashboard`, request.nextUrl));
+                // } else {
+                //     return Response.redirect(new URL(`/fr/dashboard`, request.nextUrl));
+                // }
             }
         },
         jwt(params: any) {

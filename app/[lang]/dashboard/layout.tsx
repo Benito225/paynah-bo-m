@@ -10,6 +10,7 @@ import Routes from "@/components/Routes";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import DashboardMainMenuFooter from "@/components/dashboard/MainMenu";
+import DashboardTopMenu from "@/components/dashboard/TopMenu";
 
 const fontPaynah = Poppins({
   weight: ['100', '300', '400', '500', '600', '800'],
@@ -49,14 +50,11 @@ export default function RootLayout({
         <html lang={params.lang}>
         <body className={`${fontPaynah.className} bg-[#f4f4f7]`}>
         <NavigationLoadingProviders>
-          {/*{children}*/}
             <div className={`min-h-screen`}>
                 <div>
-                    <div>
-                        Nav
-                    </div>
-                    <div className={``}>
-                        Main content
+                    <DashboardTopMenu lang={params.lang} />
+                    <div className={`mt-4`}>
+                        {/*{children}*/}
                     </div>
                 </div>
                 <DashboardMainMenuFooter lang={params.lang} />

@@ -10,6 +10,8 @@ import {Toaster} from "react-hot-toast";
 import AuthMobileTopNavBar from "@/components/auth/MobileTopNavbar";
 import AuthMobileFooter from "@/components/auth/MobileFooter";
 import AuthProvider from "@/components/auth-provider";
+import {auth} from "@/auth";
+import {redirect} from "next/navigation";
 
 const fontPaynah = Poppins({
     weight: ['100', '300', '400', '500', '600', '800'],
@@ -37,10 +39,17 @@ export async function generateStaticParams() {
     return i18n.locales.map(locale => ({ lang: locale }))
 }
 
-export default function RootLayout({children, params}: Readonly<{
+export default async function RootLayout({children, params}: Readonly<{
     children: React.ReactNode;
     params: { lang: Locale }
 }>) {
+
+    const session  = await auth();
+
+    if (session && session.user) {
+        return redirect('/dashboard');
+    }
+
     return (
         <AuthProvider>
             <html lang={params.lang}>
