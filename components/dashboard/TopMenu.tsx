@@ -9,7 +9,10 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
-import {ChevronDown} from "lucide-react";
+import {ChevronDown, Download, X} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {formatCFA} from "@/lib/utils";
+import TopMenuAccountInfos from "@/components/dashboard/top-menu/TopMenuAccountInfos";
 
 interface DashboardTopMenuProps {
     lang: Locale
@@ -41,34 +44,7 @@ export default function DashboardTopMenu({lang}: DashboardTopMenuProps) {
                     </Link>
                     <div className={`inline-flex items-center space-x-[5rem]`}>
                         <TopMenuSoldInfos lang={lang} />
-                        <div>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger className={`focus:outline-none`}>
-                                    <div className={`py-[.38rem] pl-[.38rem] pr-1 bg-[#fafafa] rounded-xl border border-[#dadadb]`}>
-                                        <div className={`inline-flex items-center space-x-4`}>
-                                            <div
-                                                className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center`}>
-                                                <Image className={`w-auto h-[2rem]`} src={`/svg/Logo_TotalEnergies.svg`}
-                                                       alt={`logo entité`} width={10}
-                                                       height={10}/>
-                                            </div>
-                                            <div className={`inline-flex items-center space-x-2`}>
-                                                <div className={`flex flex-col justify-start items-start text-xs`}>
-                                                    <span className={`font-semibold`}>Total Energie CI</span>
-                                                    <span className={`font-light text-[#767676]`}>Npa487738CI</span>
-                                                </div>
-                                                <ChevronDown className={`text-[#626262] h-[1.3rem] w-auto`} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align={`end`}>
-                                    <DropdownMenuLabel>Compte Infos</DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
+                        <TopMenuAccountInfos lang={lang} />
                     </div>
                 </div>
             </div>

@@ -1,0 +1,177 @@
+"use client"
+
+import * as z from "zod";
+import {Locale} from "@/i18n.config";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import Image from "next/image";
+import {ChevronDown, Download, X} from "lucide-react";
+import Link from "next/link";
+import {Button} from "@/components/ui/button";
+import {formatCFA} from "@/lib/utils";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import React, {useState} from "react";
+import {Form, FormControl, FormField, FormItem} from "@/components/ui/form";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+
+interface TopMenuAccountInfosProps {
+    lang: Locale
+}
+
+export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
+
+    const [isLoading, setLoading] = useState(false);
+
+    const formSchema = z.object({
+        activeAccount: z.string(),
+    })
+
+    const accountChoice = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            activeAccount: "",
+        }
+    });
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log(values)
+        setLoading(true);
+    }
+
+    return (
+        <div>
+            <DropdownMenu>
+                <DropdownMenuTrigger className={`focus:outline-none`}>
+                    <div className={`py-[.38rem] pl-[.38rem] pr-1 bg-[#fafafa] rounded-xl border border-[#dadadb]`}>
+                        <div className={`inline-flex items-center space-x-4`}>
+                            <div
+                                className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center`}>
+                                <Image className={`w-auto h-[2rem]`} src={`/svg/Logo_TotalEnergies.svg`}
+                                       alt={`logo entité`} width={10}
+                                       height={10}/>
+                            </div>
+                            <div className={`inline-flex items-center space-x-2`}>
+                                <div className={`flex flex-col justify-start items-start text-xs`}>
+                                    <span className={`font-semibold`}>Total Energie CI</span>
+                                    <span className={`font-light text-[#767676]`}>Npa487738CI</span>
+                                </div>
+                                <ChevronDown className={`text-[#626262] h-[1.3rem] w-auto`} />
+                            </div>
+                        </div>
+                    </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className={`shadow px-3 pt-2 pb-4 rounded-3xl w-[25rem] bg-[#f3f4f7]`} align={`end`}>
+                    {/*<DropdownMenuLabel>Compte Infos</DropdownMenuLabel>*/}
+                    {/*<DropdownMenuSeparator />*/}
+                    {/*<DropdownMenuItem>Profile</DropdownMenuItem>*/}
+                    <div>
+                        <div className={`bg-white rounded-t-2xl px-5 py-3`}>
+                            <div className={`flex justify-between items-center`}>
+                                <div>
+                                    <Form {...accountChoice}>
+                                        <form onSubmit={accountChoice.handleSubmit(onSubmit)} className="space-y-5">
+                                            <FormField
+                                                control={accountChoice.control}
+                                                name="activeAccount"
+                                                render={({field}) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <div>
+                                                                <Select onValueChange={field.onChange} defaultValue={'value'}>
+                                                                    <SelectTrigger className={`min-w-[10rem] h-[2.5rem] border-[#717171] pl-3 pr-3 font-light text-sm`} style={{
+                                                                        backgroundColor: field.value ? '#f0f0f0' : '#f0f0f0',
+                                                                    }}>
+                                                                        <SelectValue  placeholder="Choisir un compte"/>
+                                                                    </SelectTrigger>
+                                                                    <SelectContent className={`bg-[#f0f0f0]`}>
+                                                                        <SelectItem className={`font-light px-7 focus:bg-gray-100`} value={'value'}>
+                                                                            Npa487738CI
+                                                                        </SelectItem>
+                                                                        <SelectItem className={`font-light px-7 focus:bg-gray-100`} value={'value2'}>
+                                                                            Npa367738CI
+                                                                        </SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </div>
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </form>
+                                    </Form>
+                                </div>
+                                {/*<Link href={`#`}>*/}
+                                {/*    <svg className={`w-[2.1rem]`} viewBox="0 0 44.203 44.203">*/}
+                                {/*        <defs>*/}
+                                {/*            <clipPath id="clip-path3">*/}
+                                {/*                <rect width="44.203" height="44.203"/>*/}
+                                {/*            </clipPath>*/}
+                                {/*        </defs>*/}
+                                {/*        <g transform="translate(0 -2)">*/}
+                                {/*            <g transform="translate(0 2)" clipPath="url(#clip-path3)">*/}
+                                {/*                <path*/}
+                                {/*                    d="M22.1,0C5.319,0,0,5.319,0,22.1S5.319,44.2,22.1,44.2s22.1-5.319,22.1-22.1S38.884,0,22.1,0m0,40.746C7.944,40.746,3.458,36.259,3.458,22.1S7.944,3.457,22.1,3.457,40.745,7.944,40.745,22.1,36.259,40.746,22.1,40.746"*/}
+                                {/*                    transform="translate(0 0)"/>*/}
+                                {/*                <path*/}
+                                {/*                    d="M39.814,20.3a8.227,8.227,0,0,0-5.73-2.075h-10.6v22.5h4.06v-7.31a4.455,4.455,0,0,1,0-4.28V22.046h6.268a4.366,4.366,0,0,1,2.959,1.05,3.351,3.351,0,0,1,1.191,2.673A3.267,3.267,0,0,1,36.775,28.4a4.428,4.428,0,0,1-2.961,1.029H30.36a2.15,2.15,0,0,0,.111,3.759h3.5a8.4,8.4,0,0,0,5.808-2.074A6.958,6.958,0,0,0,42.1,25.706a7.006,7.006,0,0,0-2.29-5.408"*/}
+                                {/*                    transform="translate(-8.464 -6.567)"/>*/}
+                                {/*            </g>*/}
+                                {/*        </g>*/}
+                                {/*    </svg>*/}
+                                {/*</Link>*/}
+                                <DropdownMenuItem className={`hover:!bg-transparent cursor-pointer p-0`}>
+                                    <X strokeWidth={2.5} className={`h-5 text-[#777] w-auto`} />
+                                </DropdownMenuItem>
+                            </div>
+                        </div>
+                        <div className={`mt-6`}>
+                            <div className={`flex flex-col items-center justify-center`}>
+                                <div
+                                    className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center mb-2`}>
+                                    <Image className={`w-auto h-[3.5rem]`} src={`/svg/Logo_TotalEnergies.svg`}
+                                           alt={`logo entité`} width={10}
+                                           height={10}/>
+                                </div>
+                                <p className={`text-sm font-light text-center text-[#767676] mb-6`}>Npa487738CI</p>
+                                <Button className={`bg-transparent font-light text-xs h-[2.2rem] text-black hover:text-white border border-[#858587] inline-flex items-center`}>
+                                    <Download className={`h-[1rem]`} />
+                                    <span>Télécharger le Paynah ID</span>
+                                </Button>
+                            </div>
+                        </div>
+                        <div className={`account-infos mt-8`}>
+                            <div className={`px-6 pt-5 pb-6 bg-white rounded-3xl`}>
+                                <div className={`grid grid-cols-2 gap-x-5 gap-y-2`}>
+                                    <div>
+                                        <div className={`inline-flex flex-col`}>
+                                            <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Nom du compte</span>
+                                            <span className={`uppercase text-xs font-semibold`}>COMPTE USINE DE Bonoua</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className={`inline-flex flex-col`}>
+                                            <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Numéro du compte</span>
+                                            <span className={`uppercase text-xs font-semibold`}>PA4839CI</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className={`inline-flex flex-col`}>
+                                            <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Solde du compte</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(34850345)}</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className={`inline-flex flex-col`}>
+                                            <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Solde effectif disponible</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(34850105)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
+    );
+}
