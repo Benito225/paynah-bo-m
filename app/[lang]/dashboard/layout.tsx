@@ -51,10 +51,10 @@ export default function RootLayout({
         <body className={`${fontPaynah.className} bg-[#f4f4f7]`}>
         <NavigationLoadingProviders>
             <div className={`min-h-screen`}>
-                <div>
+                <div className={`flex flex-col h-screen pb-[6.6rem]`}>
                     <DashboardTopMenu lang={params.lang} />
-                    <div className={`mt-4`}>
-                        {/*{children}*/}
+                    <div className={`mt-3 flex-grow`}>
+                        {children}
                     </div>
                 </div>
                 <DashboardMainMenuFooter lang={params.lang} />

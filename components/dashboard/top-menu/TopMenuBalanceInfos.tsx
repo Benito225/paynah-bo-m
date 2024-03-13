@@ -24,7 +24,7 @@ export default function TopMenuBalanceInfos({lang}: TopMenuBalanceInfosProps) {
     }
 
     return (
-        <div className={`account-sold`}>
+        <div className={`account-sold min-w-[15rem]`}>
                 <div className={`inline-flex flex-col space-y-0`}>
                     <div className={`inline-flex items-center text-sm space-x-1`}>
                         <span className={`font-light text-[#8f9090]`}>Solde :</span>
