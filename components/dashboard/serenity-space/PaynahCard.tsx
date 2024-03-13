@@ -52,7 +52,7 @@ export default function PaynahCard({lang}: PaynahCardProps) {
     return (
         <div className={`card-design`}>
             <div className={`relative rounded-2xl p-4`}>
-                <Image className={`object-cover rounded-2xl z-[-1]`} src={`/${lang}/images/cover-mobile.png`} fill alt={`cover-card`} />
+                <Image className={`object-cover rounded-2xl z-[-1]`} src={`/${lang}/images/cover-test.png`} fill alt={`cover-card`} />
                 <div className={`flex justify-between mb-[3rem]`}>
                     <div className={`inline-flex`}>
                         <div>

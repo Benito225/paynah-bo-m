@@ -37,6 +37,7 @@
     "react-hot-toast": "^2.4.1",
     "react-international-phone": "^4.2.6",
     "react-jwt": "^1.2.0",
+    "react-number-format": "^5.3.3",
     "react-spinners": "^0.13.8",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
