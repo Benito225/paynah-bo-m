@@ -23,7 +23,7 @@ export default async function Home({params: { lang }}: {
 
     return (
         <>
-            <div className={`max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 h-full flex flex-col`}>
+            <div className={`max-w-screen-2xl 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 h-full flex flex-col`}>
                 <div className={`flex justify-between items-center`}>
                     <h1 className={`text-lg text-[#767676] tracking-tight`}>Serenity Space</h1>
                     <div className={`py-2 px-3 bg-white rounded-xl inline-flex items-center space-x-3`}>

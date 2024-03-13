@@ -14,8 +14,8 @@ interface AuthFooterProps {
 export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
     return (
         <div>
-            <div className={`fixed inset-x-0 bottom-5 bg-[#f4f4f7]`}>
-                <div className={`max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8  rounded-3xl`}>
+            <div className={`fixed inset-x-0 bottom-5 z-[90] bg-[#f4f4f7]`}>
+                <div className={`max-w-screen-2xl 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8  rounded-3xl`}>
                     <nav className={`main-menu bg-white py-3 px-6 rounded-3xl`}>
                         <div className={`flex justify-between items-center`}>
                             <div>

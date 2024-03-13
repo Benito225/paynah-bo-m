@@ -51,7 +51,7 @@ export default function RootLayout({
         <body className={`${fontPaynah.className} bg-[#f4f4f7]`}>
         <NavigationLoadingProviders>
             <div className={`min-h-screen`}>
-                <div className={`flex flex-col h-screen pb-[6.6rem]`}>
+                <div className={`flex flex-col min-h-screen pb-[6.6rem]`}>
                     <DashboardTopMenu lang={params.lang} />
                     <div className={`mt-3 flex-grow`}>
                         {children}
