@@ -94,7 +94,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
 
     return (
         <div className={`operation-shortcut flex-grow`}>
-            <div className={`bg-white rounded-2xl px-3 2xl:px-4 py-5 h-full`}>
+            <div className={`bg-white rounded-2xl px-3 2xl:px-[.8rem] py-5 h-full`}>
                 <h2 className={`font-medium text-base`}>Opérations rapides</h2>
                 <div className={`mt-2`}>
                     <Tabs defaultValue="send" className="w-full rounded-2xl">
@@ -155,7 +155,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                         <div>
                                             <div className={`border border-[#e4e4e4] flex items-center rounded-lg px-1 2xl:px-1.5 py-1 2xl:py-1`}>
                                                 <div className={`flex items-center w-full`}>
-                                                    <span className={`text-[10.5px] text-[#84818a] 2xl:text-[12px] font-normal whitespace-nowrap mr-1 2xl:mr-2`}>{`Mode d'envoi`}</span>
+                                                    <span className={`text-[10.5px] text-[#84818a] 2xl:text-[12px] font-normal whitespace-nowrap mr-1 2xl:mr-1.5`}>{`Mode d'envoi`}</span>
                                                     <div className={`w-full`}>
                                                         <FormField
                                                             control={sendMoney.control}
@@ -166,7 +166,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                                         <RadioGroup
                                                                             onValueChange={field.onChange}
                                                                             defaultValue={field.value}
-                                                                            className="flex items-center justify-between gap-0 rounded-lg !bg-[#f0f0f0] p-1 2xl:p-1.5 flex-row"
+                                                                            className="flex items-center justify-between gap-0 rounded-lg !bg-[#f0f0f0] p-1 2xl:p-1 flex-row"
                                                                         >
                                                                             <FormItem onClick={() => triggerRadio('direct')} className="flex-1 items-center justify-center space-y-0">
                                                                                 <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'direct' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10.5px] 2xl:text-[12px] font-medium px-1 2xl:px-2 py-1.5`}>

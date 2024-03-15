@@ -34,13 +34,13 @@ export default async function Home({params: { lang }}: {
                     </div>
                 </div>
                 <div className={`flex gap-3 mt-2.5 flex-grow`}>
-                    <div className={`w-[25%] 2xl:w-[25%]`}>
+                    <div className={`w-[25%] 2xl:w-[24%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
                             <PaynahCard lang={lang}/>
                             <OperationShortcut lang={lang} />
                         </div>
                     </div>
-                    <div className={`w-[49%] 2xl:w-[49%] bg-white`}>
+                    <div className={`w-[49%] 2xl:w-[51%] bg-white`}>
 
                     </div>
                     <div className={`w-[26%] 2xl:w-[26%]`}>
