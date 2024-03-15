@@ -22,9 +22,9 @@ export default function SalesPoint({lang}: SalesPointProps) {
     return (
         <div className={`bg-white sales-point min-h-[25rem] rounded-2xl px-6 py-5`}>
             <div className={`flex items-center justify-between border-b border-[#f1f1f1] pb-1.5 border-dashed`}>
-                <h2 className={`font-medium text-base`}>Points de vente</h2>
+                <h2 className={`font-medium text-sm 2xl:text-base`}>Points de vente</h2>
                 <div>
-                    <Link className={`inline-flex items-center text-sm text-[#909090] hover:underline duration-200`} href={`#`}>
+                    <Link className={`inline-flex text-xs text-[#909090] hover:underline duration-200`} href={`#`}>
                         <span>Voir tout</span>
                         <ChevronRight className={`h-4 w-auto`} />
                     </Link>

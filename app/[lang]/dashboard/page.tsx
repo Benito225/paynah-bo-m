@@ -10,6 +10,7 @@ import PaynahCard from "@/components/dashboard/serenity-space/PaynahCard";
 import OperationShortcut from "@/components/dashboard/serenity-space/OperationShortcut";
 import SalesPoint from "@/components/dashboard/serenity-space/SalesPoint";
 import PendingOperation from "@/components/dashboard/serenity-space/PendingOperation";
+import AccountList from "@/components/dashboard/serenity-space/AccountList";
 
 export default async function Home({params: { lang }}: {
     params: { lang: Locale }
@@ -34,16 +35,18 @@ export default async function Home({params: { lang }}: {
                     </div>
                 </div>
                 <div className={`flex gap-3 mt-2.5 flex-grow`}>
-                    <div className={`w-[25%] 2xl:w-[24%]`}>
+                    <div className={`w-[25%] 2xl:w-[23%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
                             <PaynahCard lang={lang}/>
                             <OperationShortcut lang={lang} />
                         </div>
                     </div>
-                    <div className={`w-[49%] 2xl:w-[51%] bg-white`}>
-
+                    <div className={`w-[51%] 2xl:w-[53%]`}>
+                        <div className={`flex flex-col h-full space-y-3`}>
+                            <AccountList lang={lang} />
+                        </div>
                     </div>
-                    <div className={`w-[26%] 2xl:w-[26%]`}>
+                    <div className={`w-[24%] 2xl:w-[24%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
                             <SalesPoint lang={lang} />
                             <PendingOperation lang={lang} />

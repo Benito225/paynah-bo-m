@@ -99,9 +99,9 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                 <div className={`mt-2`}>
                     <Tabs defaultValue="send" className="w-full rounded-2xl">
                         <TabsList className={`rounded-xl flex !bg-[#f0f0f0]`}>
-                            <TabsTrigger className={`rounded-lg flex-1 px-1 2xl:px-2 text-[10.5px] 2xl:text-[12px]`} value="send">{`Envoi d'argent`}</TabsTrigger>
-                            <TabsTrigger className={`rounded-lg flex-1 px-1 2xl:px-2 text-[10.5px] 2xl:text-[12px]`} value="link">{`Lien de paiement`}</TabsTrigger>
-                            <TabsTrigger className={`rounded-lg flex-1 px-1 2xl:px-2 text-[10.5px] 2xl:text-[12px]`} value="topup">{`Rechargement`}</TabsTrigger>
+                            <TabsTrigger className={`rounded-lg flex-1 px-1 2xl:px-2 text-[10.5px] 2xl:text-[11px]`} value="send">{`Envoi d'argent`}</TabsTrigger>
+                            <TabsTrigger className={`rounded-lg flex-1 px-1 2xl:px-2 text-[10.5px] 2xl:text-[11px]`} value="link">{`Lien de paiement`}</TabsTrigger>
+                            <TabsTrigger className={`rounded-lg flex-1 px-1 2xl:px-2 text-[10.5px] 2xl:text-[11px]`} value="topup">{`Rechargement`}</TabsTrigger>
                         </TabsList>
                         <TabsContent value="send">
                             <div className={`mt-5 min-h-[20rem]`}>
@@ -152,10 +152,10 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                 </FormItem>
                                             )}
                                         />
-                                        <div>
-                                            <div className={`border border-[#e4e4e4] flex items-center rounded-lg px-1 2xl:px-1.5 py-1 2xl:py-1`}>
+                                        <div className={``}>
+                                            <div className={`border border-[#e4e4e4] flex items-center rounded-lg px-1 2xl:px-1 py-1 2xl:py-1`}>
                                                 <div className={`flex items-center w-full`}>
-                                                    <span className={`text-[10.5px] text-[#84818a] 2xl:text-[12px] font-normal whitespace-nowrap mr-1 2xl:mr-1.5`}>{`Mode d'envoi`}</span>
+                                                    <span className={`text-[10.5px] text-[#84818a] 2xl:text-[11px] font-normal whitespace-nowrap mr-1 2xl:mr-1`}>{`Mode d'envoi`}</span>
                                                     <div className={`w-full`}>
                                                         <FormField
                                                             control={sendMoney.control}
@@ -169,7 +169,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                                             className="flex items-center justify-between gap-0 rounded-lg !bg-[#f0f0f0] p-1 2xl:p-1 flex-row"
                                                                         >
                                                                             <FormItem onClick={() => triggerRadio('direct')} className="flex-1 items-center justify-center space-y-0">
-                                                                                <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'direct' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10.5px] 2xl:text-[12px] font-medium px-1 2xl:px-2 py-1.5`}>
+                                                                                <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'direct' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10px] 2xl:text-[11px] font-medium px-1 2xl:px-2 py-1.5`}>
                                                                                     <svg className={`w-[.7rem] mr-1`} viewBox="0 0 44.203 44.203">
                                                                                         <defs>
                                                                                             <clipPath id="clip-path2">
@@ -191,12 +191,12 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                                                 </button>
                                                                             </FormItem>
                                                                             <FormItem onClick={() => triggerRadio('mm')} className="flex-1 items-center justify-center space-y-0">
-                                                                                <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'mm' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10.5px] 2xl:text-[12px] font-medium px-1 2xl:px-2 py-1.5`}>
+                                                                                <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'mm' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10px] 2xl:text-[11px] font-medium px-1 2xl:px-2 py-1.5`}>
                                                                                     <span>Mobile Money</span>
                                                                                 </button>
                                                                             </FormItem>
                                                                             <FormItem onClick={() => triggerRadio('bank')} className="flex-1 items-center justify-center space-y-0">
-                                                                                <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'bank' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10.5px] 2xl:text-[12px] font-medium pl-1 pr-[2px] 2xl:px-2 py-1.5`}>
+                                                                                <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'bank' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10px] 2xl:text-[11px] font-medium pl-1 pr-[2px] 2xl:px-2 py-1.5`}>
                                                                                     <span>Virement</span>
                                                                                 </button>
                                                                             </FormItem>
