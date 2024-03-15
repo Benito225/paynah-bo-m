@@ -11,6 +11,7 @@ import OperationShortcut from "@/components/dashboard/serenity-space/OperationSh
 import SalesPoint from "@/components/dashboard/serenity-space/SalesPoint";
 import PendingOperation from "@/components/dashboard/serenity-space/PendingOperation";
 import AccountList from "@/components/dashboard/serenity-space/AccountList";
+import LastTransactions from "@/components/dashboard/serenity-space/LastTransactions";
 
 export default async function Home({params: { lang }}: {
     params: { lang: Locale }
@@ -44,6 +45,7 @@ export default async function Home({params: { lang }}: {
                     <div className={`w-[51%] 2xl:w-[53%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
                             <AccountList lang={lang} />
+                            <LastTransactions lang={lang} />
                         </div>
                     </div>
                     <div className={`w-[24%] 2xl:w-[24%]`}>

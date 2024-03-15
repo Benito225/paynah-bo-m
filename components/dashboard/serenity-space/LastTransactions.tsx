@@ -13,26 +13,21 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {formatCFA, hiddeBalance} from "@/lib/utils";
 import Link from "next/link";
 
-interface PendingOperationProps {
+interface LastTransactionsProps {
     lang: Locale
 }
 
-export default function PendingOperation({lang}: PendingOperationProps) {
+export default function LastTransactions({lang}: LastTransactionsProps) {
 
     return (
-        <div className={`bg-white sales-point flex-grow min-h-[19rem] rounded-2xl px-6 py-5`}>
-            <div className={`flex items-center justify-between border-b border-[#f1f1f1] pb-1.5 border-dashed`}>
-                <h2 className={`font-medium text-sm 2xl:text-base`}>Opération en attente</h2>
+        <div className={`bg-white sales-point flex-grow rounded-2xl px-6 py-5`}>
+            <div className={`flex items-center justify-between pb-1.5`}>
+                <h2 className={`font-medium text-base`}>Transactions récentes</h2>
                 <div>
                     <Link className={`inline-flex text-xs text-[#909090] hover:underline duration-200 mb-1`} href={`#`}>
                         <span>Voir tout</span>
                         <ChevronRight className={`h-4 w-auto`} />
                     </Link>
-                </div>
-            </div>
-            <div className={`flex justify-center items-center h-full`}>
-                <div className={`inline-flex flex-col justify-center`}>
-                    <span className={`text-xs text-[#7d7d7d] mt-1`}>Aucune opération en attente</span>
                 </div>
             </div>
         </div>
