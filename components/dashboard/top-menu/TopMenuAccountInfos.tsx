@@ -46,9 +46,9 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
                         <div className={`inline-flex items-center space-x-4`}>
                             <div
                                 className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center`}>
-                                <Image className={`w-auto h-[2rem]`} src={`/svg/Logo_TotalEnergies.svg`}
-                                       alt={`logo entité`} width={10}
-                                       height={10}/>
+                                <Image className={`w-auto h-[2rem]`} src={`/${lang}/images/Logo_TotalEnergies.png`}
+                                       alt={`logo entité`} width={172}
+                                       height={140}/>
                             </div>
                             <div className={`inline-flex items-center space-x-2`}>
                                 <div className={`flex flex-col justify-start items-start text-xs`}>
@@ -128,9 +128,9 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
                             <div className={`flex flex-col items-center justify-center`}>
                                 <div
                                     className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center mb-2`}>
-                                    <Image className={`w-auto h-[3.5rem]`} src={`/svg/Logo_TotalEnergies.svg`}
-                                           alt={`logo entité`} width={10}
-                                           height={10}/>
+                                    <Image className={`w-auto h-[3.5rem]`} src={`/${lang}/images/Logo_TotalEnergies.png`}
+                                           alt={`logo entité`} width={172}
+                                           height={140}/>
                                 </div>
                                 <p className={`text-sm font-light text-center text-[#767676] mb-6`}>Npa487738CI</p>
                                 <Button className={`bg-transparent font-light text-xs h-[2.2rem] text-black hover:text-white border border-[#858587] inline-flex items-center`}>
