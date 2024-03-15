@@ -16,6 +16,8 @@ import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {Button} from "@/components/ui/button";
 import {NumericFormat} from "react-number-format";
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
 interface OperationShortcutProps {
     lang: Locale
@@ -31,10 +33,13 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
         beneficiary: z.string().min(1, {
             message: 'Le champ est requis'
         }),
-        accountNumber: z.string().min(1, {
-            message: 'Le champ est requis'
-        }),
-        bankAmount: z.number(),
+        accountNumber: z.string(),
+        bankAccountNumber: z.string(),
+        bankAmount: z.string(),
+        amount: z.string(),
+        mmAmount: z.string(),
+        mmAccountNumber: z.string(),
+        mmOperator: z.string(), // om, wave, mtn, moov
         sendMode: z.enum(["direct", "mm", "bank"], {
             required_error: "Vous devez choisir un mode d'envoi",
         }),
@@ -46,7 +51,12 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
             beneficiary: "",
             sendMode: "direct",
             accountNumber: "",
-            bankAmount: undefined
+            mmAmount: "",
+            amount: "",
+            mmAccountNumber: "",
+            mmOperator: "",
+            bankAmount: "",
+            bankAccountNumber: ""
         }
     });
 
@@ -66,7 +76,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
 
     return (
         <div className={`operation-shortcut flex-grow`}>
-            <div className={`bg-white rounded-2xl px-3 py-5 h-full`}>
+            <div className={`bg-white rounded-2xl px-3 2xl:px-4 py-5 h-full`}>
                 <h2 className={`font-medium text-base`}>Opérations rapides</h2>
                 <div className={`mt-2`}>
                     <Tabs defaultValue="send" className="w-full rounded-2xl">
@@ -76,7 +86,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                             <TabsTrigger className={`rounded-lg flex-1 px-1 2xl:px-2 text-[10.5px] 2xl:text-[12px]`} value="topup">{`Rechargement`}</TabsTrigger>
                         </TabsList>
                         <TabsContent value="send">
-                            <div className={`mt-5`}>
+                            <div className={`mt-5 min-h-[20rem]`}>
                                 <div className={`beneficiary-fav mb-5`}>
                                     <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires favoris</h3>
                                     <div className={`inline-flex space-x-1 mt-2`}>
@@ -125,9 +135,9 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                             )}
                                         />
                                         <div>
-                                            <div className={`border border-[#e4e4e4] flex items-center rounded-lg px-1 py-1 2xl:py-1`}>
+                                            <div className={`border border-[#e4e4e4] flex items-center rounded-lg px-1 2xl:px-1.5 py-1 2xl:py-1`}>
                                                 <div className={`flex items-center w-full`}>
-                                                    <span className={`text-[10.5px] text-[#84818a] 2xl:text-[12px] font-normal whitespace-nowrap mr-1 2xl:mr-1`}>{`Mode d'envoi`}</span>
+                                                    <span className={`text-[10.5px] text-[#84818a] 2xl:text-[12px] font-normal whitespace-nowrap mr-1 2xl:mr-2`}>{`Mode d'envoi`}</span>
                                                     <div className={`w-full`}>
                                                         <FormField
                                                             control={sendMoney.control}
@@ -195,6 +205,154 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                                         <label htmlFor="accountNumber"
                                                                                className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Numéro de compte
                                                                         </label>
+                                                                    </div>
+                                                                </div>
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={sendMoney.control}
+                                                    name="amount"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <div>
+                                                                    <div className="relative">
+                                                                        <NumericFormat
+                                                                            id="amount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field}
+                                                                            thousandSeparator=" " prefix="FCFA " />
+                                                                        {/*<input type="text" id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
+                                                                        <label htmlFor="amount"
+                                                                               className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
+                                                                        </label>
+                                                                        <Button type={`submit`} className={`absolute rounded-lg p-3 top-0 right-0`}>
+                                                                            <Send className={`h-[1.1rem] text-[#fff] `} />
+                                                                        </Button>
+                                                                    </div>
+                                                                </div>
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                        }
+                                        {activeSendMode == "mm" &&
+                                            <div className={`mm-form-inputs space-y-3`}>
+                                                <FormField
+                                                    control={sendMoney.control}
+                                                    name="mmAccountNumber"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <div>
+                                                                    <div className="relative">
+                                                                        {/*<input type="text" id="mmAccountNumber" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
+                                                                        <PhoneInput
+                                                                            {...field}
+                                                                            className={`mt-[.5rem] op-tel`}
+                                                                            style={
+                                                                                {
+                                                                                    '--react-international-phone-text-color': '#000',
+                                                                                    '--react-international-phone-border-color': '#f0f0f0',
+                                                                                    '--react-international-phone-height': '2.8rem',
+                                                                                    '--react-international-phone-font-size': '14px',
+                                                                                    '--react-international-phone-border-radius': '0.5rem',
+                                                                                }  as React.CSSProperties
+                                                                            }
+                                                                            defaultCountry="ci"
+                                                                            placeholder=" "
+                                                                        />
+                                                                        <label htmlFor="mmAccountNumber"
+                                                                               className={`primary-form-label !bg-white peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Numéro de compte
+                                                                        </label>
+                                                                        <div className={`absolute top-0 right-0`}>
+                                                                            <FormField
+                                                                                control={sendMoney.control}
+                                                                                name="mmOperator"
+                                                                                render={({field}) => (
+                                                                                    <FormItem>
+                                                                                        <FormControl>
+                                                                                            <div>
+                                                                                                <Select onValueChange={field.onChange} defaultValue={'om'}>
+                                                                                                    <SelectTrigger className={`w-[4rem] h-[2.8rem] rounded-l-none rounded-r-lg border border-[#f4f4f7] pl-2.5 pr-1 font-light`} style={{
+                                                                                                        backgroundColor: field.value ? '#f4f4f7' : '#f4f4f7',
+                                                                                                    }}>
+                                                                                                        <SelectValue  placeholder="Opérateur"/>
+                                                                                                    </SelectTrigger>
+                                                                                                    <SelectContent className={`bg-[#f0f0f0]`}>
+                                                                                                        <SelectItem className={`font-light px-7 flex items-center focus:bg-gray-100`} value={'om'}>
+                                                                                                            <Image className={`h-[1.6rem] w-[1.6rem]`} src={`/${lang}/images/ORANGE-MONEY.png`} alt={`om`} height={512} width={512} />
+                                                                                                        </SelectItem>
+                                                                                                        <SelectItem className={`font-light px-7 flex items-center focus:bg-gray-100`} value={'mtn'}>
+                                                                                                            <Image className={`h-[1.8rem] w-[1.8rem]`} src={`/${lang}/images/MTN MOMO.png`} alt={`mtn`} height={512} width={512} />
+                                                                                                        </SelectItem>
+                                                                                                        <SelectItem className={`font-light px-7 flex items-center focus:bg-gray-100`} value={'moov'}>
+                                                                                                            <Image className={`h-[1.8rem] w-[1.8rem]`} src={`/${lang}/images/MOOV MONEY.png`} alt={`moov`} height={512} width={512} />
+                                                                                                        </SelectItem>
+                                                                                                        <SelectItem className={`font-light px-7 flex items-center focus:bg-gray-100`} value={'wave'}>
+                                                                                                            <Image className={`h-[1.8rem] w-[1.8rem]`} src={`/${lang}/images/WAVE.png`} alt={`wave`} height={512} width={512} />
+                                                                                                        </SelectItem>
+                                                                                                    </SelectContent>
+                                                                                                </Select>
+                                                                                            </div>
+                                                                                        </FormControl>
+                                                                                    </FormItem>
+                                                                                )}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={sendMoney.control}
+                                                    name="mmAmount"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <div>
+                                                                    <div className="relative">
+                                                                        <NumericFormat
+                                                                            id="mmAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field}
+                                                                            thousandSeparator=" " prefix="FCFA " />
+                                                                        {/*<input type="text" id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
+                                                                        <label htmlFor="mmAmount"
+                                                                               className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
+                                                                        </label>
+                                                                        <Button type={`submit`} className={`absolute rounded-lg p-3 top-0 right-0`}>
+                                                                            <Send className={`h-[1.1rem] text-[#fff] `} />
+                                                                        </Button>
+                                                                    </div>
+                                                                </div>
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                        }
+                                        {activeSendMode == "bank" &&
+                                            <div className={`bank-form-inputs space-y-3`}>
+                                                <FormField
+                                                    control={sendMoney.control}
+                                                    name="bankAccountNumber"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <div>
+                                                                    <div className="relative">
+                                                                        <input type="text" id="bankAccountNumber" className={`primary-form-input !pr-[6rem] h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />
+                                                                        <label htmlFor="bankAccountNumber"
+                                                                               className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Numéro de compte
+                                                                        </label>
+                                                                        <div className={`absolute top-0 right-0 h-full`}>
+                                                                            <div className={`flex items-center h-full pr-2`}>
+                                                                                <Image className={`h-[1.2rem] w-auto mr-1`} src={`/svg/LOGO MASTERCARD.svg`} alt={`master-card`} height={10} width={10} />
+                                                                                <Image className={`h-[1.2rem] w-auto`} src={`/svg/LOGO VISA.svg`} alt={`master-card`} height={10} width={10} />
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </FormControl>

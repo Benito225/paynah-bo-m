@@ -138,3 +138,15 @@
 .primary-form-label-primary {
   @apply absolute text-sm text-[#84818A] duration-300 transform -translate-y-4 scale-90 top-2 z-10 origin-[0] bg-[#f4f4f7] px-2 left-1 focus:outline-none;
 }
+
+.react-international-phone-country-selector-dropdown {
+  z-index: 90 !important;
+}
+
+.op-tel .react-international-phone-country-selector-button__button-content {
+  @apply pt-[.45rem];
+}
+
+.op-tel.react-international-phone-input-container .react-international-phone-input {
+  @apply pt-[.45rem] pr-[4rem];
+}
