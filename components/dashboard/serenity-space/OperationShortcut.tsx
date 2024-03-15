@@ -45,6 +45,11 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
         }),
     });
 
+    const formSchemaPaymentLink = z.object({
+        accountNumber: z.string(),
+        amount: z.string(),
+    });
+
     const sendMoney = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -54,9 +59,17 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
             mmAmount: "",
             amount: "",
             mmAccountNumber: "",
-            mmOperator: "",
+            mmOperator: "om",
             bankAmount: "",
             bankAccountNumber: ""
+        }
+    });
+
+    const paymentLink = useForm<z.infer<typeof formSchemaPaymentLink>>({
+        resolver: zodResolver(formSchemaPaymentLink),
+        defaultValues: {
+            accountNumber: "om",
+            amount: "",
         }
     });
 
@@ -65,10 +78,15 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
         setActiveSendMode(inputName);
     }
 
-
     async function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values);
-        console.log("ok");
+        setLoading(true);
+
+        setShowConError(true);
+    }
+
+    async function onSubmitPaymentLink(values: z.infer<typeof formSchemaPaymentLink>) {
+        console.log(values);
         setLoading(true);
 
         setShowConError(true);
@@ -389,8 +407,77 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                 </Form>
                             </div>
                         </TabsContent>
-                        <TabsContent value="link">Change your password here.</TabsContent>
-                        <TabsContent value="topup">Change your password 3.</TabsContent>
+                        <TabsContent value="link">
+                            <div className={`mt-5 min-h-[20rem]`}>
+                                <Form {...paymentLink}>
+                                    <form onSubmit={paymentLink.handleSubmit(onSubmitPaymentLink)} className="space-y-3">
+                                        <FormField
+                                            control={paymentLink.control}
+                                            name="accountNumber"
+                                            render={({field}) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <div className={`relative`}>
+                                                            <Select onValueChange={field.onChange} defaultValue={'om'}>
+                                                                <SelectTrigger className={`w-full !pt-[.8rem] h-[2.8rem] rounded-lg border border-[#f4f4f7] pl-2.5 pr-1 font-normal`} style={{
+                                                                    backgroundColor: field.value ? '#fff' : '#fff',
+                                                                }}>
+                                                                    <SelectValue placeholder=" "/>
+                                                                </SelectTrigger>
+                                                                <SelectContent className={`bg-[#f0f0f0]`}>
+                                                                    <SelectItem className={`font-normal px-7 flex items-center focus:bg-gray-100 font-normal`} value={'om'}>
+                                                                        Compte principal
+                                                                    </SelectItem>
+                                                                    <SelectItem className={`font-normal  px-7 flex items-center focus:bg-gray-100 font-normal`} value={'mtn'}>
+                                                                         Salariale
+                                                                    </SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                            <label htmlFor=""
+                                                                   className={`primary-form-label !bg-white peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Compte à créditer
+                                                            </label>
+                                                        </div>
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={paymentLink.control}
+                                            name="amount"
+                                            render={({field}) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <div>
+                                                            <div className="relative">
+                                                                <NumericFormat
+                                                                    id="amount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field}
+                                                                    thousandSeparator=" " prefix="FCFA " />
+                                                                {/*<input type="text" id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
+                                                                <label htmlFor="amount"
+                                                                       className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
+                                                                </label>
+                                                                <Button type={`submit`} className={`absolute rounded-lg p-3 top-0 right-0`}>
+                                                                    <Send className={`h-[1.1rem] text-[#fff] `} />
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </form>
+                                </Form>
+                            </div>
+                        </TabsContent>
+                        <TabsContent value="topup">
+                            <div className={`flex justify-center items-center mt-5 min-h-[20rem]`}>
+                                <div className={``}>
+                                    <div className={`inline-flex flex-col justify-center`}>
+                                        <span className={`text-xs text-[#7d7d7d] mt-1`}>Bientôt disponible</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </TabsContent>
                     </Tabs>
                 </div>
             </div>
