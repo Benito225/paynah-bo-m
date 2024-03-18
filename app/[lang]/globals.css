@@ -150,3 +150,19 @@
 .op-tel.react-international-phone-input-container .react-international-phone-input {
   @apply pt-[.45rem] pr-[4rem];
 }
+
+.status-success {
+  @apply bg-[#19b2a6] text-white rounded-lg py-0.5 px-1.5 w-[3.5rem] text-center block;
+}
+
+.status-expired {
+  @apply bg-[#dbdbdb] text-black rounded-lg py-0.5 px-1.5 w-[3.5rem] text-center block;
+}
+
+.status-rejected {
+  @apply bg-[#f00] text-white rounded-lg py-0.5 px-1.5 w-[3.5rem] text-center block;
+}
+
+.status-pending {
+  @apply bg-[#ff723b] text-white rounded-lg py-0.5 px-1.5 w-[3.5rem] text-center block;
+}

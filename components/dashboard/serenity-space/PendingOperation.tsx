@@ -20,7 +20,7 @@ interface PendingOperationProps {
 export default function PendingOperation({lang}: PendingOperationProps) {
 
     return (
-        <div className={`bg-white sales-point flex-grow min-h-[19rem] rounded-2xl px-6 py-5`}>
+        <div className={`bg-white sales-point flex-grow rounded-2xl px-6 py-5`}>
             <div className={`flex items-center justify-between border-b border-[#f1f1f1] pb-1.5 border-dashed`}>
                 <h2 className={`font-medium text-sm 2xl:text-base`}>Opération en attente</h2>
                 <div>
