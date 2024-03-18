@@ -152,17 +152,17 @@
 }
 
 .status-success {
-  @apply bg-[#19b2a6] text-white rounded-lg py-0.5 px-1.5 w-[3.5rem] text-center block;
+  @apply bg-[#dbfcef] text-[#19b2a6] rounded-lg py-0.5 px-1.5 w-[3.7rem] text-center block;
 }
 
 .status-expired {
-  @apply bg-[#dbdbdb] text-black rounded-lg py-0.5 px-1.5 w-[3.5rem] text-center block;
+  @apply bg-[#dbdbdb] text-black rounded-lg py-0.5 px-1.5 w-[3.7rem] text-center block;
 }
 
 .status-rejected {
-  @apply bg-[#f00] text-white rounded-lg py-0.5 px-1.5 w-[3.5rem] text-center block;
+  @apply bg-[#ffe8e8] text-[#ff0000] rounded-lg py-0.5 px-1.5 w-[3.7rem] text-center block;
 }
 
 .status-pending {
-  @apply bg-[#ff723b] text-white rounded-lg py-0.5 px-1.5 w-[3.5rem] text-center block;
+  @apply bg-[#fff4ed] text-[#ff723b] rounded-lg py-0.5 px-1.5 w-[3.7rem] text-center block;
 }
