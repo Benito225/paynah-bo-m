@@ -35,7 +35,7 @@ export default function PendingOperation({lang}: PendingOperationProps) {
                     <li className={`py-2`}>
                         <div className={`flex justify-between items-center space-x-3 2xl:space-x-4`}>
                             <div className={`inline-flex flex-col`}>
-                                <p className={`text-[13px] leading-4 2xl:leading-normal font-medium`}>Transfert de <span>{formatCFA(10000)}</span> vers <span>+225 07 77 40 41 36</span></p>
+                                <p className={`text-[13px] leading-4 2xl:leading-normal font-normal`}>Transfert de <span>{formatCFA(10000)}</span> vers <span>+225 07 77 40 41 36</span></p>
                                 <p className={`font-light text-[#767676] text-[11px]`}>Initié par <span>Ben Ismaël</span></p>
                             </div>
                             <div className={`inline-flex space-x-2`}>
@@ -51,7 +51,7 @@ export default function PendingOperation({lang}: PendingOperationProps) {
                     <li className={`py-2`}>
                         <div className={`flex justify-between items-center space-x-3 2xl:space-x-4`}>
                             <div className={`inline-flex flex-col`}>
-                                <p className={`text-[13px] leading-4 2xl:leading-normal font-medium`}>Transfert de <span>{formatCFA(5000)}</span> vers <span>+225 07 77 40 41 36</span></p>
+                                <p className={`text-[13px] leading-4 2xl:leading-normal font-normal`}>Transfert de <span>{formatCFA(5000)}</span> vers <span>+225 07 77 40 41 36</span></p>
                                 <p className={`font-light text-[#767676] text-[11px]`}>Initié par <span>Ben Ismaël</span></p>
                             </div>
                             <div className={`inline-flex space-x-2`}>
@@ -67,7 +67,7 @@ export default function PendingOperation({lang}: PendingOperationProps) {
                     <li className={`py-2`}>
                         <div className={`flex justify-between items-center space-x-3 2xl:space-x-4`}>
                             <div className={`inline-flex flex-col`}>
-                                <p className={`text-[13px] leading-4 2xl:leading-normal font-medium`}>Transfert de <span>{formatCFA(105000)}</span> vers <span>NPA32453SA</span></p>
+                                <p className={`text-[13px] leading-4 2xl:leading-normal font-normal`}>Transfert de <span>{formatCFA(105000)}</span> vers <span>NPA32453SA</span></p>
                                 <p className={`font-light text-[#767676] text-[11px]`}>Initié par <span>Jolivet Kouadio</span></p>
                             </div>
                             <div className={`inline-flex space-x-2`}>
