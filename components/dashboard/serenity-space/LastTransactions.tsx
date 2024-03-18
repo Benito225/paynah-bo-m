@@ -55,7 +55,7 @@ export default function LastTransactions({lang}: LastTransactionsProps) {
         },
         {
             tId: "24557FS3AS",
-            date: "2024-03-24T14:00:00",
+            date: "2023-03-24T14:00:00",
             description: "Envoi d'argent",
             type: "credit",
             amount: 50000,
@@ -126,35 +126,36 @@ export default function LastTransactions({lang}: LastTransactionsProps) {
                 <Table>
                     <TableHeader>
                         <TableRow className={`text-xs border-[#f4f4f4]`}>
-                            <TableHead className={`text-[#afafaf] font-normal h-9 min-w-[9rem]`}>Descritpion</TableHead>
+                            <TableHead className={`text-[#afafaf] font-normal h-9 min-w-[7rem]`}>ID Transactions</TableHead>
+                            <TableHead className={`text-[#afafaf] font-normal h-9 min-w-[7rem]`}>Descritpion</TableHead>
                             <TableHead className={`text-[#afafaf] font-normal h-9`}>Montant</TableHead>
                             <TableHead className={`text-[#afafaf] font-normal h-9 min-w-[7rem]`}>Date</TableHead>
-                            <TableHead className={`text-[#afafaf] font-normal h-9`}>Type</TableHead>
                             <TableHead className={`text-[#afafaf] font-normal h-9`}>Statut</TableHead>
                             <TableHead className={`text-[#afafaf] font-normal h-9 text-center`}>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {transactions.map((transaction) => (
-                            <TableRow className={`border-[#f4f4f4] font-medium`} key={transaction.tId}>
+                            <TableRow className={`border-[#f4f4f4]`} key={transaction.tId}>
+                                <TableCell className="text-xs !py-3.5">{transaction.tId}</TableCell>
                                 <TableCell className="text-xs !py-3.5">{transaction.description}</TableCell>
                                 <TableCell className="text-xs !py-3.5">
-                                   <div className={`font-medium ${transaction.type == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>{transaction.type == TransactionsType.DEBIT ? '-' : ''}{formatCFA(transaction.amount)}</div>
+                                   <div className={`${transaction.type == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>{transaction.type == TransactionsType.DEBIT ? '-' : ''}{formatCFA(transaction.amount)}</div>
                                 </TableCell>
                                 <TableCell className="text-xs !py-3.5">{formatDate(transaction.date, lang)}</TableCell>
-                                <TableCell className="text-xs !py-3.5">
-                                    <div>
-                                        {transaction.type == "debit" ?
-                                            <div className="inline-flex font-medium space-x-1 items-center">
-                                                <span>Débit</span>
-                                                <MoveUpRight className="h-4" />
-                                            </div> : <div className="inline-flex font-medium space-x-1 items-center">
-                                                <span>Crédit</span>
-                                                <MoveDownLeft className="h-4" />
-                                            </div>
-                                        }
-                                    </div>
-                                </TableCell>
+                                {/*<TableCell className="text-xs !py-3.5">*/}
+                                {/*    <div>*/}
+                                {/*        {transaction.type == "debit" ?*/}
+                                {/*            <div className="inline-flex space-x-1 items-center">*/}
+                                {/*                <span>Débit</span>*/}
+                                {/*                <MoveUpRight className="h-4" />*/}
+                                {/*            </div> : <div className="inline-flex space-x-1 items-center">*/}
+                                {/*                <span>Crédit</span>*/}
+                                {/*                <MoveDownLeft className="h-4" />*/}
+                                {/*            </div>*/}
+                                {/*        }*/}
+                                {/*    </div>*/}
+                                {/*</TableCell>*/}
                                 <TableCell className="text-xs !py-3.5">
                                     <div dangerouslySetInnerHTML={{__html: getStatusBadge(transaction.status)}}></div>
                                 </TableCell>
@@ -171,7 +172,7 @@ export default function LastTransactions({lang}: LastTransactionsProps) {
                                                 </svg>
                                             </button>
                                         </DropdownMenuTrigger>
-                                        <DropdownMenuContent className="w-56 rounded-xl z-[100] shadow-md" align={"end"}>
+                                        <DropdownMenuContent className="w-48 rounded-xl z-[100] shadow-md" align={"end"}>
                                             <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                                 <ClipboardList className="mr-2 h-3.5 w-3.5" />
                                                 <span className={`mt-[1.5px]`}>{`Détails de l'opération`}</span>

@@ -42,9 +42,9 @@ export function formatDate(dateString: string, lang: string): string {
 
     const currentYear = new Date().getFullYear();
 
-    if (year === currentYear) {
-        return `${day} ${month} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-    } else {
-        return `${day} ${month} ${year} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-    }
+    // if (year === currentYear) {
+    //     return `${day} ${month} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+    // } else {
+        return `${day} ${month} ${year} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+    // }
 }

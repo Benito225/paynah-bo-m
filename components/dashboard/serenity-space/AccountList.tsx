@@ -30,6 +30,12 @@ export default function AccountList({lang}: AccountListProps) {
     return (
         <div className={`account-list`}>
             <div className={`grid grid-cols-3 2xl:grid-cols-4 gap-2.5 2xl:min-h-[10rem]`}>
+                <button type={"button"} className={`border border-dashed border-[#959596] flex flex-col justify-center items-center space-y-6 2xl:space-y-8 p-4 rounded-3xl text-[#767676]`}>
+                    <div className={`inline-flex flex-col justify-center`}>
+                        <Plus className={`h-6 w-auto`} />
+                        <span className={`text-xs font-light mt-1 w-[80%] mx-auto text-center`}>Créer un nouveau compte</span>
+                    </div>
+                </button>
                 <div className={`bg-white flex flex-col justify-between space-y-6 2xl:space-y-8 p-4 rounded-3xl`}>
                     <div className={`flex justify-between items-start`}>
                         <div>
@@ -258,12 +264,6 @@ export default function AccountList({lang}: AccountListProps) {
                         <span className={`text-base font-semibold`}>{formatCFA(20873456)}</span>
                     </div>
                 </div>
-                <button type={"button"} className={`border border-dashed border-[#959596] flex flex-col justify-center items-center space-y-6 2xl:space-y-8 p-4 rounded-3xl text-[#767676]`}>
-                    <div className={`inline-flex flex-col justify-center`}>
-                        <Plus className={`h-6 w-auto`} />
-                        <span className={`text-xs font-light mt-1 w-[80%] mx-auto text-center`}>Créer un nouveau compte</span>
-                    </div>
-                </button>
             </div>
         </div>
     );
