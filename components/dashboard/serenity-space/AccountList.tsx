@@ -7,12 +7,19 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {ChevronRight, Plus, Send} from "lucide-react";
+import {ChevronRight, ClipboardList, Pencil, Plus, Send, Trash2} from "lucide-react";
 import Image from "next/image";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {formatCFA, hiddeBalance} from "@/lib/utils";
 import Link from "next/link";
 import { FlipVertical } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 interface AccountListProps {
     lang: Locale
@@ -47,15 +54,52 @@ export default function AccountList({lang}: AccountListProps) {
                                 <span className={`text-[12px] font-light text-[#626262]`}>Salaire corporate</span>
                             </div>
                         </div>
-                        <button className={`text-[#626262]`}>
-                            <svg className={`h-4 w-auto`} viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                                 strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="1"/>
-                                <circle cx="12" cy="5" r="1"/>
-                                <circle cx="12" cy="19" r="1"/>
-                            </svg>
-                        </button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className={`focus:outline-none`} asChild>
+                                <button className={`text-[#626262]`}>
+                                    <svg className={`h-4 w-auto`} viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                                         strokeLinejoin="round">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </svg>
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56 rounded-xl shadow-md" align={"end"}>
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <ClipboardList className="mr-2 h-3.5 w-3.5" />
+                                    <span className={`mt-[1.5px]`}>Détails du compte</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <Pencil className="mr-2 h-3.5 w-3.5"  />
+                                    <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <svg className="mr-2 h-3.5 w-3.5" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                                         strokeLinejoin="round">
+                                        <line x1="4" x2="4" y1="21" y2="14"/>
+                                        <line x1="4" x2="4" y1="10" y2="3"/>
+                                        <line x1="12" x2="12" y1="21" y2="12"/>
+                                        <line x1="12" x2="12" y1="8" y2="3"/>
+                                        <line x1="20" x2="20" y1="21" y2="16"/>
+                                        <line x1="20" x2="20" y1="12" y2="3"/>
+                                        <line x1="2" x2="6" y1="14" y2="14"/>
+                                        <line x1="10" x2="14" y1="8" y2="8"/>
+                                        <line x1="18" x2="22" y1="16" y2="16"/>
+                                    </svg>
+                                    <span className={`mt-[1.5px]`}>Règle du compte</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                    <span className={`mt-[1.5px]`}>Supprimer le compte</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                     <div className={`inline-flex flex-col`}>
                         <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Solde disponible</h3>
@@ -86,15 +130,52 @@ export default function AccountList({lang}: AccountListProps) {
                                 <span className={`text-[12px] font-light text-[#626262]`}>Salaire pompiste</span>
                             </div>
                         </div>
-                        <button className={`text-[#626262]`}>
-                            <svg className={`h-4 w-auto`} viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                                 strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="1"/>
-                                <circle cx="12" cy="5" r="1"/>
-                                <circle cx="12" cy="19" r="1"/>
-                            </svg>
-                        </button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className={`focus:outline-none`} asChild>
+                                <button className={`text-[#626262]`}>
+                                    <svg className={`h-4 w-auto`} viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                                         strokeLinejoin="round">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </svg>
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56 rounded-xl shadow-md" align={"end"}>
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <ClipboardList className="mr-2 h-3.5 w-3.5" />
+                                    <span className={`mt-[1.5px]`}>Détails du compte</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <Pencil className="mr-2 h-3.5 w-3.5"  />
+                                    <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <svg className="mr-2 h-3.5 w-3.5" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                                         strokeLinejoin="round">
+                                        <line x1="4" x2="4" y1="21" y2="14"/>
+                                        <line x1="4" x2="4" y1="10" y2="3"/>
+                                        <line x1="12" x2="12" y1="21" y2="12"/>
+                                        <line x1="12" x2="12" y1="8" y2="3"/>
+                                        <line x1="20" x2="20" y1="21" y2="16"/>
+                                        <line x1="20" x2="20" y1="12" y2="3"/>
+                                        <line x1="2" x2="6" y1="14" y2="14"/>
+                                        <line x1="10" x2="14" y1="8" y2="8"/>
+                                        <line x1="18" x2="22" y1="16" y2="16"/>
+                                    </svg>
+                                    <span className={`mt-[1.5px]`}>Règle du compte</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                    <span className={`mt-[1.5px]`}>Supprimer le compte</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                     <div className={`inline-flex flex-col`}>
                         <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Solde disponible</h3>
@@ -125,15 +206,52 @@ export default function AccountList({lang}: AccountListProps) {
                                 <span className={`text-[12px] font-light text-[#626262]`}>Factures</span>
                             </div>
                         </div>
-                        <button className={`text-[#626262]`}>
-                            <svg className={`h-4 w-auto`} viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                                 strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="1"/>
-                                <circle cx="12" cy="5" r="1"/>
-                                <circle cx="12" cy="19" r="1"/>
-                            </svg>
-                        </button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className={`focus:outline-none`} asChild>
+                                <button className={`text-[#626262]`}>
+                                    <svg className={`h-4 w-auto`} viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                                         strokeLinejoin="round">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </svg>
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56 rounded-xl shadow-md" align={"end"}>
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <ClipboardList className="mr-2 h-3.5 w-3.5" />
+                                    <span className={`mt-[1.5px]`}>Détails du compte</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <Pencil className="mr-2 h-3.5 w-3.5"  />
+                                    <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <svg className="mr-2 h-3.5 w-3.5" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                                         strokeLinejoin="round">
+                                        <line x1="4" x2="4" y1="21" y2="14"/>
+                                        <line x1="4" x2="4" y1="10" y2="3"/>
+                                        <line x1="12" x2="12" y1="21" y2="12"/>
+                                        <line x1="12" x2="12" y1="8" y2="3"/>
+                                        <line x1="20" x2="20" y1="21" y2="16"/>
+                                        <line x1="20" x2="20" y1="12" y2="3"/>
+                                        <line x1="2" x2="6" y1="14" y2="14"/>
+                                        <line x1="10" x2="14" y1="8" y2="8"/>
+                                        <line x1="18" x2="22" y1="16" y2="16"/>
+                                    </svg>
+                                    <span className={`mt-[1.5px]`}>Règle du compte</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <Trash2 className="mr-2 h-3.5 w-3.5" />
+                                    <span className={`mt-[1.5px]`}>Supprimer le compte</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                     <div className={`inline-flex flex-col`}>
                         <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Solde disponible</h3>

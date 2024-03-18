@@ -5,11 +5,27 @@ import React, {useState} from "react";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {Input} from "@/components/ui/input";
-import {ChevronRight, MoveDownLeft, MoveUpRight} from "lucide-react";
+import {
+    AlertTriangle,
+    ChevronRight,
+    ClipboardList,
+    MoveDownLeft,
+    MoveUpRight,
+    Pencil,
+    RotateCw,
+    Trash2
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {formatCFA, formatDate, getStatusBadge} from "@/lib/utils";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 interface LastTransactionsProps {
     lang: Locale
@@ -143,15 +159,35 @@ export default function LastTransactions({lang}: LastTransactionsProps) {
                                     <div dangerouslySetInnerHTML={{__html: getStatusBadge(transaction.status)}}></div>
                                 </TableCell>
                                 <TableCell className="text-xs !py-3 text-center">
-                                    <button className={`rounded-full bg-[#f0f0f0] hover:bg-gray-200 duration-200 p-1`}>
-                                        <svg className={`h-3 w-auto`} viewBox="0 0 24 24"
-                                             fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                                             strokeLinejoin="round">
-                                            <circle cx="12" cy="12" r="1"/>
-                                            <circle cx="12" cy="5" r="1"/>
-                                            <circle cx="12" cy="19" r="1"/>
-                                        </svg>
-                                    </button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger className={`focus:outline-none`} asChild>
+                                            <button className={`rounded-full bg-[#f0f0f0] hover:bg-gray-200 duration-200 p-1`}>
+                                                <svg className={`h-3 w-auto`} viewBox="0 0 24 24"
+                                                     fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                                                     strokeLinejoin="round">
+                                                    <circle cx="12" cy="12" r="1"/>
+                                                    <circle cx="12" cy="5" r="1"/>
+                                                    <circle cx="12" cy="19" r="1"/>
+                                                </svg>
+                                            </button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="w-56 rounded-xl z-[100] shadow-md" align={"end"}>
+                                            <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                                <ClipboardList className="mr-2 h-3.5 w-3.5" />
+                                                <span className={`mt-[1.5px]`}>{`Détails de l'opération`}</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                                <AlertTriangle className="mr-2 h-3.5 w-3.5" />
+                                                <span className={`mt-[1.5px]`}>Faire une réclamation</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                                <RotateCw className="mr-2 h-3.5 w-3.5" />
+                                                <span className={`mt-[1.5px]`}>{`Refaire l'opération`}</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </TableCell>
                             </TableRow>
                         ))}
