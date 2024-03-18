@@ -20,7 +20,7 @@ interface SalesPointProps {
 export default function SalesPoint({lang}: SalesPointProps) {
 
     return (
-        <div className={`bg-white sales-point min-h-[22rem] rounded-2xl px-6 py-5`}>
+        <div className={`bg-white sales-point min-h-[24rem] rounded-2xl px-6 py-5`}>
             <div className={`flex items-center justify-between border-b border-[#f1f1f1] pb-1.5 border-dashed`}>
                 <h2 className={`font-medium text-sm 2xl:text-base`}>Points de vente</h2>
                 <div>
