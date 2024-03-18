@@ -18,7 +18,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
             <div className={`fixed inset-x-0 bottom-5 z-[90]`}>
                 <div className={`relative`}>
                     <div className={`max-w-screen-2xl 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8  rounded-3xl`}>
-                        <nav className={`main-menu bg-white py-3 px-6 rounded-3xl`}>
+                        <nav className={`main-menu bg-white py-3 px-6 rounded-3xl border border-[#f4f4f7]`}>
                             <div className={`flex justify-between items-center`}>
                                 <div>
                                     <Link href={Routes.dashboard.home.replace('{lang}', lang)}>
