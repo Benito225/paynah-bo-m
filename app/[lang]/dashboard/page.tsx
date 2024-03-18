@@ -42,13 +42,13 @@ export default async function Home({params: { lang }}: {
                             <OperationShortcut lang={lang} />
                         </div>
                     </div>
-                    <div className={`w-[51%] 2xl:w-[53%]`}>
+                    <div className={`w-[50%] 2xl:w-[53%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
                             <AccountList lang={lang} />
                             <LastTransactions lang={lang} />
                         </div>
                     </div>
-                    <div className={`w-[24%] 2xl:w-[24%]`}>
+                    <div className={`w-[25%] 2xl:w-[24%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
                             <SalesPoint lang={lang} />
                             <PendingOperation lang={lang} />
