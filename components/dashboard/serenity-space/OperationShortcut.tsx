@@ -1,7 +1,7 @@
 "use client"
 
 import {Locale} from "@/i18n.config";
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -10,13 +10,12 @@ import {Input} from "@/components/ui/input";
 import {Plus, Send} from "lucide-react";
 import Image from "next/image";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {formatCFA, hiddeBalance} from "@/lib/utils";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {Button} from "@/components/ui/button";
 import {NumericFormat} from "react-number-format";
-import { PhoneInput } from 'react-international-phone';
+import {PhoneInput, PhoneInputRefType, CountryData} from 'react-international-phone';
 import 'react-international-phone/style.css';
 
 interface OperationShortcutProps {
@@ -28,6 +27,9 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
     const [isLoading, setLoading] = useState(false);
     const [showConError, setShowConError] = useState(false);
     const [activeSendMode, setActiveSendMode] = useState('direct');
+    // const [pCountry, setPCountry] = useState('');
+
+    const refPhone = useRef<PhoneInputRefType>(null);
 
     const formSchema = z.object({
         beneficiary: z.string().min(1, {
@@ -38,6 +40,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
         bankAmount: z.string(),
         amount: z.string(),
         mmAmount: z.string(),
+        mmCountry: z.string(),
         mmAccountNumber: z.string(),
         mmOperator: z.string(), // om, wave, mtn, moov
         sendMode: z.enum(["direct", "mm", "bank"], {
@@ -57,6 +60,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
             sendMode: "direct",
             accountNumber: "",
             mmAmount: "",
+            mmCountry: "CI",
             amount: "",
             mmAccountNumber: "",
             mmOperator: "om",
@@ -90,6 +94,10 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
         setLoading(true);
 
         setShowConError(true);
+    }
+
+    function changePhoneInputCountrySelect(value: string) {
+        refPhone.current?.setCountry(value.toLowerCase());
     }
 
     return (
@@ -259,6 +267,135 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                             <div className={`mm-form-inputs space-y-3`}>
                                                 <FormField
                                                     control={sendMoney.control}
+                                                    name="mmCountry"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <div className={`relative`}>
+                                                                    <Select onValueChange={(value) => {field.onChange(value); changePhoneInputCountrySelect(value)}} defaultValue={'CI'}>
+                                                                        <SelectTrigger className={`w-full text-sm !pt-[.8rem] h-[2.8rem] rounded-lg border border-[#e4e4e4] pl-2.5 pr-1 font-normal`} style={{
+                                                                            backgroundColor: field.value ? '#fff' : '#fff',
+                                                                        }}>
+                                                                            <SelectValue placeholder=" "/>
+                                                                        </SelectTrigger>
+                                                                        <SelectContent className={`bg-[#f0f0f0] z-[100]`}>
+                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'CI'}>
+                                                                                <div className={`inline-flex items-center space-x-2.5`}>
+                                                                                    <svg className={`w-[1.60rem] rounded-[3px]`} viewBox="0 0 38 25">
+                                                                                        <defs>
+                                                                                            <clipPath id="clip-path2">
+                                                                                                <rect width="38" height="25" rx="3" transform="translate(0 -0.061)" fill="#fff"/>
+                                                                                            </clipPath>
+                                                                                        </defs>
+                                                                                        <g transform="translate(0 0.061)" clipPath="url(#clip-path2)">
+                                                                                            <g transform="translate(0.554 0.333)">
+                                                                                                <path d="M0,4.5H36.765V29.009H0Z" transform="translate(0 -4.5)" fill="#f0f0f0"/>
+                                                                                                <path d="M17.413,4.5H30.467V29.01H17.413Z" transform="translate(6.298 -4.5)" fill="#6da544"/>
+                                                                                                <path d="M0,4.5H13.054V29.01H0Z" transform="translate(0 -4.5)" fill="#ff9811"/>
+                                                                                            </g>
+                                                                                        </g>
+                                                                                    </svg>
+                                                                                    <span className={`mt-[2px] text-sm`}>{`Côte d'Ivoire`}</span>
+                                                                                </div>
+                                                                            </SelectItem>
+                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'BJ'}>
+                                                                                <div className={`inline-flex items-center space-x-2.5`}>
+                                                                                    <svg className={`w-[1.60rem] rounded-[3px]`} viewBox="0 0 38 24">
+                                                                                        <defs>
+                                                                                            <clipPath id="clip-path2">
+                                                                                                <rect width="38" height="24" rx="3" transform="translate(0 0)" fill="#fff"/>
+                                                                                            </clipPath>
+                                                                                        </defs>
+                                                                                        <g transform="translate(0 0)" clipPath="url(#clip-path2)">
+                                                                                            <g transform="translate(0.554 -0.157)">
+                                                                                                <path d="M0,4.5H36.766V29.01H0Z" transform="translate(0 -4.5)" fill="#6da544"/>
+                                                                                                <path d="M10.37,4.5H33.015V16.755H10.37Z" transform="translate(3.751 -4.5)" fill="#ffda44"/>
+                                                                                                <path d="M10.37,13.5H33.015V25.755H10.37Z" transform="translate(3.751 -1.245)" fill="#d80027"/>
+                                                                                            </g>
+                                                                                        </g>
+                                                                                    </svg>
+                                                                                    <span className={`mt-[2px] text-sm`}>{`Bénin`}</span>
+                                                                                </div>
+                                                                            </SelectItem>
+                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'CM'}>
+                                                                                <div className={`inline-flex items-center space-x-2.5`}>
+                                                                                    <svg className={`w-[1.60rem] rounded-[3px]`} viewBox="0 0 38 24">
+                                                                                        <defs>
+                                                                                            <clipPath id="clip-path2">
+                                                                                                <rect width="38" height="24" rx="3"
+                                                                                                      transform="translate(0 -0.03)"
+                                                                                                      fill="#fff"/>
+                                                                                            </clipPath>
+                                                                                        </defs>
+                                                                                        <g transform="translate(0 0.03)"
+                                                                                           clipPath="url(#clip-path2)">
+                                                                                            <g transform="translate(0.554 0.088)">
+                                                                                                <path d="M0,4.5H36.765V29.01H0Z"
+                                                                                                      transform="translate(0 -4.5)"
+                                                                                                      fill="#d80027"/>
+                                                                                                <path d="M0,4.5H12.255V29.01H0Z"
+                                                                                                      transform="translate(0 -4.5)"
+                                                                                                      fill="#496e2d"/>
+                                                                                                <path
+                                                                                                    d="M20.58,4.5H32.835V29.01H20.58Zm-6.128,8.845.846,2.6h2.739l-2.216,1.61.846,2.605-2.216-1.61-2.216,1.61.847-2.605-2.216-1.61h2.739Z"
+                                                                                                    transform="translate(3.93 -4.5)"
+                                                                                                    fill="#ffda44"/>
+                                                                                            </g>
+                                                                                        </g>
+                                                                                    </svg>
+                                                                                    <span className={`mt-[2px] text-sm`}>{`Cameroun`}</span>
+                                                                                </div>
+                                                                            </SelectItem>
+                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'GN'}>
+                                                                                <div className={`inline-flex items-center space-x-2.5`}>
+                                                                                    <svg className={`w-[1.60rem] rounded-[3px]`} viewBox="0 0 38 24">
+                                                                                        <defs>
+                                                                                            <clipPath id="clip-path2">
+                                                                                                <rect width="38" height="24" rx="3" transform="translate(0 -0.242)" fill="#fff"/>
+                                                                                            </clipPath>
+                                                                                        </defs>
+                                                                                        <g transform="translate(0 0.242)" clipPath="url(#clip-path2)">
+                                                                                            <g transform="translate(0.554 -0.573)">
+                                                                                                <path id="Tracé_36" data-name="Tracé 36" d="M0,4.5H36.765V29.009H0Z" transform="translate(0 -4.5)" fill="#ffda44"/>
+                                                                                                <path id="Tracé_37" data-name="Tracé 37" d="M17.413,4.5H30.467V29.01H17.413Z" transform="translate(6.298 -4.5)" fill="#6da544"/>
+                                                                                                <path id="Tracé_38" data-name="Tracé 38" d="M0,4.5H13.054V29.01H0Z" transform="translate(0 -4.5)" fill="#d80027"/>
+                                                                                            </g>
+                                                                                        </g>
+                                                                                    </svg>
+                                                                                    <span className={`mt-[2px] text-sm`}>{`Guinée`}</span>
+                                                                                </div>
+                                                                            </SelectItem>
+                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'SN'}>
+                                                                                <div className={`inline-flex items-center space-x-2.5`}>
+                                                                                    <svg className={`w-[1.60rem] rounded-[3px]`} viewBox="0 0 38 24">
+                                                                                        <defs>
+                                                                                            <clipPath id="clip-path2">
+                                                                                                <rect width="38" height="24" rx="3" transform="translate(0 -0.273)" fill="#fff"/>
+                                                                                            </clipPath>
+                                                                                        </defs>
+                                                                                        <g transform="translate(0 0.273)" clipPath="url(#clip-path2)">
+                                                                                            <g transform="translate(0.554 -0.328)">
+                                                                                                <path d="M0,4.5H36.765V29.009H0Z" transform="translate(0 -4.5)" fill="#ffda44"/>
+                                                                                                <path d="M17.413,4.5H30.467V29.01H17.413Z" transform="translate(6.298 -4.5)" fill="#d80027"/>
+                                                                                                <path d="M0,4.5H13.054V29.01H0Zm18.382,7.992,1.058,3.256h3.424l-2.77,2.013,1.058,3.256L18.382,19l-2.77,2.012,1.058-3.256L13.9,15.748h3.424Z" transform="translate(0 -4.5)" fill="#496e2d"/>
+                                                                                            </g>
+                                                                                        </g>
+                                                                                    </svg>
+                                                                                    <span className={`mt-[2px] text-sm`}> {`Sénégal`}</span>
+                                                                                </div>
+                                                                            </SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                    <label htmlFor=""
+                                                                           className={`primary-form-label !bg-white peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Pays opérateur
+                                                                    </label>
+                                                                </div>
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={sendMoney.control}
                                                     name="mmAccountNumber"
                                                     render={({field}) => (
                                                         <FormItem>
@@ -278,13 +415,16 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                                                     '--react-international-phone-border-radius': '0.5rem',
                                                                                 }  as React.CSSProperties
                                                                             }
-                                                                            defaultCountry="ci"
+                                                                            defaultCountry={`ci`}
+                                                                            forceDialCode={true}
+                                                                            ref={refPhone}
+                                                                            hideDropdown={true}
                                                                             placeholder=" "
                                                                         />
                                                                         <label htmlFor="mmAccountNumber"
-                                                                               className={`primary-form-label !bg-white peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Numéro de compte
+                                                                               className={`primary-form-label !bg-white peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-4`}>Numéro de compte
                                                                         </label>
-                                                                        <div className={`absolute top-0 right-0`}>
+                                                                        <div className={`absolute top-0 left-0`}>
                                                                             <FormField
                                                                                 control={sendMoney.control}
                                                                                 name="mmOperator"
@@ -293,12 +433,12 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                                                         <FormControl>
                                                                                             <div>
                                                                                                 <Select onValueChange={field.onChange} defaultValue={'om'}>
-                                                                                                    <SelectTrigger className={`w-[4rem] h-[2.8rem] rounded-l-none rounded-r-lg border border-[#f4f4f7] pl-2.5 pr-1 font-light`} style={{
-                                                                                                        backgroundColor: field.value ? '#f4f4f7' : '#f4f4f7',
+                                                                                                    <SelectTrigger className={`w-[4rem] h-[2.8rem] rounded-l-lg rounded-r-none border border-[#e4e4e4] pl-2.5 pr-1 font-light`} style={{
+                                                                                                        backgroundColor: field.value ? '#fff' : '#fff',
                                                                                                     }}>
                                                                                                         <SelectValue  placeholder="Opérateur"/>
                                                                                                     </SelectTrigger>
-                                                                                                    <SelectContent className={`bg-[#f0f0f0]`}>
+                                                                                                    <SelectContent className={`bg-[#f0f0f0] !w-[2rem] z-[100]`}>
                                                                                                         <SelectItem className={`font-light px-7 flex items-center focus:bg-gray-100`} value={'om'}>
                                                                                                             <Image className={`h-[1.6rem] w-[1.6rem]`} src={`/${lang}/images/ORANGE-MONEY.png`} alt={`om`} height={512} width={512} />
                                                                                                         </SelectItem>
@@ -419,16 +559,16 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                     <FormControl>
                                                         <div className={`relative`}>
                                                             <Select onValueChange={field.onChange} defaultValue={'om'}>
-                                                                <SelectTrigger className={`w-full !pt-[.8rem] h-[2.8rem] rounded-lg border border-[#f4f4f7] pl-2.5 pr-1 font-normal`} style={{
+                                                                <SelectTrigger className={`w-full text-sm !pt-[.8rem] h-[2.8rem] rounded-lg border border-[#f4f4f7] pl-2.5 pr-1 font-normal`} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#fff',
                                                                 }}>
                                                                     <SelectValue placeholder=" "/>
                                                                 </SelectTrigger>
                                                                 <SelectContent className={`bg-[#f0f0f0]`}>
-                                                                    <SelectItem className={`font-normal px-7 flex items-center focus:bg-gray-100 font-normal`} value={'om'}>
+                                                                    <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'om'}>
                                                                         Compte principal
                                                                     </SelectItem>
-                                                                    <SelectItem className={`font-normal  px-7 flex items-center focus:bg-gray-100 font-normal`} value={'mtn'}>
+                                                                    <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'mtn'}>
                                                                          Salariale
                                                                     </SelectItem>
                                                                 </SelectContent>

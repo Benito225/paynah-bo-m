@@ -148,7 +148,7 @@
 }
 
 .op-tel.react-international-phone-input-container .react-international-phone-input {
-  @apply pt-[.45rem] pr-[4rem];
+  @apply pl-[.9rem] pt-[.2rem];
 }
 
 .status-success {

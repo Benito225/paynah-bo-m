@@ -26,6 +26,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Form, FormControl, FormField, FormItem} from "@/components/ui/form";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
 interface LastTransactionsProps {
     lang: Locale
@@ -111,10 +114,66 @@ export default function LastTransactions({lang}: LastTransactionsProps) {
         }
     ];
 
+    const [isLoading, setLoading] = useState(false);
+    const [showConError, setShowConError] = useState(false);
+
+    const formSchema = z.object({
+        pAccount: z.string().min(1, {
+            message: 'Le champ est requis'
+        }),
+    })
+
+    const selectAccount = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            pAccount: "",
+        }
+    });
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log(values);
+        setLoading(true);
+
+        setShowConError(true);
+    }
+
     return (
         <div className={`bg-white sales-point flex-grow rounded-2xl px-6 py-5`}>
             <div className={`flex items-center justify-between pb-1.5`}>
-                <h2 className={`font-medium text-base`}>Transactions récentes</h2>
+                <div className={`inline-flex items-center space-x-3`}>
+                    <h2 className={`font-medium text-base`}>Transactions récentes</h2>
+                    <Form {...selectAccount}>
+                        <form onSubmit={selectAccount.handleSubmit(onSubmit)} className="space-y-5">
+                            <FormField
+                                control={selectAccount.control}
+                                name="pAccount"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <div>
+                                                <Select onValueChange={field.onChange} defaultValue={'cp'}>
+                                                    <SelectTrigger className={`h-[2.2rem] text-xs rounded-xl border border-[#f4f4f7] pl-2.5 pr-1 font-normal`} style={{
+                                                        backgroundColor: field.value ? '#f4f4f7' : '#f4f4f7',
+                                                    }}>
+                                                        <SelectValue  placeholder="Choisir une devise"/>
+                                                    </SelectTrigger>
+                                                    <SelectContent className={`bg-[#f0f0f0]`}>
+                                                        <SelectItem className={`font-normal text-xs px-7 focus:bg-gray-100`} value={'cp'}>
+                                                            Compte principale
+                                                        </SelectItem>
+                                                        <SelectItem className={`font-normal text-xs px-7 focus:bg-gray-100`} value={'sc'}>
+                                                            Salaire corporate
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </form>
+                    </Form>
+                </div>
                 <div>
                     <Link className={`inline-flex text-xs text-[#909090] hover:underline duration-200 mb-1`} href={`#`}>
                         <span>Voir tout</span>
@@ -122,7 +181,7 @@ export default function LastTransactions({lang}: LastTransactionsProps) {
                     </Link>
                 </div>
             </div>
-            <div className={`mt-5`}>
+            <div className={`mt-3`}>
                 <Table>
                     <TableHeader>
                         <TableRow className={`text-xs border-[#f4f4f4]`}>
