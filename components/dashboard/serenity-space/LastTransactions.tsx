@@ -126,7 +126,7 @@ export default function LastTransactions({lang}: LastTransactionsProps) {
                 <Table>
                     <TableHeader>
                         <TableRow className={`text-xs border-[#f4f4f4]`}>
-                            <TableHead className={`text-[#afafaf] font-normal h-9 min-w-[7rem]`}>ID Transactions</TableHead>
+                            <TableHead className={`text-[#afafaf] font-normal h-9 min-w-[8rem]`}>ID Transactions</TableHead>
                             <TableHead className={`text-[#afafaf] font-normal h-9 min-w-[7rem]`}>Descritpion</TableHead>
                             <TableHead className={`text-[#afafaf] font-normal h-9`}>Montant</TableHead>
                             <TableHead className={`text-[#afafaf] font-normal h-9 min-w-[7rem]`}>Date</TableHead>
