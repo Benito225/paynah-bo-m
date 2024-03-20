@@ -38,6 +38,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
         accountNumber: z.string(),
         bankAccountNumber: z.string(),
         bankAmount: z.string(),
+        bankZone: z.string(),
         amount: z.string(),
         mmAmount: z.string(),
         mmCountry: z.string(),
@@ -65,6 +66,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
             mmAccountNumber: "",
             mmOperator: "om",
             bankAmount: "",
+            bankZone: "uemoa",
             bankAccountNumber: ""
         }
     });
@@ -495,6 +497,33 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                             <div className={`bank-form-inputs space-y-3`}>
                                                 <FormField
                                                     control={sendMoney.control}
+                                                    name="bankZone"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <div className={`relative`}>
+                                                                    <Select onValueChange={field.onChange} defaultValue={'uemoa'}>
+                                                                        <SelectTrigger className={`w-full text-sm !pt-[.8rem] h-[2.8rem] rounded-lg border border-[#e4e4e4] pl-2.5 pr-1 font-normal`} style={{
+                                                                            backgroundColor: field.value ? '#fff' : '#fff',
+                                                                        }}>
+                                                                            <SelectValue placeholder=" "/>
+                                                                        </SelectTrigger>
+                                                                        <SelectContent className={`bg-[#f0f0f0]`}>
+                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'uemoa'}>
+                                                                                UEMOA
+                                                                            </SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                    <label htmlFor=""
+                                                                           className={`primary-form-label !bg-white peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Zone des banques
+                                                                    </label>
+                                                                </div>
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={sendMoney.control}
                                                     name="bankAccountNumber"
                                                     render={({field}) => (
                                                         <FormItem>
@@ -507,8 +536,8 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                                         </label>
                                                                         <div className={`absolute top-0 right-0 h-full`}>
                                                                             <div className={`flex items-center h-full pr-2`}>
-                                                                                <Image className={`h-[1.2rem] w-auto mr-1`} src={`/svg/LOGO MASTERCARD.svg`} alt={`master-card`} height={10} width={10} />
-                                                                                <Image className={`h-[1.2rem] w-auto`} src={`/svg/LOGO VISA.svg`} alt={`master-card`} height={10} width={10} />
+                                                                                {/*<Image className={`h-[1.2rem] w-auto mr-1`} src={`/svg/LOGO MASTERCARD.svg`} alt={`master-card`} height={10} width={10} />*/}
+                                                                                {/*<Image className={`h-[1.2rem] w-auto`} src={`/svg/LOGO VISA.svg`} alt={`master-card`} height={10} width={10} />*/}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -559,7 +588,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                     <FormControl>
                                                         <div className={`relative`}>
                                                             <Select onValueChange={field.onChange} defaultValue={'om'}>
-                                                                <SelectTrigger className={`w-full text-sm !pt-[.8rem] h-[2.8rem] rounded-lg border border-[#f4f4f7] pl-2.5 pr-1 font-normal`} style={{
+                                                                <SelectTrigger className={`w-full text-sm !pt-[.8rem] h-[2.8rem] rounded-lg border border-[#e4e4e4] pl-2.5 pr-1 font-normal`} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#fff',
                                                                 }}>
                                                                     <SelectValue placeholder=" "/>
