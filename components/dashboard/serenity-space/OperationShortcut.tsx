@@ -15,8 +15,10 @@ import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {Button} from "@/components/ui/button";
 import {NumericFormat} from "react-number-format";
+import IMask from 'imask';
 import {PhoneInput, PhoneInputRefType, CountryData} from 'react-international-phone';
 import 'react-international-phone/style.css';
+import {getBankName} from "@/lib/utils";
 
 interface OperationShortcutProps {
     lang: Locale
@@ -27,9 +29,12 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
     const [isLoading, setLoading] = useState(false);
     const [showConError, setShowConError] = useState(false);
     const [activeSendMode, setActiveSendMode] = useState('direct');
+    const [bankName, setBankName] = useState('');
     // const [pCountry, setPCountry] = useState('');
 
     const refPhone = useRef<PhoneInputRefType>(null);
+    const refBankAccountNumber = useRef(null);
+
 
     const formSchema = z.object({
         beneficiary: z.string().min(1, {
@@ -100,6 +105,36 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
 
     function changePhoneInputCountrySelect(value: string) {
         refPhone.current?.setCountry(value.toLowerCase());
+    }
+
+    useEffect(() => {
+        if (refBankAccountNumber.current) {
+            const mask = IMask(refBankAccountNumber.current, {
+                mask: 'CCNNN NNNNN NNNNNNNNNNNN NN',
+                lazy: true,
+                blocks: {
+                    'C': {placeholderChar: 'C', mask: 'a'},
+                    'N': {placeholderChar: '0', mask: '0'},
+                },
+                expose: true,
+            });
+
+            console.log(mask.value);
+        }
+    }, [activeSendMode]);
+
+    // console.log(sendMoney.getValues('bankAccountNumber'));
+    // console.log(refBankAccountNumber.current);
+
+    function getRibBank(rib: string) {
+        const bankCode = rib.split(" ")[0];
+        if (rib.length == 5) {
+            setBankName(getBankName(bankCode));
+        }
+
+        if (rib.length == 0) {
+            setBankName('');
+        }
     }
 
     return (
@@ -424,7 +459,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                                             placeholder=" "
                                                                         />
                                                                         <label htmlFor="mmAccountNumber"
-                                                                               className={`primary-form-label !bg-white peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-4`}>Numéro de compte
+                                                                               className={`primary-form-label !-translate-y-3.5 !bg-white peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-4`}>Numéro de compte
                                                                         </label>
                                                                         <div className={`absolute top-0 left-0`}>
                                                                             <FormField
@@ -435,23 +470,52 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                                                         <FormControl>
                                                                                             <div>
                                                                                                 <Select onValueChange={field.onChange} defaultValue={'om'}>
-                                                                                                    <SelectTrigger className={`w-[4rem] h-[2.8rem] rounded-l-lg rounded-r-none border border-[#e4e4e4] pl-2.5 pr-1 font-light`} style={{
+                                                                                                    <SelectTrigger className={`w-[4rem] selectedItemMM h-[2.8rem] rounded-l-lg !pb-[0px] rounded-r-none border border-[#e4e4e4] pl-2.5 pr-1 font-light`} style={{
                                                                                                         backgroundColor: field.value ? '#fff' : '#fff',
                                                                                                     }}>
                                                                                                         <SelectValue  placeholder="Opérateur"/>
                                                                                                     </SelectTrigger>
-                                                                                                    <SelectContent className={`bg-[#f0f0f0] !w-[2rem] z-[100]`}>
-                                                                                                        <SelectItem className={`font-light px-7 flex items-center focus:bg-gray-100`} value={'om'}>
-                                                                                                            <Image className={`h-[1.6rem] w-[1.6rem]`} src={`/${lang}/images/ORANGE-MONEY.png`} alt={`om`} height={512} width={512} />
+                                                                                                    <SelectContent className={`bg-[#f0f0f0] !w-[10rem] z-[100]`}>
+                                                                                                        <SelectItem className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`} value={'om'}>
+                                                                                                            <div className={`inline-flex items-center space-x-2.5`}>
+                                                                                                                <Image className={`h-[1.6rem] w-[1.6rem]`} src={`/${lang}/images/ORANGE-MONEY.png`} alt={`om`} height={512} width={512} />
+                                                                                                                <span className={`mm-label`}>Orange</span>
+                                                                                                            </div>
                                                                                                         </SelectItem>
-                                                                                                        <SelectItem className={`font-light px-7 flex items-center focus:bg-gray-100`} value={'mtn'}>
-                                                                                                            <Image className={`h-[1.8rem] w-[1.8rem]`} src={`/${lang}/images/MTN MOMO.png`} alt={`mtn`} height={512} width={512} />
+                                                                                                        <SelectItem className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`} value={'mtn'}>
+                                                                                                            <div className={`inline-flex items-center space-x-2`}>
+                                                                                                                <Image
+                                                                                                                    className={`h-[1.8rem] w-[1.8rem]`}
+                                                                                                                    src={`/${lang}/images/MTN MOMO.png`}
+                                                                                                                    alt={`mtn`}
+                                                                                                                    height={512}
+                                                                                                                    width={512}/>
+                                                                                                                <span className={`mm-label`}>MTN</span>
+                                                                                                            </div>
                                                                                                         </SelectItem>
-                                                                                                        <SelectItem className={`font-light px-7 flex items-center focus:bg-gray-100`} value={'moov'}>
-                                                                                                            <Image className={`h-[1.8rem] w-[1.8rem]`} src={`/${lang}/images/MOOV MONEY.png`} alt={`moov`} height={512} width={512} />
+                                                                                                        <SelectItem className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`} value={'moov'}>
+                                                                                                            <div
+                                                                                                                className={`inline-flex items-center space-x-2`}>
+                                                                                                                <Image
+                                                                                                                    className={`h-[1.8rem] w-[1.8rem]`}
+                                                                                                                    src={`/${lang}/images/MOOV MONEY.png`}
+                                                                                                                    alt={`moov`}
+                                                                                                                    height={512}
+                                                                                                                    width={512}/>
+                                                                                                                <span className={`mm-label`}>Moov</span>
+                                                                                                            </div>
                                                                                                         </SelectItem>
-                                                                                                        <SelectItem className={`font-light px-7 flex items-center focus:bg-gray-100`} value={'wave'}>
-                                                                                                            <Image className={`h-[1.8rem] w-[1.8rem]`} src={`/${lang}/images/WAVE.png`} alt={`wave`} height={512} width={512} />
+                                                                                                        <SelectItem className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`} value={'wave'}>
+                                                                                                            <div
+                                                                                                                className={`inline-flex items-center space-x-2`}>
+                                                                                                                <Image
+                                                                                                                    className={`h-[1.8rem] w-[1.8rem]`}
+                                                                                                                    src={`/${lang}/images/WAVE.png`}
+                                                                                                                    alt={`wave`}
+                                                                                                                    height={512}
+                                                                                                                    width={512}/>
+                                                                                                                <span className={`mm-label`}>Wave</span>
+                                                                                                            </div>
                                                                                                         </SelectItem>
                                                                                                     </SelectContent>
                                                                                                 </Select>
@@ -530,13 +594,16 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                             <FormControl>
                                                                 <div>
                                                                     <div className="relative">
-                                                                        <input type="text" id="bankAccountNumber" className={`primary-form-input !pr-[6rem] h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />
+                                                                        <input onChange={(e) => {sendMoney.setValue('bankAccountNumber', e.target.value); getRibBank(e.target.value)}} ref={refBankAccountNumber} type="text" id="bankAccountNumber" className={`primary-form-input !pr-[3rem] h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " />
                                                                         <label htmlFor="bankAccountNumber"
-                                                                               className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Numéro de compte
+                                                                               className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>RIB
                                                                         </label>
+                                                                        {/*{field.value}*/}
                                                                         <div className={`absolute top-0 right-0 h-full`}>
                                                                             <div className={`flex items-center h-full pr-2`}>
-                                                                                {/*<Image className={`h-[1.2rem] w-auto mr-1`} src={`/svg/LOGO MASTERCARD.svg`} alt={`master-card`} height={10} width={10} />*/}
+                                                                                {bankName && <div className={`h-[1.6rem] w-[3rem] relative`}>
+                                                                                    <Image className={`object-contain`} src={`/${lang}/images/banks-logo/${bankName}`} alt={`master-card`} fill />
+                                                                                </div>}
                                                                                 {/*<Image className={`h-[1.2rem] w-auto`} src={`/svg/LOGO VISA.svg`} alt={`master-card`} height={10} width={10} />*/}
                                                                             </div>
                                                                         </div>

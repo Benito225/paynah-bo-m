@@ -148,7 +148,7 @@
 }
 
 .op-tel.react-international-phone-input-container .react-international-phone-input {
-  @apply pl-[.9rem] pt-[.2rem];
+  @apply pl-[.9rem] pt-[.4rem];
 }
 
 .status-success {
@@ -165,4 +165,8 @@
 
 .status-pending {
   @apply bg-[#fff4ed] text-[#ff723b] rounded-lg py-0.5 px-1.5 w-[3.7rem] text-center block;
+}
+
+.selectedItemMM .mm-label {
+  display: none;
 }
