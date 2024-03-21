@@ -600,9 +600,9 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                                         </label>
                                                                         {/*{field.value}*/}
                                                                         <div className={`absolute top-0 right-0 h-full`}>
-                                                                            <div className={`flex items-center h-full pr-2`}>
+                                                                            <div className={`flex items-center text-xs h-full pr-2`}>
                                                                                 {bankName && <div className={`h-[1.6rem] w-[3rem] relative`}>
-                                                                                    <Image className={`object-contain`} src={`/${lang}/images/banks-logo/${bankName}`} alt={`master-card`} fill />
+                                                                                    <Image className={`object-contain`} src={`/${lang}/images/banks-logo/${bankName}`} alt={`${bankName}`} fill />
                                                                                 </div>}
                                                                                 {/*<Image className={`h-[1.2rem] w-auto`} src={`/svg/LOGO VISA.svg`} alt={`master-card`} height={10} width={10} />*/}
                                                                             </div>
