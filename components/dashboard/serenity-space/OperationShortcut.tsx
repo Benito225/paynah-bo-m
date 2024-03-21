@@ -43,6 +43,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
         accountNumber: z.string(),
         bankAccountNumber: z.string(),
         bankAmount: z.string(),
+        bankBeneficiary: z.string(),
         bankZone: z.string(),
         amount: z.string(),
         mmAmount: z.string(),
@@ -72,7 +73,8 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
             mmOperator: "om",
             bankAmount: "",
             bankZone: "uemoa",
-            bankAccountNumber: ""
+            bankAccountNumber: "",
+            bankBeneficiary: ""
         }
     });
 
@@ -179,24 +181,6 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                 </div>
                                 <Form {...sendMoney}>
                                     <form onSubmit={sendMoney.handleSubmit(onSubmit)} className="space-y-3">
-                                        <FormField
-                                            control={sendMoney.control}
-                                            name="beneficiary"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <div>
-                                                            <div className="relative">
-                                                                <input type="text" id="beneficiary" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />
-                                                                <label htmlFor="beneficiary"
-                                                                       className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Nom du bénéficiaire
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </FormControl>
-                                                </FormItem>
-                                            )}
-                                        />
                                         <div className={``}>
                                             <div className={`border border-[#e4e4e4] flex items-center rounded-lg px-1 2xl:px-1 py-1 2xl:py-1`}>
                                                 <div className={`flex items-center w-full`}>
@@ -254,6 +238,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                 </div>
                                             </div>
                                         </div>
+
                                         {activeSendMode == "direct" &&
                                             <div className={`direct-form-inputs space-y-3`}>
                                                 <FormField
@@ -533,6 +518,24 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                                 />
                                                 <FormField
                                                     control={sendMoney.control}
+                                                    name="beneficiary"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <div>
+                                                                    <div className="relative">
+                                                                        <input type="text" id="beneficiary" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />
+                                                                        <label htmlFor="beneficiary"
+                                                                               className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Nom du bénéficiaire
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={sendMoney.control}
                                                     name="mmAmount"
                                                     render={({field}) => (
                                                         <FormItem>
@@ -559,6 +562,24 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                                         }
                                         {activeSendMode == "bank" &&
                                             <div className={`bank-form-inputs space-y-3`}>
+                                                <FormField
+                                                    control={sendMoney.control}
+                                                    name="bankBeneficiary"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <div>
+                                                                    <div className="relative">
+                                                                        <input type="text" id="bankBeneficiary" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />
+                                                                        <label htmlFor="beneficiary"
+                                                                               className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Nom du bénéficiaire
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
                                                 <FormField
                                                     control={sendMoney.control}
                                                     name="bankZone"
