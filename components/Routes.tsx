@@ -8,7 +8,8 @@ const Routes = {
         signUp: '/{lang}/auth/sign-up',
     },
     dashboard: {
-        home: '/{lang}/dashboard'
+        home: '/{lang}/dashboard',
+        sendMoney: '/{lang}/dashboard/send-money',
     }
 }
 

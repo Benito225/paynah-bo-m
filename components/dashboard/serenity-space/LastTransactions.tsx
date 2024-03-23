@@ -196,9 +196,9 @@ export default function LastTransactions({lang}: LastTransactionsProps) {
                     <TableBody>
                         {transactions.map((transaction) => (
                             <TableRow className={`border-[#f4f4f4]`} key={transaction.tId}>
-                                <TableCell className="text-xs !py-3.5">{transaction.tId}</TableCell>
+                                <TableCell className="text-xs font-medium !py-3.5">{transaction.tId}</TableCell>
                                 <TableCell className="text-xs !py-3.5">{transaction.description}</TableCell>
-                                <TableCell className="text-xs !py-3.5">
+                                <TableCell className="text-xs font-medium !py-3.5">
                                    <div className={`${transaction.type == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>{transaction.type == TransactionsType.DEBIT ? '-' : ''}{formatCFA(transaction.amount)}</div>
                                 </TableCell>
                                 <TableCell className="text-xs !py-3.5">{formatDate(transaction.date, lang)}</TableCell>

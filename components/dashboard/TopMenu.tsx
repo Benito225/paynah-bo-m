@@ -13,6 +13,7 @@ import {ChevronDown, Download, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {formatCFA} from "@/lib/utils";
 import TopMenuAccountInfos from "@/components/dashboard/top-menu/TopMenuAccountInfos";
+import Routes from "@/components/Routes";
 
 interface DashboardTopMenuProps {
     lang: Locale
@@ -23,7 +24,7 @@ export default function DashboardTopMenu({lang}: DashboardTopMenuProps) {
         <div className={`bg-white border-b border-[#d2d3d3] py-2`}>
             <div className={`max-w-screen-2xl 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8`}>
                 <div className={`flex justify-between items-center`}>
-                    <Link href={`#`}>
+                    <Link href={Routes.dashboard.home}>
                         <svg className={`w-[2.5rem]`} viewBox="0 0 44.203 44.203">
                             <defs>
                                 <clipPath id="clip-path2">

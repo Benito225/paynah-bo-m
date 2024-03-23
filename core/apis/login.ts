@@ -13,6 +13,10 @@ export async function login(values: any) {
     });
 }
 
+export async function logout() {
+    return await signOut();
+}
+
 export async function sendOtp(values: any) {
     const data = {
         'username': values.username,

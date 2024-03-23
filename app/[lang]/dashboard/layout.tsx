@@ -11,6 +11,7 @@ import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/compon
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import DashboardMainMenuFooter from "@/components/dashboard/MainMenu";
 import DashboardTopMenu from "@/components/dashboard/TopMenu";
+import {usePathname} from "next/navigation";
 
 const fontPaynah = Poppins({
   weight: ['100', '300', '400', '500', '600', '800'],
@@ -57,7 +58,7 @@ export default function RootLayout({
                         {children}
                     </div>
                 </div>
-                <DashboardMainMenuFooter lang={params.lang} />
+                <DashboardMainMenuFooter lang={params.lang}/>
             </div>
           <Toaster/>
         </NavigationLoadingProviders>

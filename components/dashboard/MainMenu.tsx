@@ -1,3 +1,5 @@
+"use client"
+
 import {Locale} from "@/i18n.config";
 import Link from "next/link";
 import Routes from "@/components/Routes";
@@ -6,13 +8,18 @@ import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {signOut} from "@/auth";
 import {Button} from "@/components/ui/button";
 import {LogOut} from "lucide-react";
+import {logout} from "@/core/apis/login";
+import { usePathname } from "next/navigation";
 
 interface AuthFooterProps {
-    lang: Locale
+    lang: Locale,
 }
 
 export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
-    return (
+
+    const pathname = usePathname();
+
+   return (
         <div>
             {/*<div className={`fixed inset-x-0 bottom-5 z-[90] bg-[#f4f4f7]`}>*/}
             <div className={`fixed inset-x-0 bottom-5 z-[90]`}>
@@ -47,7 +54,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                         <TooltipProvider delayDuration={10}>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Link className={`inline-flex bg-black p-3 rounded-xl aspect-square justify-center items-center`} href={`#`}>
+                                                    <Link className={`inline-flex ${pathname.endsWith(Routes.dashboard.home.replace('{lang}', lang)) ? 'bg-black' : 'bg-[#fafafa] hover:bg-[#EAEAEA] duration-200' }  p-3 rounded-xl aspect-square justify-center items-center`} href={Routes.dashboard.home.replace('{lang}', lang)}>
                                                         {/*<svg className={`w-[1.2rem] fill-white`} viewBox="0 0 20.9 20.9">*/}
                                                         {/*    <defs>*/}
                                                         {/*        <clipPath id="clip-path">*/}
@@ -136,7 +143,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                                         {/*              transform="translate(-128.866 -15.722)"/>*/}
                                                         {/*    </g>*/}
                                                         {/*</svg>*/}
-                                                        <svg className={`w-[1.2rem] fill-white`} viewBox="0 0 18.883 19.25">
+                                                        <svg className={`w-[1.2rem] ${pathname.endsWith(Routes.dashboard.home.replace('{lang}', lang)) ? 'fill-white' : 'fill-[#afafaf]'}`} viewBox="0 0 18.883 19.25">
                                                             <defs>
                                                                 <clipPath id="a">
                                                                     <rect width="18.883" height="19.25"/>
@@ -172,8 +179,8 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
                                                     <Link
-                                                        className={`inline-flex bg-[#fafafa] hover:bg-[#EAEAEA] duration-200 p-3 rounded-xl aspect-square justify-center items-center`}
-                                                        href={`#`}>
+                                                        className={`inline-flex ${pathname.startsWith(Routes.dashboard.sendMoney.replace('{lang}', lang)) ? 'bg-black' : 'bg-[#fafafa] hover:bg-[#EAEAEA] duration-200'} p-3 rounded-xl aspect-square justify-center items-center`}
+                                                        href={Routes.dashboard.sendMoney.replace('{lang}', lang)}>
                                                         {/*<svg className={`w-[1.2rem] fill-[#afafaf]`} viewBox="0 0 22.642 21.229">*/}
                                                         {/*    <g transform="translate(0 0)">*/}
                                                         {/*        <path*/}
@@ -184,7 +191,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                                         {/*            transform="translate(-497.08 -487.531)"/>*/}
                                                         {/*    </g>*/}
                                                         {/*</svg>*/}
-                                                        <svg className={`w-[1.2rem] fill-[#afafaf]`} viewBox="0 0 20.383 20.383">
+                                                        <svg className={`w-[1.2rem] ${pathname.startsWith(Routes.dashboard.sendMoney.replace('{lang}', lang)) ? 'fill-white' : 'fill-[#afafaf]'}`} viewBox="0 0 20.383 20.383">
                                                             <g transform="translate(-1878.5 -1586.81)">
                                                                 <path
                                                                     d="M17.488,1.342a1.609,1.609,0,0,1,2.051,2.051L14.233,18.553a1.609,1.609,0,0,1-2.99.122l-2.73-6.142a.327.327,0,0,0-.166-.166L2.206,9.638a1.609,1.609,0,0,1,.122-2.99Zm1.528,1.43a.641.641,0,1,0-.907-.907l-9.4,9.4a.641.641,0,1,0,.907.907Z"
@@ -434,10 +441,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                         </Link>
                                         <div className={`inline-flex items-center`}>
                                             <form className={`flex`}
-                                                  action={async () => {
-                                                      "use server";
-                                                      await signOut();
-                                                  }}
+                                                  action={logout}
                                             >
                                                 <TooltipProvider delayDuration={10}>
                                                     <Tooltip>
