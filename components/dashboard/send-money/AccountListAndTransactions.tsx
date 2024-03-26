@@ -2,17 +2,8 @@
 
 import {Locale} from "@/i18n.config";
 import React, {useState} from "react";
-import * as z from "zod";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {Form, FormControl, FormField, FormItem} from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
-import {ChevronRight, ClipboardList, Pencil, Plus, Send, Trash2} from "lucide-react";
-import Image from "next/image";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {formatCFA, hiddeBalance} from "@/lib/utils";
-import Link from "next/link";
-import { FlipVertical } from 'lucide-react';
+import {ClipboardList, Pencil, Plus, Send, Trash2} from "lucide-react";
+import {formatCFA} from "@/lib/utils";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -20,12 +11,22 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import TransactionsTable from "@/components/dashboard/send-money/TransactionsTable";
 
 interface AccountListAndTransactionsProps {
-    lang: Locale
+    lang: Locale,
+    searchItems: {
+        per_page: number,
+        page: number,
+        search?: string,
+        from?: string,
+        sort?: string,
+        to?: string,
+        status?: string
+    }
 }
 
-export default function AccountListAndTransactions({lang}: AccountListAndTransactionsProps) {
+export default function AccountListAndTransactions({lang, searchItems}: AccountListAndTransactionsProps) {
     const [selectedAccount, setSelectedAccount] = useState('all');
 
     return (
@@ -406,8 +407,8 @@ export default function AccountListAndTransactions({lang}: AccountListAndTransac
                 </div>
             </div>
             <div className={`h-full`}>
-                <div className={`bg-white flex-grow rounded-2xl h-full`}>
-
+                <div className={`bg-white flex-grow rounded-3xl h-full`}>
+                    <TransactionsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount}  />
                 </div>
             </div>
         </div>

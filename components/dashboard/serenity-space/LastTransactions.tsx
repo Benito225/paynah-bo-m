@@ -4,18 +4,12 @@ import {Locale} from "@/i18n.config";
 import React, {useState} from "react";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
-import {Input} from "@/components/ui/input";
 import {
     AlertTriangle,
     ChevronRight,
     ClipboardList,
-    MoveDownLeft,
-    MoveUpRight,
-    Pencil,
     RotateCw,
-    Trash2
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {formatCFA, formatDate, getStatusBadge} from "@/lib/utils";
@@ -37,7 +31,7 @@ interface LastTransactionsProps {
 export enum TransactionsStatus {
     DONE = 'approved',
     PENDING = 'pending',
-    REJECTED = 'rejected',
+    DECLINED = 'declined',
     EXPIRED = 'expired',
 }
 
@@ -94,7 +88,7 @@ export default function LastTransactions({lang}: LastTransactionsProps) {
             description: "Envoi d'argent",
             type: "credit",
             amount: 100000,
-            status: 'rejected',
+            status: 'declined',
         },
         {
             tId: "24559FS3AS",

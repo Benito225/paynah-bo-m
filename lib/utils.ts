@@ -22,7 +22,7 @@ export function getStatusBadge(transactionStatus: string): string {
         return `<span class="status-expired font-medium text-[10.5px]">Expiré</span>`;
     } else if (transactionStatus == TransactionsStatus.DONE) {
         return `<span class="status-success font-medium text-[10.5px]">Effectué</span>`;
-    } else if (transactionStatus == TransactionsStatus.REJECTED) {
+    } else if (transactionStatus == TransactionsStatus.DECLINED) {
         return `<span class="status-rejected font-medium text-[10.5px]">Échoué</span>`;
     } else {
         return `<span class="status-pending font-medium text-[10.5px]">En cours</span>`;
@@ -196,3 +196,9 @@ export function getBankName(bankCode: string) {
 
     return banks[codeNumber];
 }
+
+export const TStatus = [
+    "pending",
+    "approved",
+    "declined",
+]

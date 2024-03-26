@@ -24,7 +24,7 @@ export default function DashboardTopMenu({lang}: DashboardTopMenuProps) {
         <div className={`bg-white border-b border-[#d2d3d3] py-2`}>
             <div className={`max-w-screen-2xl 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8`}>
                 <div className={`flex justify-between items-center`}>
-                    <Link href={Routes.dashboard.home}>
+                    <Link href={Routes.dashboard.home.replace('{lang}', lang)}>
                         <svg className={`w-[2.5rem]`} viewBox="0 0 44.203 44.203">
                             <defs>
                                 <clipPath id="clip-path2">

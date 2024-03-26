@@ -4,10 +4,17 @@ import {ChevronRight} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import Beneficiary from "@/components/dashboard/send-money/Beneficiary";
 import AccountListAndTransactions from "@/components/dashboard/send-money/AccountListAndTransactions";
+import {SearchParams} from "@/core/interfaces";
+import {searchParamsSchema} from "@/components/dashboard/send-money/validations";
 
-export default async function Home({params: { lang }}: {
-    params: { lang: Locale }
-}) {
+export interface IndexPageProps {
+    searchParams: SearchParams,
+    params: { lang: Locale },
+}
+
+export default async function Home({params: { lang }, searchParams}: IndexPageProps) {
+    const searchItems = searchParamsSchema.parse(searchParams);
+
     return (
         <>
             <div className={`max-w-screen-2xl 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 h-full flex flex-col`}>
@@ -37,7 +44,7 @@ export default async function Home({params: { lang }}: {
                         </div>
                     </div>
                     <div className={`w-[72%] 2xl:w-[74%]`}>
-                        <AccountListAndTransactions lang={lang}/>
+                        <AccountListAndTransactions lang={lang} searchItems={searchItems} />
                     </div>
                 </div>
             </div>
