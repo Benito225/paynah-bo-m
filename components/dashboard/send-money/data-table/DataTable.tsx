@@ -90,14 +90,14 @@ export function TDataTable<TData, TValue>({ table, columns, searchableColumns = 
                 newRowLink={newRowLink}
                 deleteRowsAction={deleteRowsAction}
             />
-            <div className="rounded-md border">
+            <div className="">
                 <Table>
-                    <TableHeader>
+                    <TableHeader className={`bg-[#f0f0f0]`}>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead className={`h-9 text-[#737373]`} key={header.id}>
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -114,11 +114,12 @@ export function TDataTable<TData, TValue>({ table, columns, searchableColumns = 
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
+                                    className={`border-[#fafafa]`}
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell className={`!py-3 text-[13px] font-normal`} key={cell.id}>
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()

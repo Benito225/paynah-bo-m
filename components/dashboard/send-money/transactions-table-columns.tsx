@@ -43,9 +43,9 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
         {
             accessorKey: "transactionId",
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="ID Transaction" />
+                <DataTableColumnHeader className={`text-xs font-normal`} column={column} title="ID Transaction" />
             ),
-            cell: ({ row }) => <div className="w-[80px]">{row.getValue("transactionId")}</div>,
+            cell: ({ row }) => <div className="min-w-[6rem]">{row.getValue("transactionId")}</div>,
             enableSorting: false,
             enableHiding: false,
         },
@@ -104,7 +104,7 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
         {
             accessorKey: "status",
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Statut" />
+                <DataTableColumnHeader className={`text-xs font-normal`} column={column} title="Statut" />
             ),
             cell: ({ row }) => {
                 const status = TStatus.find(
@@ -126,41 +126,43 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
         {
             id: "actions",
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Actions" />
+                <DataTableColumnHeader className={`text-xs font-normal`} column={column} title="Actions" />
             ),
             cell: function Cell({ row }) {
                 // const [isUpdatePending, startUpdateTransition] = React.useTransition()
 
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger className={`focus:outline-none`} asChild>
-                            <button className={`rounded-full bg-[#f0f0f0] hover:bg-gray-200 duration-200 p-1`}>
-                                <svg className={`h-3 w-auto`} viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                                     strokeLinejoin="round">
-                                    <circle cx="12" cy="12" r="1"/>
-                                    <circle cx="12" cy="5" r="1"/>
-                                    <circle cx="12" cy="19" r="1"/>
-                                </svg>
-                            </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-48 rounded-xl z-[100] shadow-md" align={"end"}>
-                            <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                <ClipboardList className="mr-2 h-3.5 w-3.5" />
-                                <span className={`mt-[1.5px]`}>{`Détails de l'opération`}</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                <AlertTriangle className="mr-2 h-3.5 w-3.5" />
-                                <span className={`mt-[1.5px]`}>Faire une réclamation</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                <RotateCw className="mr-2 h-3.5 w-3.5" />
-                                <span className={`mt-[1.5px]`}>{`Refaire l'opération`}</span>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className={`text-center`}>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className={`focus:outline-none`} asChild>
+                                <button className={`rounded-full bg-[#f0f0f0] hover:bg-gray-200 duration-200 p-1`}>
+                                    <svg className={`h-3 w-auto`} viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                                         strokeLinejoin="round">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </svg>
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-48 rounded-xl z-[100] shadow-md" align={"end"}>
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <ClipboardList className="mr-2 h-3.5 w-3.5" />
+                                    <span className={`mt-[1.5px]`}>{`Détails de l'opération`}</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <AlertTriangle className="mr-2 h-3.5 w-3.5" />
+                                    <span className={`mt-[1.5px]`}>Faire une réclamation</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    <RotateCw className="mr-2 h-3.5 w-3.5" />
+                                    <span className={`mt-[1.5px]`}>{`Refaire l'opération`}</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 )
             },
         },

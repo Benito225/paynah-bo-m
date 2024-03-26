@@ -45,7 +45,7 @@ export function DataTableColumnHeader<TData, TValue>({
             }
             variant="ghost"
             size="sm"
-            className="-ml-3 h-8 data-[state=open]:bg-accent"
+            className="-ml-3 h-7 text-xs font-normal data-[state=open]:bg-accent"
           >
             <span>{title}</span>
             {column.getIsSorted() === "desc" ? (
@@ -58,7 +58,7 @@ export function DataTableColumnHeader<TData, TValue>({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          <DropdownMenuItem
+          <DropdownMenuItem className={`text-xs`}
             aria-label="Sort ascending"
             onClick={() => column.toggleSorting(false)}
           >
@@ -68,7 +68,7 @@ export function DataTableColumnHeader<TData, TValue>({
             />
             Croissant
           </DropdownMenuItem>
-          <DropdownMenuItem
+          <DropdownMenuItem className={`text-xs`}
             aria-label="Sort descending"
             onClick={() => column.toggleSorting(true)}
           >
@@ -78,7 +78,7 @@ export function DataTableColumnHeader<TData, TValue>({
             />
             Décroissant
           </DropdownMenuItem>
-          <DropdownMenuItem
+          <DropdownMenuItem className={`text-xs`}
               aria-label="reset sorting"
               onClick={() =>  column.clearSorting()}
           >
