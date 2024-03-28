@@ -6,6 +6,7 @@ import Beneficiary from "@/components/dashboard/send-money/Beneficiary";
 import AccountListAndTransactions from "@/components/dashboard/send-money/AccountListAndTransactions";
 import {SearchParams} from "@/core/interfaces";
 import {searchParamsSchema} from "@/components/dashboard/send-money/validations";
+import MainActions from "@/components/dashboard/send-money/modals/MainActions";
 
 export interface IndexPageProps {
     searchParams: SearchParams,
@@ -33,12 +34,7 @@ export default async function Home({params: { lang }, searchParams}: IndexPagePr
                     <div className={`w-[28%] 2xl:w-[26%]`}>
                         <div className={`h-full bg-white px-6 py-8 rounded-2xl`}>
                             <div className={`flex flex-col space-y-2.5`}>
-                                <Button className={`w-full py-6`}>
-                                    {`Envoyez de l'argent`}
-                                </Button>
-                                <Button className={`w-full text-black border border-black bg-transparent py-6 hover:text-white `}>
-                                    {`Ajouter un bénéficiaire`}
-                                </Button>
+                               <MainActions lang={lang} />
                             </div>
                             <Beneficiary lang={lang} />
                         </div>
