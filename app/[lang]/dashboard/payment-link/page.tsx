@@ -1,21 +1,20 @@
-import {Locale} from "@/i18n.config";
-import SupportShortcut from "@/components/dashboard/serenity-space/SupportShortcut";
-import {ChevronRight} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import Beneficiary from "@/components/dashboard/send-money/Beneficiary";
-import AccountListAndTransactions from "@/components/dashboard/send-money/AccountListAndTransactions";
 import {SearchParams} from "@/core/interfaces";
+import {Locale} from "@/i18n.config";
 import {searchParamsSchema} from "@/components/dashboard/send-money/validations";
-import MainActions from "@/components/dashboard/send-money/modals/MainActions";
 import Link from "next/link";
 import Routes from "@/components/Routes";
+import {ChevronRight} from "lucide-react";
+import SupportShortcut from "@/components/dashboard/serenity-space/SupportShortcut";
+import MainActions from "@/components/dashboard/payment-link/modals/MainActions";
+import Recipients from "@/components/dashboard/payment-link/Recipients";
+import AccountListAndTransactions from "@/components/dashboard/payment-link/AccountListAndTransactions";
 
-export interface IndexPageProps {
+export interface PaymentLinkProps {
     searchParams: SearchParams,
     params: { lang: Locale },
 }
 
-export default async function SendMoneyPage({params: { lang }, searchParams}: IndexPageProps) {
+export default async function PaymentLinkPage({params: { lang }, searchParams}: PaymentLinkProps) {
     const searchItems = searchParamsSchema.parse(searchParams);
 
     return (
@@ -25,7 +24,7 @@ export default async function SendMoneyPage({params: { lang }, searchParams}: In
                     <div className={`inline-flex items-center space-x-0.5`}>
                         <Link href={Routes.dashboard.home.replace('{lang}', lang)} className={`text-base text-[#767676] tracking-tight`}>Serenity Space</Link>
                         <ChevronRight className={`h-4 w-4 text-[#767676]`} />
-                        <h2 className={`text-base text-black tracking-tight`}>{`Envoi d'argent`}</h2>
+                        <h2 className={`text-base text-black tracking-tight`}>{`Lien de paiement`}</h2>
                     </div>
                     <div className={`py-2 px-3 bg-white rounded-xl inline-flex items-center space-x-3`}>
                         <span className={`text-xs`}>Avez vous des préoccupations ?</span>
@@ -38,7 +37,7 @@ export default async function SendMoneyPage({params: { lang }, searchParams}: In
                             <div className={`flex flex-col space-y-2.5`}>
                                <MainActions lang={lang} />
                             </div>
-                            <Beneficiary lang={lang} />
+                            <Recipients lang={lang} />
                         </div>
                     </div>
                     <div className={`w-[72%] 2xl:w-[74%]`}>

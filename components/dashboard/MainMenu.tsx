@@ -215,8 +215,8 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
                                                     <Link
-                                                        className={`inline-flex bg-[#fafafa] hover:bg-[#EAEAEA] duration-200 p-3 rounded-xl aspect-square justify-center items-center`}
-                                                        href={`#`}>
+                                                        className={`inline-flex ${pathname.startsWith(Routes.dashboard.paymentLink.replace('{lang}', lang)) ? 'bg-black' : 'bg-[#fafafa] hover:bg-[#EAEAEA] duration-200'} p-3 rounded-xl aspect-square justify-center items-center`}
+                                                        href={Routes.dashboard.paymentLink.replace('{lang}', lang)}>
                                                         {/*<svg className={`w-[1.1rem] fill-[#afafaf]`}*/}
                                                         {/*     viewBox="0 0 20.569 20.873">*/}
                                                         {/*    <g transform="translate(0 0)">*/}
@@ -228,7 +228,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                                         {/*            transform="translate(-6509.066 -799.891)"/>*/}
                                                         {/*    </g>*/}
                                                         {/*</svg>*/}
-                                                        <svg className={`w-[1.1rem] fill-[#afafaf]`} viewBox="0 0 20.277 20.274">
+                                                        <svg className={`w-[1.1rem] ${pathname.startsWith(Routes.dashboard.paymentLink.replace('{lang}', lang)) ? 'fill-white' : 'fill-[#afafaf]'}`} viewBox="0 0 20.277 20.274">
                                                             <g transform="translate(0.1 0.097)">
                                                                 <path
                                                                     d="M13.14.5A6.391,6.391,0,0,0,8.589,2.385l-.939.94a1.192,1.192,0,0,0,0,1.686,1.221,1.221,0,0,0,1.686,0l.939-.939A4.05,4.05,0,1,1,16,9.8l-.94.939a1.193,1.193,0,0,0,1.687,1.687l.939-.94A6.432,6.432,0,0,0,13.14.5ZM6.932,19.576a6.394,6.394,0,0,0,4.551-1.882l.938-.94a1.192,1.192,0,0,0,0-1.686,1.221,1.221,0,0,0-1.686,0l-.939.939A4.051,4.051,0,1,1,4.067,10.28l.939-.939A1.192,1.192,0,0,0,3.32,7.654l-.939.939A6.432,6.432,0,0,0,6.932,19.576Z"
