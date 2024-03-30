@@ -31,6 +31,8 @@ export default function MainActions({lang}: MainActionsProps) {
     const [beneficiary, setBeneficiary] = useState<{id: string, name: string}>({id: '', name: ''});
     const [existBenef, setExistBenef] = useState(true);
     const [payFees, setPayFees] = useState(false);
+    const [sendLinkCanal, setSendLinkCanal] = useState('');
+    const [linkValidity, setLinkValidity] = useState('');
     const [amount, setAmount] = useState('0');
     const [totalAmount, setTotalAmount] = useState('');
     const [reason, setReason] = useState('');
