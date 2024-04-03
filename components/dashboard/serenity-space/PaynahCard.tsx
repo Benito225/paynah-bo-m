@@ -13,10 +13,12 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {formatCFA, hiddeBalance} from "@/lib/utils";
 
 interface PaynahCardProps {
-    lang: Locale
+    lang: Locale,
+    className?: string,
+    onClick?: () => any
 }
 
-export default function PaynahCard({lang}: PaynahCardProps) {
+export default function PaynahCard({ lang, className, onClick }: PaynahCardProps) {
 
     const [isLoading, setLoading] = useState(false);
     const [showConError, setShowConError] = useState(false);
@@ -50,12 +52,12 @@ export default function PaynahCard({lang}: PaynahCardProps) {
     }
 
     return (
-        <div className={`card-design`}>
-            <div className={`relative rounded-3xl flex flex-col justify-between aspect-video p-4`}>
+        <div onClick={onClick} className={`card-design ${className}`}>
+            <div className={`relative rounded-3xl flex flex-col justify-between ${className ? '' : 'aspect-video'} p-4`}>
                 <div className={`bg-black w-full h-full rounded-3xl absolute z-[-1] top-0 right-0`}>
                 </div>
                 <Image className={`object-cover rounded-3xl z-[-1]`} src={`/${lang}/images/cover-test.png`} fill alt={`cover-card`} />
-                <div className={`flex justify-between mb-[3rem]`}>
+                <div className={`flex justify-between ${className ? 'mb-[2.4rem]' : 'mb-[3rem]'} `}>
                     <div className={`inline-flex`}>
                         <div>
                             <h2 className={`text-[#dbdbdb] text-sm uppercase mr-2`}>Compte Agregés</h2>
@@ -72,7 +74,7 @@ export default function PaynahCard({lang}: PaynahCardProps) {
                                                 <FormControl>
                                                     <div>
                                                         <Select onValueChange={field.onChange} defaultValue={'XOF'}>
-                                                            <SelectTrigger className={`min-w-[2rem] h-[1.2rem] border-none pl-2 pr-1 rounded-full font-light text-[#afafaf] text-xs`} style={{
+                                                            <SelectTrigger className={`min-w-[2rem] h-[1.2rem] border-none pl-2 pr-1 rounded-full font-light text-[#afafaf] ${className ? 'text-[10px]' : 'text-xs'}`} style={{
                                                                 backgroundColor: field.value ? '#2e2e2e' : '#2e2e2e',
                                                             }}>
                                                                 <SelectValue  placeholder="Choisir une devise"/>
@@ -107,12 +109,12 @@ export default function PaynahCard({lang}: PaynahCardProps) {
                 <div>
                     <div className={`flex flex-col space-y-2`}>
                         <div className={`flex flex-col`}>
-                            <span className={`text-xs font-light text-[#afafaf]`}>Solde</span>
-                            <span className={`font-semibold text-white text-base`}>{displayBalance ? formatCFA(balance) : hiddeBalance(formatCFA(balance))}</span>
+                            <span className={`${className ? 'text-[11px]' : 'text-xs'} font-light text-[#afafaf]`}>Solde</span>
+                            <span className={`font-semibold text-white ${className ? 'text-base' : 'text-base'}`}>{displayBalance ? formatCFA(balance) : hiddeBalance(formatCFA(balance))}</span>
                         </div>
                         <div className={`flex flex-col`}>
-                            <span className={`text-xs font-light text-[#afafaf]`}>Solde disponible</span>
-                            <span className={`font-semibold text-white text-base`}>{displayAvailableBalance ? formatCFA(availableBalance) : hiddeBalance(formatCFA(availableBalance))}</span>
+                            <span className={`${className ? 'text-[11px]' : 'text-xs'} font-light text-[#afafaf]`}>Solde disponible</span>
+                            <span className={`font-semibold text-white ${className ? 'text-base' : 'text-base'}`}>{displayAvailableBalance ? formatCFA(availableBalance) : hiddeBalance(formatCFA(availableBalance))}</span>
                         </div>
                     </div>
                 </div>

@@ -11,6 +11,7 @@ const Routes = {
         home: '/{lang}/dashboard',
         sendMoney: '/{lang}/dashboard/send-money',
         paymentLink: '/{lang}/dashboard/payment-link',
+        accounts: '/{lang}/dashboard/accounts'
     }
 }
 

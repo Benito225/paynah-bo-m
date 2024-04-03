@@ -256,7 +256,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                         <TooltipProvider delayDuration={10}>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Link className={`inline-flex bg-[#fafafa] hover:bg-[#EAEAEA] duration-200 p-3 rounded-xl aspect-square justify-center items-center`} href={`#`}>
+                                                    <Link className={`inline-flex ${pathname.startsWith(Routes.dashboard.accounts.replace('{lang}', lang)) ? 'bg-black' : 'bg-[#fafafa] hover:bg-[#EAEAEA] duration-200'} p-3 rounded-xl aspect-square justify-center items-center`} href={`${Routes.dashboard.accounts.replace('{lang}', lang)}`}>
                                                         {/*<svg className={`w-[1.2rem] fill-[#afafaf]`} viewBox="0 0 19.474 17.751">*/}
                                                         {/*    <defs>*/}
                                                         {/*        <clipPath id="clip-path">*/}
@@ -272,7 +272,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                                         {/*        </g>*/}
                                                         {/*    </g>*/}
                                                         {/*</svg>*/}
-                                                        <svg className={`w-[1.2rem] fill-[#afafaf]`} viewBox="0 0 20 18">
+                                                        <svg className={`w-[1.2rem]  ${pathname.startsWith(Routes.dashboard.accounts.replace('{lang}', lang)) ? 'fill-white' : 'fill-[#afafaf]'}`} viewBox="0 0 20 18">
                                                             <path
                                                                 d="M14.516,0C17.964,0,20,1.985,20,5.382H15.769v.035a3.512,3.512,0,0,0-3.556,3.467,3.512,3.512,0,0,0,3.556,3.467H20v.312C20,16.015,17.964,18,14.516,18H5.484C2.036,18,0,16.015,0,12.662H0V5.338C0,1.985,2.036,0,5.484,0h9.031Zm4.738,6.872A.737.737,0,0,1,20,7.6h0v2.531a.746.746,0,0,1-.747.728h-3.4A2.106,2.106,0,0,1,13.76,9.264a1.982,1.982,0,0,1,.433-1.652,2.092,2.092,0,0,1,1.576-.74h3.484Zm-3,1.17H15.92a.766.766,0,0,0-.54.213.728.728,0,0,0-.224.524.764.764,0,0,0,.764.754h.329a.746.746,0,1,0,0-1.491ZM10.382,3.891H4.738a.755.755,0,0,0-.764.737.764.764,0,0,0,.764.754h5.644a.746.746,0,1,0,0-1.491Z"/>
                                                         </svg>
