@@ -11,14 +11,15 @@ import {Form} from "@/components/ui/form";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Banknote, Goal, Search, SquarePen, X} from "lucide-react";
+import {Banknote, Goal, Search, Send, SquarePen, TimerReset, X} from "lucide-react";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {formatCFA} from "@/lib/utils";
+import {formatCFA, getPeriod} from "@/lib/utils";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {NumericFormat} from "react-number-format";
 import {Checkbox} from "@/components/ui/checkbox";
 import Link from "next/link";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
 interface MainActionsProps {
     lang: string
@@ -36,6 +37,8 @@ export default function MainActions({lang}: MainActionsProps) {
     const [amount, setAmount] = useState('0');
     const [totalAmount, setTotalAmount] = useState('');
     const [reason, setReason] = useState('');
+    const [sentCanal, setSentCanal] = useState('sms');
+    const [linkDuration, setLinkDuration] = useState('3d');
     const [percentage, setPercentage] = useState('w-1/4');
 
     const [confirmStep, setConfirmStep] = useState(0);
@@ -541,6 +544,53 @@ export default function MainActions({lang}: MainActionsProps) {
                                                 </div>
                                             </div>
                                         </div>
+                                        <div>
+                                            <div className={`w-full`}>
+                                                <div className={`inline-flex space-x-3`}>
+                                                    <h3 className={`text-sm font-medium`}>{`5 - Canal d'envoi du lien`}</h3>
+                                                </div>
+                                                <div className={`relative mt-2 w-full`}>
+                                                    <Select onValueChange={(value) => setSentCanal(value)} defaultValue={sentCanal}>
+                                                        <SelectTrigger className={`w-full text-sm bg-white h-[2.8rem] rounded-lg border border-[#e4e4e4] pl-2.5 pr-1 font-normal`}>
+                                                            <SelectValue placeholder=""/>
+                                                        </SelectTrigger>
+                                                        <SelectContent className={`bg-[#f0f0f0] z-[300]`}>
+                                                            <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`} value={'sms'}>
+                                                                SMS
+                                                            </SelectItem>
+                                                            <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`} value={'email'}>
+                                                                Email
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className={`w-full`}>
+                                                <div className={`inline-flex space-x-3`}>
+                                                    <h3 className={`text-sm font-medium`}>6- Durée de validité du lien</h3>
+                                                </div>
+                                                <div className={`relative mt-2 w-full`}>
+                                                    <Select onValueChange={(value) => setLinkDuration(value)} defaultValue={linkDuration}>
+                                                        <SelectTrigger className={`w-full text-sm bg-white h-[2.8rem] rounded-lg border border-[#e4e4e4] pl-2.5 pr-1 font-normal`}>
+                                                            <SelectValue placeholder=""/>
+                                                        </SelectTrigger>
+                                                        <SelectContent className={`bg-[#f0f0f0] z-[300]`}>
+                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'3d'}>
+                                                                3 Jours
+                                                            </SelectItem>
+                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'1w'}>
+                                                                1 Semaines
+                                                            </SelectItem>
+                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'1w'}>
+                                                                1 Mois
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -642,15 +692,6 @@ export default function MainActions({lang}: MainActionsProps) {
                                                     <span className={`text-sm font-normal`}>{amount}</span>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center space-x-2 mt-1.5">
-                                                <Checkbox onCheckedChange={(checked) => {checked == 'indeterminate' ? setPayFees(false) : setPayFees(checked)}} className={`bg-white border-[#dfdfdf]`} id="fees" />
-                                                <label
-                                                    htmlFor="fees"
-                                                    className="text-xs text-[#777778] cursor-pointer font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                >
-                                                   Payer les frais <span className={`text-black`}>(1%)</span>
-                                                </label>
-                                            </div>
                                         </div>
                                         <div>
                                             <div className={`w-full`}>
@@ -669,15 +710,30 @@ export default function MainActions({lang}: MainActionsProps) {
                                             </div>
                                         </div>
                                         <div>
-                                            <div className={`w-full`}>
-                                                <div className={`inline-flex space-x-3 mt-3`}>
-                                                    <h3 className={`text-sm text-[#626262] font-normal`}>Montant total</h3>
+                                            <div className={`inline-flex space-x-3`}>
+                                                <h3 className={`text-sm text-[#626262] font-normal`}>{`Canal d'envoi du lien`}</h3>
+                                                <button onClick={() => setStep(3)}>
+                                                    <SquarePen className={`text-[#626262] h-4 w-4`} />
+                                                </button>
+                                            </div>
+                                            <div className={`mt-2.5 w-full`}>
+                                                <div className={`bg-white w-full inline-flex items-center space-x-2 rounded-lg py-3 px-2.5`}>
+                                                    <Send className={`text-[#767676] h-5 w-5`} />
+                                                    <span className={`text-sm font-normal capitalize `}>{sentCanal}</span>
                                                 </div>
-                                                <div className={`mt-1 w-full`}>
-                                                    <div className={`bg-white w-full inline-flex items-center space-x-2 rounded-lg py-3 px-2.5`}>
-                                                        <Banknote className={`text-[#767676] h-5 w-5`} />
-                                                        <span className={`text-sm font-medium`}>{totalAmount}</span>
-                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className={`inline-flex space-x-3`}>
+                                                <h3 className={`text-sm text-[#626262] font-normal`}>Durée de validité du lien</h3>
+                                                <button onClick={() => setStep(3)}>
+                                                    <SquarePen className={`text-[#626262] h-4 w-4`} />
+                                                </button>
+                                            </div>
+                                            <div className={`mt-2.5 w-full`}>
+                                                <div className={`bg-white w-full inline-flex items-center space-x-2 rounded-lg py-3 px-2.5`}>
+                                                    <TimerReset className={`text-[#767676] h-5 w-5`} />
+                                                    <span className={`text-sm font-normal`}>{getPeriod(linkDuration)}</span>
                                                 </div>
                                             </div>
                                         </div>

@@ -202,3 +202,18 @@ export const TStatus = [
     "approved",
     "declined",
 ]
+
+export const getPeriod = (type: string) => {
+    const periodNumber = type.match(/\d+/g)?.join('');
+    const periodUnit = type.replace(`${periodNumber}`, '');
+
+    if (periodUnit == 'd') {
+        return periodNumber+' jour(s)'
+    } else if (periodUnit == 'w') {
+        return periodNumber+' Semaine(s)'
+    } else if (periodUnit == 'm') {
+        return periodNumber+' Mois'
+    } else {
+        return periodNumber+' jour(s)'
+    }
+}
