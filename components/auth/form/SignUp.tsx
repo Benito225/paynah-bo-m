@@ -18,6 +18,8 @@ import { PhoneNumberUtil } from 'google-libphonenumber';
 import SignUpCreateAccess from "@/components/auth/form/SignUpCreateAccess";
 import SignUpCompanyProfile from "@/components/auth/form/SignUpCompanyProfileForm";
 import SignUpONGProfile from "@/components/auth/form/SignUpONGProfileForm";
+import VerifyEmail from "@/components/auth/form/VerifyEmail";
+import ValidateEmail from "@/components/auth/form/ValidateEmail";
 
 interface AuthSignUpFormProps {
     lang: Locale
@@ -27,6 +29,18 @@ const formSchema = z.object({
     country: z.string().min(1, {
         message: "Veuillez choisir un pays SVP"
     }),
+})
+
+const formSchemaVerifyEmail = z.object({
+    email: z.string().min(1, {
+        message: "Veuillez entrez une adresse email SVP"
+    }).email({message: 'Veuillez entrez une adresse email Correcte'}),
+})
+
+const formSchemaValidateEmail = z.object({
+    otp: z.string().min(6, {
+        message: "Votre code doit être de 6 Caractères"
+    })
 })
 
 const formSchemaTwo = z.object({
@@ -66,11 +80,11 @@ const formSchemaThreeIndividualProfile = z.object({
     }).min(1, {
         message: "Veuillez renseigner un numéro de Téléphone SVP"
     }),
-    email: z.string({
-        required_error: "Veuillez renseigner un email SVP"
-    }).min(1, {
-        message: "Veuillez renseigner un email SVP"
-    }).email(),
+    // email: z.string({
+    //     required_error: "Veuillez renseigner un email SVP"
+    // }).min(1, {
+    //     message: "Veuillez renseigner un email SVP"
+    // }).email(),
     companyStatus: z.enum(["new-company", "existing-company"], {
         required_error: "Veuillez choisir le status de votre entreprise",
     }),
@@ -107,11 +121,11 @@ const formSchemaThreeCompanyProfile = z.object({
     }).min(1, {
         message: "Veuillez renseigner un numéro de Téléphone SVP"
     }),
-    email: z.string({
-        required_error: "Veuillez renseigner un email SVP"
-    }).min(1, {
-        message: "Veuillez renseigner un email SVP"
-    }).email(),
+    // email: z.string({
+    //     required_error: "Veuillez renseigner un email SVP"
+    // }).min(1, {
+    //     message: "Veuillez renseigner un email SVP"
+    // }).email(),
 })
 
 const formSchemaThreeONGProfile = z.object({
@@ -145,11 +159,11 @@ const formSchemaThreeONGProfile = z.object({
     }).min(1, {
         message: "Veuillez renseigner un numéro de Téléphone SVP"
     }),
-    email: z.string({
-        required_error: "Veuillez renseigner un email SVP"
-    }).min(1, {
-        message: "Veuillez renseigner un email SVP"
-    }).email(),
+    // email: z.string({
+    //     required_error: "Veuillez renseigner un email SVP"
+    // }).min(1, {
+    //     message: "Veuillez renseigner un email SVP"
+    // }).email(),
 })
 
 const formSchemaFour = z.object({
@@ -179,8 +193,16 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
 
+    const [countValue, setCountValue] = useState(0);
+
     const [showErrorTwo, setShowErrorTwo] = useState(false);
     const [showConErrorTwo, setShowConErrorTwo] = useState(false);
+
+    const [showErrorVerifyEmail, setShowErrorVerifyEmail] = useState(false);
+    const [showConErrorVerifyEmail, setShowConErrorVerifyEmail] = useState(false);
+
+    const [showErrorValidateEmail, setShowErrorValidateEmail] = useState(false);
+    const [showConErrorValidateEmail, setShowConErrorValidateEmail] = useState(false);
 
     // step 3
     const [showErrorIndividualProfile, setShowErrorIndividualProfile] = useState(false);
@@ -200,6 +222,20 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             country: "",
+        }
+    });
+
+    const stepVerifyEmail = useForm<z.infer<typeof formSchemaVerifyEmail>>({
+        resolver: zodResolver(formSchemaVerifyEmail),
+        defaultValues: {
+            email: "",
+        }
+    });
+
+    const stepValidateEmail = useForm<z.infer<typeof formSchemaValidateEmail>>({
+        resolver: zodResolver(formSchemaValidateEmail),
+        defaultValues: {
+            otp: "",
         }
     });
 
@@ -229,6 +265,8 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
     });
 
     const errorsArray = Object.values(stepOne.formState.errors);
+    const errorsArrayVerifyEmail = Object.values(stepVerifyEmail.formState.errors);
+    const errorsArrayValidateEmail = Object.values(stepValidateEmail.formState.errors);
     const errorsArrayTwo = Object.values(stepTwo.formState.errors);
     const errorsArrayThreeIndividualProfile = Object.values(stepThreeIndividualProfile.formState.errors);
     const errorsArrayThreeCompanyProfile = Object.values(stepThreeCompanyProfile.formState.errors);
@@ -253,6 +291,43 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         // }
     }
 
+    async function onSubmitVerifyEmail(values: z.infer<typeof formSchemaVerifyEmail>) {
+        console.log(values)
+        setLoading(true);
+
+        // setShowConError(true);
+
+        setCountValue(300);
+        setStep(3);
+
+        // router.push(Routes.auth.validateOtp.replace('{lang}', lang));
+
+        // if (errorsArray.length > 0) {
+        //     setShowError(true);
+        //     setTimeout(() => {
+        //         setShowError(false);
+        //     }, 1500);
+        // }
+    }
+
+    async function onSubmitValidateEmail(values: z.infer<typeof formSchemaValidateEmail>) {
+        console.log(values)
+        setLoading(true);
+
+        // setShowConError(true);
+
+        setStep(4);
+
+        // router.push(Routes.auth.validateOtp.replace('{lang}', lang));
+
+        // if (errorsArray.length > 0) {
+        //     setShowError(true);
+        //     setTimeout(() => {
+        //         setShowError(false);
+        //     }, 1500);
+        // }
+    }
+
     function handleGoToBack() {
         if (step > 1) {
             const backNumber = step - 1;
@@ -266,7 +341,7 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
 
         setShowConErrorTwo(true);
 
-        setStep(3);
+        setStep(6);
         setStepThreeForm(values.profileType);
 
         // router.push(Routes.auth.validateOtp.replace('{lang}', lang));
@@ -293,7 +368,7 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
 
         // setShowConErrorIndividualProfile(true);
 
-        setStep(4);
+        setStep(7);
 
         // if (errorsArray.length > 0) {
         // setShowErrorIndividualProfile(true);
@@ -317,7 +392,7 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
 
         // setShowConErrorIndividualProfile(true);
 
-        setStep(4);
+        setStep(7);
 
         // if (errorsArray.length > 0) {
         // setShowErrorIndividualProfile(true);
@@ -341,7 +416,7 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
 
         // setShowConErrorIndividualProfile(true);
 
-        setStep(4);
+        setStep(7);
 
         // if (errorsArray.length > 0) {
         // setShowErrorIndividualProfile(true);
@@ -354,6 +429,8 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
     async function onSubmitStepFour(values: z.infer<typeof formSchemaFour>) {
         console.log(values)
         setLoading(true);
+
+        setStep(5);
 
         // setShowConErrorCreateAccess(true);
 
@@ -377,7 +454,7 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         //     });
         // }
 
-        router.push(Routes.auth.validateAccount.replace('{lang}', lang));
+        // router.push(Routes.auth.validateAccount.replace('{lang}', lang));
     }
 
     return (
@@ -386,9 +463,18 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
                 <SignUpCountryChoice onSubmit={onSubmit} lang={lang} showError={showError} errorsArray={errorsArray} stepOne={stepOne} showConError={showConError} />
             </div>
             <div className={`duration-200 ${step == 2 ? 'block fade-in' : 'hidden fade-out'}`}>
-                <SignUpProfileChoice showErrorTwo={showErrorTwo} errorsArrayTwo={errorsArrayTwo} stepTwo={stepTwo} showConErrorTwo={showConErrorTwo} lang={lang} onSubmitTwo={onSubmitTwo} handleGoToBack={handleGoToBack} />
+                <VerifyEmail showErrorVerifyEmail={showErrorVerifyEmail} errorsArrayVerifyEmail={errorsArrayVerifyEmail} stepVerifyEmail={stepVerifyEmail} showConErrorVerifyEmail={showConErrorVerifyEmail} lang={lang} onSubmitVerifyEmail={onSubmitVerifyEmail} handleGoToBack={handleGoToBack} />
             </div>
             <div className={`duration-200 ${step == 3 ? 'block fade-in' : 'hidden fade-out'}`}>
+                <ValidateEmail showErrorValidateEmail={showErrorValidateEmail} errorsArrayValidateEmail={errorsArrayValidateEmail} stepValidateEmail={stepValidateEmail} showConErrorValidateEmail={showConErrorValidateEmail} lang={lang} onSubmitValidateEmail={onSubmitValidateEmail} handleGoToBack={handleGoToBack} stepVerifyEmail={stepVerifyEmail} step={step} />
+            </div>
+            <div className={`duration-200 ${step == 4 ? 'block fade-in' : 'hidden fade-out'}`}>
+                <SignUpCreateAccess showErrorCreateAccess={showErrorCreateAccess} errorsArrayCreateAccess={errorsArrayCreateAccess} stepFour={stepFour} showConErrorCreateAccess={showConErrorCreateAccess} lang={lang} onSubmitStepFour={onSubmitStepFour} handleGoToBack={handleGoToBack} />
+            </div>
+            <div className={`duration-200 ${step == 5 ? 'block fade-in' : 'hidden fade-out'}`}>
+                <SignUpProfileChoice showErrorTwo={showErrorTwo} errorsArrayTwo={errorsArrayTwo} stepTwo={stepTwo} showConErrorTwo={showConErrorTwo} lang={lang} onSubmitTwo={onSubmitTwo} handleGoToBack={handleGoToBack} />
+            </div>
+            <div className={`duration-200 ${step == 6 ? 'block fade-in' : 'hidden fade-out'}`}>
                 {stepThreeForm == "individual" &&
                   <SignUpIndividualProfile showErrorIndividualProfile={showErrorIndividualProfile} errorsArrayIndividualProfile={errorsArrayThreeIndividualProfile} stepThreeIndividualProfile={stepThreeIndividualProfile} showConErrorIndividualProfile={showConErrorIndividualProfile} lang={lang} onSubmitThreeIndividualProfile={onSubmitThreeIndividualProfile} handleGoToBack={handleGoToBack} />
                 }
@@ -399,8 +485,11 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
                     <SignUpONGProfile showErrorONGProfile={showErrorONGProfile} errorsArrayONGProfile={errorsArrayThreeONGProfile} stepThreeONGProfile={stepThreeONGProfile} showConErrorONGProfile={showConErrorONGProfile} lang={lang} onSubmitThreeONGProfile={onSubmitThreeONGProfile} handleGoToBack={handleGoToBack} />
                 }
             </div>
-            <div className={`duration-200 ${step == 4 ? 'block fade-in' : 'hidden fade-out'}`}>
-                <SignUpCreateAccess showErrorCreateAccess={showErrorCreateAccess} errorsArrayCreateAccess={errorsArrayCreateAccess} stepFour={stepFour} showConErrorCreateAccess={showConErrorCreateAccess} lang={lang} onSubmitStepFour={onSubmitStepFour} handleGoToBack={handleGoToBack} />
+            <div className={`duration-200 ${step == 7 ? 'block fade-in' : 'hidden fade-out'}`}>
+            </div>
+            <div className={`duration-200 ${step == 8 ? 'block fade-in' : 'hidden fade-out'}`}>
+            </div>
+            <div className={`duration-200 ${step == 9 ? 'block fade-in' : 'hidden fade-out'}`}>
             </div>
         </div>
     );

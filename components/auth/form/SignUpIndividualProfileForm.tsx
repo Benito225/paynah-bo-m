@@ -39,7 +39,8 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
     return (
         <div className={`formContainer mx-auto max-w-2xl`}>
             <div className={`text-center mb-10`}>
-                <h2 className={`font-semibold text-center text-2xl md:text-3xl mb-3`}>Création de compte individuel</h2>
+                <h2 className={`font-semibold text-center text-2xl md:text-3xl mb-3`}>Informations compte individuel</h2>
+                <p className={`text-[#626262] w-[90%] lg:w-[80%] mx-auto text-sm md:text-base`}>Assurez-vous que les informations que vous allez renseigner soient les mêmes que celles sur vos pièces justificatives</p>
             </div>
             <div className={`px-4 mb-[0rem] md:mb-[5.5rem]`}>
                 <div className={`flex items-center flex-col space-y-2 mb-4`}>
@@ -170,7 +171,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                         )}
                                     />
                                 </div>
-                                <div className={`col-span-2 md:col-span-1`}>
+                                <div className={`col-span-2 md:col-span-2`}>
                                     <FormField
                                         control={stepThreeIndividualProfile.control}
                                         name="tel"
@@ -197,24 +198,24 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                         )}
                                     />
                                 </div>
-                                <div className={`col-span-2 md:col-span-1`}>
-                                    <FormField
-                                        control={stepThreeIndividualProfile.control}
-                                        name="email"
-                                        render={({field}) => (
-                                            <FormItem>
-                                                <FormControl>
-                                                    <div>
-                                                        <Input type={`email`} className={`font-light text-sm ${showConErrorIndividualProfile && "border-[#e95d5d]"}`}
-                                                               placeholder="E-mail" {...field} style={{
-                                                            backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                        }} />
-                                                    </div>
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                                {/*<div className={`col-span-2 md:col-span-1`}>*/}
+                                {/*    <FormField*/}
+                                {/*        control={stepThreeIndividualProfile.control}*/}
+                                {/*        name="email"*/}
+                                {/*        render={({field}) => (*/}
+                                {/*            <FormItem>*/}
+                                {/*                <FormControl>*/}
+                                {/*                    <div>*/}
+                                {/*                        <Input type={`email`} className={`font-light text-sm ${showConErrorIndividualProfile && "border-[#e95d5d]"}`}*/}
+                                {/*                               placeholder="E-mail" {...field} style={{*/}
+                                {/*                            backgroundColor: field.value ? '#fff' : '#f0f0f0',*/}
+                                {/*                        }} />*/}
+                                {/*                    </div>*/}
+                                {/*                </FormControl>*/}
+                                {/*            </FormItem>*/}
+                                {/*        )}*/}
+                                {/*    />*/}
+                                {/*</div>*/}
                                 <FormField
                                     control={stepThreeIndividualProfile.control}
                                     name="companyStatus"

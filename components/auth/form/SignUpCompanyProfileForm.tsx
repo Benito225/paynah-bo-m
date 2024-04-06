@@ -176,7 +176,7 @@ export default function SignUpCompanyProfile({showErrorCompanyProfile, errorsArr
                                         )}
                                     />
                                 </div>
-                                <div className={`col-span-2 md:col-span-1`}>
+                                <div className={`col-span-2 md:col-span-2`}>
                                     <FormField
                                         control={stepThreeCompanyProfile.control}
                                         name="tel"
@@ -203,24 +203,24 @@ export default function SignUpCompanyProfile({showErrorCompanyProfile, errorsArr
                                         )}
                                     />
                                 </div>
-                                <div className={`col-span-2 md:col-span-1`}>
-                                    <FormField
-                                        control={stepThreeCompanyProfile.control}
-                                        name="email"
-                                        render={({field}) => (
-                                            <FormItem>
-                                                <FormControl>
-                                                    <div>
-                                                        <Input type={`email`} className={`font-light text-sm ${showConErrorCompanyProfile && "border-[#e95d5d]"}`}
-                                                               placeholder="E-mail" {...field} style={{
-                                                            backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                        }} />
-                                                    </div>
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                                {/*<div className={`col-span-2 md:col-span-1`}>*/}
+                                {/*    <FormField*/}
+                                {/*        control={stepThreeCompanyProfile.control}*/}
+                                {/*        name="email"*/}
+                                {/*        render={({field}) => (*/}
+                                {/*            <FormItem>*/}
+                                {/*                <FormControl>*/}
+                                {/*                    <div>*/}
+                                {/*                        <Input type={`email`} className={`font-light text-sm ${showConErrorCompanyProfile && "border-[#e95d5d]"}`}*/}
+                                {/*                               placeholder="E-mail" {...field} style={{*/}
+                                {/*                            backgroundColor: field.value ? '#fff' : '#f0f0f0',*/}
+                                {/*                        }} />*/}
+                                {/*                    </div>*/}
+                                {/*                </FormControl>*/}
+                                {/*            </FormItem>*/}
+                                {/*        )}*/}
+                                {/*    />*/}
+                                {/*</div>*/}
                             </div>
                             <div className={`flex flex-col md:flex-row justify-center items-center space-y-1 md:space-x-5 mt-[3.5rem] md:mt-[5rem]`}>
                                 <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`}>
