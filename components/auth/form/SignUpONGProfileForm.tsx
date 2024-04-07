@@ -42,7 +42,8 @@ export default function SignUpONGProfile({showErrorONGProfile, errorsArrayONGPro
     return (
         <div className={`formContainer mx-auto max-w-2xl`}>
             <div className={`text-center mb-10`}>
-                <h2 className={`font-semibold text-center text-2xl md:text-3xl mb-3`}>Création de compte ONG</h2>
+                <h2 className={`font-semibold text-center text-2xl md:text-3xl mb-3`}>Informations compte professions réglementées</h2>
+                <p className={`text-[#626262] w-[90%] lg:w-[80%] mx-auto text-sm md:text-base`}>Assurez-vous que les informations que vous allez renseigner soient les mêmes que celles sur vos pièces justificatives</p>
             </div>
             <div className={`px-4 mb-[0rem] md:mb-[5.5rem]`}>
                 <div className={`flex items-center flex-col space-y-2 mb-4`}>

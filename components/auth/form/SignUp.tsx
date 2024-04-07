@@ -20,6 +20,9 @@ import SignUpCompanyProfile from "@/components/auth/form/SignUpCompanyProfileFor
 import SignUpONGProfile from "@/components/auth/form/SignUpONGProfileForm";
 import VerifyEmail from "@/components/auth/form/VerifyEmail";
 import ValidateEmail from "@/components/auth/form/ValidateEmail";
+import SignUpFilesInfo from "@/components/auth/form/SignUpFilesInfo";
+import SignUpFilesUpload from "@/components/auth/form/SignUpFilesUpload";
+import SignUpOK from "@/components/auth/form/SignUpOK";
 
 interface AuthSignUpFormProps {
     lang: Locale
@@ -335,6 +338,13 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
         }
     }
 
+    function handleGoToNext() {
+        if (step < 9) {
+            const backNumber = step + 1;
+            setStep(backNumber)
+        }
+    }
+
     async function onSubmitTwo(values: z.infer<typeof formSchemaTwo>) {
         console.log(values)
         setLoading(true);
@@ -486,10 +496,13 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
                 }
             </div>
             <div className={`duration-200 ${step == 7 ? 'block fade-in' : 'hidden fade-out'}`}>
+                <SignUpFilesInfo lang={lang} handleGoToBack={handleGoToBack} handleGoToNext={handleGoToNext} />
             </div>
             <div className={`duration-200 ${step == 8 ? 'block fade-in' : 'hidden fade-out'}`}>
+                <SignUpFilesUpload lang={lang} handleGoToBack={handleGoToBack} handleGoToNext={handleGoToNext} />
             </div>
             <div className={`duration-200 ${step == 9 ? 'block fade-in' : 'hidden fade-out'}`}>
+                <SignUpOK lang={lang} />
             </div>
         </div>
     );
