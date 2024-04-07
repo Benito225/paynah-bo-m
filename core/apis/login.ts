@@ -22,30 +22,27 @@ export async function sendOtp(values: any) {
         'username': values.username,
     };
 
-    return await fetchData('/user-accounts/send-reset-password-mail', 'POST', data);
+    // return await fetchData('/user-accounts/send-reset-password-mail', 'POST', data);
+    return await fetchData('/user-accounts/send-otp', 'POST', data);
 }
 
-export async function validateOtp(values: any, token: string) {
-    const user = decodeToken(token) as IUser;
-
-    const otp = values.c1+''+values.c2+''+values.c3+''+values.c4+''+values.c5+''+values.c6;
+export async function validateOtp(values: any, username: string) {
     const data = {
-        'codeOTP': otp,
-        'id': user?.sub
+        'otpCode': values.otp,
+        'username': username
     };
 
-    console.log(data);
-
-    return await fetchData('/user-accounts/verify-otp', 'POST', data, token);
+    return await fetchData('/user-accounts/verify-otp', 'POST', data);
 }
 
 export async function resetPassword(values: any, token: string) {
     const user = decodeToken(token) as IUser;
 
     const data = {
+        'token': token,
         'password': values.password,
-        'id': user?.sub
+        'id': user?.id
     };
 
-    return await fetchData('/user-accounts/reset-password', 'POST', data, token);
+    return await fetchData('/user-accounts/reset-password', 'POST', data);
 }

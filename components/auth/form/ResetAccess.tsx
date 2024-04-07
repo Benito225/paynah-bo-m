@@ -40,7 +40,7 @@ export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) 
     const [showConError, setShowConError] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    const [cookies, setCookie, removeCookie] = useCookies(['username-token']);
+    const [cookies, setCookie, removeCookie] = useCookies(['username-token', 'username']);
 
     const router = useRouter();
 
@@ -65,12 +65,14 @@ export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) 
         setShowError(false);
 
         const userToken = cookies["username-token"];
+        const userLogin = cookies["username"];
 
-        if (!userToken) {
+        if (!userToken || !userLogin) {
             return router.push(Routes.auth.sendOtp.replace('{lang}', lang));
         }
 
         const resetPasswordRes = await resetPassword(values, userToken);
+        console.log(resetPasswordRes);
 
         if (!resetPasswordRes.success) {
             setLoading(false);
@@ -89,10 +91,14 @@ export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) 
                 className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
             });
 
-            const userInfo = decodeToken(userToken) as IUser;
+            // const userInfo = decodeToken(userToken) as IUser;
+
+            removeCookie('username-token');
+            removeCookie('username');
 
             await signIn("merchant", {
-                username: userInfo.login,
+                // username: userInfo.login,
+                username: userLogin,
                 password: values.password,
                 redirect: true
             });

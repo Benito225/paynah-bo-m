@@ -23,7 +23,8 @@ const config = {
                     'password': password,
                 };
 
-                const authResponse = await fetchData('/user-accounts/login', 'POST', data);
+                // const authResponse = await fetchData('/user-accounts/login', 'POST', data);
+                const authResponse = await fetchData('/user-accounts/login-v2', 'POST', data);
 
                 if (!authResponse.success) {
                     throw new AuthError(authResponse.message);

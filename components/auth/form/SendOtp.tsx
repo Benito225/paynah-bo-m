@@ -33,7 +33,7 @@ export default function AuthSendOtpForm({ lang }: AuthSendOtpFormProps) {
     const [showConError, setShowConError] = useState(false);
 
     const router = useRouter();
-    const [cookies, setCookie, removeCookie] = useCookies(['username-token']);
+    const [cookies, setCookie, removeCookie] = useCookies(['username']);
 
     const sendOtpForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -52,7 +52,7 @@ export default function AuthSendOtpForm({ lang }: AuthSendOtpFormProps) {
             setLoading(false);
             setShowConError(true);
 
-            removeCookie('username-token');
+            removeCookie('username');
 
             setShowError(true);
             setTimeout(() => {
@@ -66,7 +66,7 @@ export default function AuthSendOtpForm({ lang }: AuthSendOtpFormProps) {
             setShowConError(false);
             setShowError(false);
 
-            setCookie('username-token', sendOtpRes.data);
+            setCookie('username', sendOtpRes.data);
 
             router.push(Routes.auth.validateOtp.replace('{lang}', lang));
         }
