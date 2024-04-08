@@ -25,7 +25,8 @@ import SignUpFilesUpload from "@/components/auth/form/SignUpFilesUpload";
 import SignUpOK from "@/components/auth/form/SignUpOK";
 
 interface AuthSignUpFormProps {
-    lang: Locale
+    lang: Locale,
+    countries: {id: string, name: string, code: string, distributorId: string}[]
 }
 
 const formSchema = z.object({
@@ -188,7 +189,7 @@ const isPhoneValid = (phone: string) => {
     }
 };
 
-export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
+export default function AuthSignUpForm({ lang, countries }: AuthSignUpFormProps) {
 
     const [isLoading, setLoading] = useState(false);
     const [step, setStep] = useState(1);
@@ -470,7 +471,7 @@ export default function AuthSignUpForm({ lang }: AuthSignUpFormProps) {
     return (
         <div>
             <div className={`duration-200 ${step == 1 ? 'block fade-in' : 'hidden fade-out'}`}>
-                <SignUpCountryChoice onSubmit={onSubmit} lang={lang} showError={showError} errorsArray={errorsArray} stepOne={stepOne} showConError={showConError} />
+                <SignUpCountryChoice countries={countries} onSubmit={onSubmit} lang={lang} showError={showError} errorsArray={errorsArray} stepOne={stepOne} showConError={showConError} />
             </div>
             <div className={`duration-200 ${step == 2 ? 'block fade-in' : 'hidden fade-out'}`}>
                 <VerifyEmail showErrorVerifyEmail={showErrorVerifyEmail} errorsArrayVerifyEmail={errorsArrayVerifyEmail} stepVerifyEmail={stepVerifyEmail} showConErrorVerifyEmail={showConErrorVerifyEmail} lang={lang} onSubmitVerifyEmail={onSubmitVerifyEmail} handleGoToBack={handleGoToBack} />

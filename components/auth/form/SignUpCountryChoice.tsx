@@ -6,6 +6,11 @@ import Link from "next/link";
 import Routes from "@/components/Routes";
 import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {getCountriesList} from "@/core/apis/signup";
+import {useEffect, useState} from "react";
+import {fetchData} from "@/lib/api";
+import { FlagImage } from "react-international-phone";
+import AuthSignUpFormProps from "@/components/auth/form/SignUp";
 
 
 interface SignUpCountryChoiceProps {
@@ -15,9 +20,10 @@ interface SignUpCountryChoiceProps {
     showConError: boolean,
     lang: string,
     onSubmit: any,
+    countries: { id: string; name: string; code: string; distributorId: string }[]
 }
 
-export default function SignUpCountryChoice({ showError, errorsArray, stepOne, showConError, lang, onSubmit }: SignUpCountryChoiceProps) {
+export default function SignUpCountryChoice({ showError, errorsArray, stepOne, showConError, lang, onSubmit, countries }: SignUpCountryChoiceProps) {
 
     return (
         <div className={`formContainer mx-auto max-w-lg`}>
@@ -63,112 +69,14 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
                                                                 <SelectValue  placeholder="Choisir un pays"/>
                                                             </SelectTrigger>
                                                             <SelectContent className={`bg-[#f0f0f0]`}>
-                                                                <SelectItem className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`} value="Côte d'Ivoire">
-                                                                    <div className={`inline-flex items-center space-x-2.5`}>
-                                                                        <svg className={`w-7`} viewBox="0 0 38 25">
-                                                                            <defs>
-                                                                                <clipPath id="clip-path">
-                                                                                    <rect width="38" height="25" rx="3" transform="translate(0 -0.061)" fill="#fff"/>
-                                                                                </clipPath>
-                                                                            </defs>
-                                                                            <g transform="translate(0 0.061)" clipPath="url(#clip-path)">
-                                                                                <g transform="translate(0.554 0.333)">
-                                                                                    <path d="M0,4.5H36.765V29.009H0Z" transform="translate(0 -4.5)" fill="#f0f0f0"/>
-                                                                                    <path d="M17.413,4.5H30.467V29.01H17.413Z" transform="translate(6.298 -4.5)" fill="#6da544"/>
-                                                                                    <path d="M0,4.5H13.054V29.01H0Z" transform="translate(0 -4.5)" fill="#ff9811"/>
-                                                                                </g>
-                                                                            </g>
-                                                                        </svg>
-                                                                        <span className={`mt-[2px]`}>{`Côte d'Ivoire`}</span>
-                                                                    </div>
-                                                                </SelectItem>
-                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-gray-100 cursor-pointer`} value="Bénin">
-                                                                    <div className={`inline-flex items-center space-x-2.5`}>
-                                                                        <svg className={`w-7`} viewBox="0 0 38 24">
-                                                                            <defs>
-                                                                                <clipPath id="clip-path">
-                                                                                    <rect width="38" height="24" rx="3" transform="translate(0 0)" fill="#fff"/>
-                                                                                </clipPath>
-                                                                            </defs>
-                                                                            <g transform="translate(0 0)" clipPath="url(#clip-path)">
-                                                                                <g transform="translate(0.554 -0.157)">
-                                                                                    <path d="M0,4.5H36.766V29.01H0Z" transform="translate(0 -4.5)" fill="#6da544"/>
-                                                                                    <path d="M10.37,4.5H33.015V16.755H10.37Z" transform="translate(3.751 -4.5)" fill="#ffda44"/>
-                                                                                    <path d="M10.37,13.5H33.015V25.755H10.37Z" transform="translate(3.751 -1.245)" fill="#d80027"/>
-                                                                                </g>
-                                                                            </g>
-                                                                        </svg>
-                                                                        <span className={`mt-[2px]`}>{`Bénin`}</span>
-                                                                    </div>
-                                                                </SelectItem>
-                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-gray-100 cursor-pointer`} value="Cameroun">
-                                                                    <div
-                                                                        className={`inline-flex items-center space-x-2.5`}>
-                                                                        <svg className={`w-7`} viewBox="0 0 38 24">
-                                                                            <defs>
-                                                                                <clipPath id="clip-path">
-                                                                                    <rect width="38" height="24" rx="3"
-                                                                                          transform="translate(0 -0.03)"
-                                                                                          fill="#fff"/>
-                                                                                </clipPath>
-                                                                            </defs>
-                                                                            <g transform="translate(0 0.03)"
-                                                                               clipPath="url(#clip-path)">
-                                                                                <g transform="translate(0.554 0.088)">
-                                                                                    <path d="M0,4.5H36.765V29.01H0Z"
-                                                                                          transform="translate(0 -4.5)"
-                                                                                          fill="#d80027"/>
-                                                                                    <path d="M0,4.5H12.255V29.01H0Z"
-                                                                                          transform="translate(0 -4.5)"
-                                                                                          fill="#496e2d"/>
-                                                                                    <path
-                                                                                        d="M20.58,4.5H32.835V29.01H20.58Zm-6.128,8.845.846,2.6h2.739l-2.216,1.61.846,2.605-2.216-1.61-2.216,1.61.847-2.605-2.216-1.61h2.739Z"
-                                                                                        transform="translate(3.93 -4.5)"
-                                                                                        fill="#ffda44"/>
-                                                                                </g>
-                                                                            </g>
-                                                                        </svg>
-                                                                        <span className={`mt-[2px]`}>{`Cameroun`}</span>
-                                                                    </div>
-                                                                </SelectItem>
-                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-gray-100 cursor-pointer`} value="Guinée">
-                                                                    <div className={`inline-flex items-center space-x-2.5`}>
-                                                                        <svg className={`w-7`} viewBox="0 0 38 24">
-                                                                            <defs>
-                                                                                <clipPath id="clip-path">
-                                                                                    <rect width="38" height="24" rx="3" transform="translate(0 -0.242)" fill="#fff"/>
-                                                                                </clipPath>
-                                                                            </defs>
-                                                                            <g transform="translate(0 0.242)" clipPath="url(#clip-path)">
-                                                                                <g transform="translate(0.554 -0.573)">
-                                                                                    <path id="Tracé_36" data-name="Tracé 36" d="M0,4.5H36.765V29.009H0Z" transform="translate(0 -4.5)" fill="#ffda44"/>
-                                                                                    <path id="Tracé_37" data-name="Tracé 37" d="M17.413,4.5H30.467V29.01H17.413Z" transform="translate(6.298 -4.5)" fill="#6da544"/>
-                                                                                    <path id="Tracé_38" data-name="Tracé 38" d="M0,4.5H13.054V29.01H0Z" transform="translate(0 -4.5)" fill="#d80027"/>
-                                                                                </g>
-                                                                            </g>
-                                                                        </svg>
-                                                                        <span className={`mt-[2px]`}>{`Guinée`}</span>
-                                                                    </div>
-                                                                </SelectItem>
-                                                                <SelectItem className={`h-[3.1rem] font-light focus:bg-gray-100 cursor-pointer`} value="Sénégal">
-                                                                    <div className={`inline-flex items-center space-x-2.5`}>
-                                                                        <svg className={`w-7`} viewBox="0 0 38 24">
-                                                                            <defs>
-                                                                                <clipPath id="clip-path">
-                                                                                    <rect width="38" height="24" rx="3" transform="translate(0 -0.273)" fill="#fff"/>
-                                                                                </clipPath>
-                                                                            </defs>
-                                                                            <g transform="translate(0 0.273)" clipPath="url(#clip-path)">
-                                                                                <g transform="translate(0.554 -0.328)">
-                                                                                    <path d="M0,4.5H36.765V29.009H0Z" transform="translate(0 -4.5)" fill="#ffda44"/>
-                                                                                    <path d="M17.413,4.5H30.467V29.01H17.413Z" transform="translate(6.298 -4.5)" fill="#d80027"/>
-                                                                                    <path d="M0,4.5H13.054V29.01H0Zm18.382,7.992,1.058,3.256h3.424l-2.77,2.013,1.058,3.256L18.382,19l-2.77,2.012,1.058-3.256L13.9,15.748h3.424Z" transform="translate(0 -4.5)" fill="#496e2d"/>
-                                                                                </g>
-                                                                            </g>
-                                                                        </svg>
-                                                                        <span className={`mt-[2px]`}> {`Sénégal`}</span>
-                                                                    </div>
-                                                                </SelectItem>
+                                                                {countries.map((country, index) =>
+                                                                    <SelectItem key={index} className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`} value={country.id}>
+                                                                        <div className={`inline-flex items-center space-x-2.5`}>
+                                                                            <FlagImage className={`w-7`} iso2={country.code.toLowerCase()} />
+                                                                            <span className={`mt-[2px]`}>{country.name}</span>
+                                                                        </div>
+                                                                    </SelectItem>
+                                                                )}
                                                             </SelectContent>
                                                         </Select>
                                                     </div>
