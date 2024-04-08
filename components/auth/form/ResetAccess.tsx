@@ -91,15 +91,11 @@ export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) 
                 className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
             });
 
-            // const userInfo = decodeToken(userToken) as IUser;
-
             removeCookie('username-token');
             removeCookie('username');
 
             await signIn("merchant", {
-                // username: userInfo.login,
-                username: userLogin,
-                password: values.password,
+                accessToken: resetPasswordRes.data,
                 redirect: true
             });
         }
@@ -117,9 +113,9 @@ export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) 
                         </svg>
                     </div>
                     <div>
-                        {showConError && (
-                            <p className={`text-xs text-[#e00000]`}>{`Le double de la clé d’accès choisi ne correspond pas, réessayez`}</p>
-                        )}
+                        {/*{showConError && (*/}
+                        {/*    <p className={`text-xs text-[#e00000]`}>{`Le double de la clé d’accès choisi ne correspond pas, réessayez`}</p>*/}
+                        {/*)}*/}
                         {errorsArray.length > 0 && (
                             <div className={`text-center`}>
                                 <ul className={`text-xs text-[#e00000]`}>

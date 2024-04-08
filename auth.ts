@@ -13,9 +13,18 @@ const config = {
             type: "credentials",
             credentials: {},
             async authorize(credentials, req) {
-                const {username, password} = credentials as {
+                const {username, password, accessToken} = credentials as {
                     username: string;
                     password: string;
+                    accessToken: string;
+                }
+
+                if (accessToken) {
+                    const user = decodeToken(accessToken) as IUser;
+                    user.accessToken = accessToken;
+                    console.log('- l_user direct', user);
+
+                    return user as any;
                 }
 
                 const data = {
@@ -23,8 +32,8 @@ const config = {
                     'password': password,
                 };
 
-                // const authResponse = await fetchData('/user-accounts/login', 'POST', data);
-                const authResponse = await fetchData('/user-accounts/login-v2', 'POST', data);
+                const authResponse = await fetchData('/user-accounts/login', 'POST', data);
+                console.log(authResponse);
 
                 if (!authResponse.success) {
                     throw new AuthError(authResponse.message);
