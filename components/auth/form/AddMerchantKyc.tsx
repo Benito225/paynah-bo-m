@@ -481,20 +481,20 @@ export default function AddMerchantKyc({ lang }: AddMerchantKycProps) {
             {/*<div className={`duration-200 ${step == 4 ? 'block fade-in' : 'hidden fade-out'}`}>*/}
             {/*    <SignUpCreateAccess showErrorCreateAccess={showErrorCreateAccess} errorsArrayCreateAccess={errorsArrayCreateAccess} stepFour={stepFour} showConErrorCreateAccess={showConErrorCreateAccess} lang={lang} onSubmitStepFour={onSubmitStepFour} handleGoToBack={handleGoToBack} />*/}
             {/*</div>*/}
-            <div className={`duration-200 ${step == 5 ? 'block fade-in' : 'hidden fade-out'}`}>
-                <SignUpProfileChoice showErrorTwo={showErrorTwo} errorsArrayTwo={errorsArrayTwo} stepTwo={stepTwo} showConErrorTwo={showConErrorTwo} lang={lang} onSubmitTwo={onSubmitTwo} handleGoToBack={handleGoToBack} />
-            </div>
-            <div className={`duration-200 ${step == 6 ? 'block fade-in' : 'hidden fade-out'}`}>
-                {stepThreeForm == "individual" &&
-                  <SignUpIndividualProfile showErrorIndividualProfile={showErrorIndividualProfile} errorsArrayIndividualProfile={errorsArrayThreeIndividualProfile} stepThreeIndividualProfile={stepThreeIndividualProfile} showConErrorIndividualProfile={showConErrorIndividualProfile} lang={lang} onSubmitThreeIndividualProfile={onSubmitThreeIndividualProfile} handleGoToBack={handleGoToBack} />
-                }
-                {stepThreeForm == "company" &&
-                    <SignUpCompanyProfile showErrorCompanyProfile={showErrorCompanyProfile} errorsArrayCompanyProfile={errorsArrayThreeCompanyProfile} stepThreeCompanyProfile={stepThreeCompanyProfile} showConErrorCompanyProfile={showConErrorCompanyProfile} lang={lang} onSubmitThreeCompanyProfile={onSubmitThreeCompanyProfile} handleGoToBack={handleGoToBack} />
-                }
-                {stepThreeForm == "ong" &&
-                    <SignUpONGProfile showErrorONGProfile={showErrorONGProfile} errorsArrayONGProfile={errorsArrayThreeONGProfile} stepThreeONGProfile={stepThreeONGProfile} showConErrorONGProfile={showConErrorONGProfile} lang={lang} onSubmitThreeONGProfile={onSubmitThreeONGProfile} handleGoToBack={handleGoToBack} />
-                }
-            </div>
+            {/*<div className={`duration-200 ${step == 5 ? 'block fade-in' : 'hidden fade-out'}`}>*/}
+            {/*    <SignUpProfileChoice showErrorTwo={showErrorTwo} errorsArrayTwo={errorsArrayTwo} stepTwo={stepTwo} showConErrorTwo={showConErrorTwo} lang={lang} onSubmitTwo={onSubmitTwo} handleGoToBack={handleGoToBack} />*/}
+            {/*</div>*/}
+            {/*<div className={`duration-200 ${step == 6 ? 'block fade-in' : 'hidden fade-out'}`}>*/}
+            {/*    {stepThreeForm == "individual" &&*/}
+            {/*      <SignUpIndividualProfile showErrorIndividualProfile={showErrorIndividualProfile} errorsArrayIndividualProfile={errorsArrayThreeIndividualProfile} stepThreeIndividualProfile={stepThreeIndividualProfile} showConErrorIndividualProfile={showConErrorIndividualProfile} lang={lang} onSubmitThreeIndividualProfile={onSubmitThreeIndividualProfile} handleGoToBack={handleGoToBack} />*/}
+            {/*    }*/}
+            {/*    {stepThreeForm == "company" &&*/}
+            {/*        <SignUpCompanyProfile showErrorCompanyProfile={showErrorCompanyProfile} errorsArrayCompanyProfile={errorsArrayThreeCompanyProfile} stepThreeCompanyProfile={stepThreeCompanyProfile} showConErrorCompanyProfile={showConErrorCompanyProfile} lang={lang} onSubmitThreeCompanyProfile={onSubmitThreeCompanyProfile} handleGoToBack={handleGoToBack} />*/}
+            {/*    }*/}
+            {/*    {stepThreeForm == "ong" &&*/}
+            {/*        <SignUpONGProfile showErrorONGProfile={showErrorONGProfile} errorsArrayONGProfile={errorsArrayThreeONGProfile} stepThreeONGProfile={stepThreeONGProfile} showConErrorONGProfile={showConErrorONGProfile} lang={lang} onSubmitThreeONGProfile={onSubmitThreeONGProfile} handleGoToBack={handleGoToBack} />*/}
+            {/*    }*/}
+            {/*</div>*/}
             <div className={`duration-200 ${step == 7 ? 'block fade-in' : 'hidden fade-out'}`}>
                 <SignUpFilesInfo lang={lang} handleGoToBack={handleGoToBack} handleGoToNext={handleGoToNext} />
             </div>
