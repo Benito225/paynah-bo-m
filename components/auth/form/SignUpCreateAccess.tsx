@@ -16,10 +16,11 @@ interface SignUpCreateAccessProps {
     showConErrorCreateAccess: boolean,
     lang: string,
     onSubmitStepFour: any,
-    handleGoToBack: any
+    handleGoToBack: any,
+    isLoading: boolean
 }
 
-export default function SignUpCreateAccess({ showErrorCreateAccess, errorsArrayCreateAccess, stepFour, showConErrorCreateAccess, lang, onSubmitStepFour, handleGoToBack }: SignUpCreateAccessProps) {
+export default function SignUpCreateAccess({ showErrorCreateAccess, errorsArrayCreateAccess, stepFour, showConErrorCreateAccess, lang, onSubmitStepFour, handleGoToBack, isLoading }: SignUpCreateAccessProps) {
 
     const [showPassword, setShowPassword] = useState(false);
     const handleTogglePassword = () => {
@@ -44,9 +45,9 @@ export default function SignUpCreateAccess({ showErrorCreateAccess, errorsArrayC
                                 </svg>
                             </div>
                             <div>
-                                {showConErrorCreateAccess && (
-                                    <p className={`text-xs text-[#e00000]`}>{`Le double de la clé d’accès choisi ne correspond pas, réessayez`}</p>
-                                )}
+                                {/*{showConErrorCreateAccess && (*/}
+                                {/*    <p className={`text-xs text-[#e00000]`}>{`Le double de la clé d’accès choisi ne correspond pas, réessayez`}</p>*/}
+                                {/*)}*/}
                                 {errorsArrayCreateAccess.length > 0 && (
                                     <div className={`text-center`}>
                                         <ul className={`text-xs text-[#e00000]`}>
@@ -74,7 +75,7 @@ export default function SignUpCreateAccess({ showErrorCreateAccess, errorsArrayC
                                                                 <Input className={`font-light text-sm ${showConErrorCreateAccess && "border-[#e95d5d]"}`} type={showPassword ? 'text' : 'password'}
                                                                        placeholder="Clé d'accès" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                }} />
+                                                                }} disabled={isLoading}/>
                                                                 <svg onClick={handleTogglePassword} className={`h-6 w-6 cursor-pointer ${showPassword ? 'fill-[#414141]' : 'fill-[#c1c1c1]'}  absolute top-4 right-4`} viewBox="0 0 28.065 19.104">
                                                                     <g transform="translate(0.325) rotate(1)">
                                                                         <path d="M0,0H18.622V18.622H0Z" transform="translate(0.539)" fill="none"/>
@@ -101,7 +102,7 @@ export default function SignUpCreateAccess({ showErrorCreateAccess, errorsArrayC
                                                                 <Input type={`password`} className={`font-light text-sm ${showConErrorCreateAccess && "border-[#e95d5d]"}`}
                                                                        placeholder="Confirmation clé d'accès" {...field} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                }} />
+                                                                }} disabled={isLoading}/>
                                                             </div>
                                                         </FormControl>
                                                     </FormItem>
@@ -118,10 +119,10 @@ export default function SignUpCreateAccess({ showErrorCreateAccess, errorsArrayC
                                     {/*    </Button>*/}
                                     {/*</div>*/}
                                     <div className={`flex flex-col md:flex-row justify-center items-center space-y-1 md:space-x-5 mt-[4rem] md:mt-[5rem]`}>
-                                        <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`}>
+                                        <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`} disabled={isLoading}>
                                             Retour
                                         </Button>
-                                        <Button type={`submit`} className={`!mb-1 w-full md:w-[10rem] h-[2.8rem]`}>
+                                        <Button type={`submit`} className={`!mb-1 w-full md:w-[10rem] h-[2.8rem]`} disabled={isLoading}>
                                             Valider
                                         </Button>
                                     </div>

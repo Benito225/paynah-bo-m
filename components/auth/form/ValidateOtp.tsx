@@ -133,10 +133,10 @@ export default function AuthValidateOtpForm({ lang }: AuthValidateOtpFormProps) 
             username: username
         };
 
-        const sendOtpRes = await sendOtp(values);
         const toastLoading = toast.loading('Action en cours de traitement...', {
             className: 'text-sm font-medium !max-w-xl !shadow-2xl border border-[#ededed]'
         });
+        const sendOtpRes = await sendOtp(values);
 
         if (!sendOtpRes.success) {
             setLoading(false);

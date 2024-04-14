@@ -11,7 +11,9 @@ import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/compon
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import DashboardMainMenuFooter from "@/components/dashboard/MainMenu";
 import DashboardTopMenu from "@/components/dashboard/TopMenu";
-import {usePathname} from "next/navigation";
+import {redirect, usePathname} from "next/navigation";
+import {IUser} from "@/core/interfaces/user";
+import {auth} from "@/auth";
 
 const fontPaynah = Poppins({
   weight: ['100', '300', '400', '500', '600', '800'],
@@ -40,30 +42,40 @@ export async function generateStaticParams() {
   return i18n.locales.map(locale => ({ lang: locale }))
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children, params
 }: Readonly<{
   children: React.ReactNode;
   params: { lang: Locale };
 }>) {
-  return (
-      <AuthProvider>
-        <html lang={params.lang}>
-        <body className={`${fontPaynah.className} bg-[#f4f4f7]`}>
-        <NavigationLoadingProviders>
-            <div className={`min-h-screen`}>
-                <div className={`flex flex-col min-h-screen pb-[6.6rem]`}>
-                    <DashboardTopMenu lang={params.lang} />
-                    <div className={`mt-3 flex-grow`}>
-                        {children}
+    const session  = await auth();
+
+    if (session && session.user) {
+        const merchant = session.user as IUser;
+
+        if (merchant.merchantsIds && merchant.merchantsIds.length == 0) {
+            return redirect('/onboarding/add-merchant');
+        }
+    }
+
+    return (
+        <AuthProvider>
+            <html lang={params.lang}>
+            <body className={`${fontPaynah.className} bg-[#f4f4f7]`}>
+            <NavigationLoadingProviders>
+                <div className={`min-h-screen`}>
+                    <div className={`flex flex-col min-h-screen pb-[6.6rem]`}>
+                        <DashboardTopMenu lang={params.lang}/>
+                        <div className={`mt-3 flex-grow`}>
+                            {children}
+                        </div>
                     </div>
+                    <DashboardMainMenuFooter lang={params.lang}/>
                 </div>
-                <DashboardMainMenuFooter lang={params.lang}/>
-            </div>
-          <Toaster/>
-        </NavigationLoadingProviders>
-        </body>
-        </html>
-      </AuthProvider>
-  );
+                <Toaster/>
+            </NavigationLoadingProviders>
+            </body>
+            </html>
+        </AuthProvider>
+    );
 }

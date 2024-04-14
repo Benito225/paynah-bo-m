@@ -7,6 +7,7 @@ import {UseFormReturn} from "react-hook-form";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {REGEXP_ONLY_DIGITS_AND_CHARS} from "input-otp";
+import reSendOtp from "@/components/auth/form/SignUp";
 interface ValidateEmailProps {
     showErrorValidateEmail: boolean,
     errorsArrayValidateEmail: any[],
@@ -16,10 +17,12 @@ interface ValidateEmailProps {
     onSubmitValidateEmail: any,
     handleGoToBack: () => void,
     stepVerifyEmail: any,
-    step: number
+    step: number,
+    isLoading: boolean,
+    reSendOtp: () => Promise<undefined | string>
 }
 
-export default function ValidateEmail({showErrorValidateEmail, errorsArrayValidateEmail, stepValidateEmail, showConErrorValidateEmail, lang, onSubmitValidateEmail, handleGoToBack, stepVerifyEmail, step}: ValidateEmailProps) {
+export default function ValidateEmail({ showErrorValidateEmail, errorsArrayValidateEmail, stepValidateEmail, showConErrorValidateEmail, lang, onSubmitValidateEmail, handleGoToBack, stepVerifyEmail, step, isLoading, reSendOtp }: ValidateEmailProps) {
     const [countDown, setCountDown] =  useState(300);
     const [clickTriggered, setClickTriggered] = useState(false);
     const [alreadyClickTriggered, setAlreadyClickTriggered] = useState(false);
@@ -111,7 +114,7 @@ export default function ValidateEmail({showErrorValidateEmail, errorsArrayValida
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS} {...field}>
+                                                <InputOTP maxLength={6} disabled={isLoading} pattern={REGEXP_ONLY_DIGITS_AND_CHARS} {...field}>
                                                     <InputOTPGroup>
                                                         <InputOTPSlot className={`bg-white border-[#f0f0f0] font-medium !rounded-xl h-[2.9rem] w-[2.9rem] md:h-[3.3rem] md:w-[3.3rem] text-lg text-center md:text-xl ${showConErrorValidateEmail && "border-[#e95d5d]"}`} index={0} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
@@ -155,14 +158,14 @@ export default function ValidateEmail({showErrorValidateEmail, errorsArrayValida
                 <div className={`font-semibold text-center mb-1.5`}>
                     {formatCountDown(countDown)}
                 </div>
-                <p className={`text-sm w-[80%] mx-auto md:text-base text-center font-light`}>{`Vous n'avez rien reçu ? Vérifiez vos spams ou`} <a className={`duration-200 hover:font-semibold font-medium`} href="#">Renvoyer le code</a> </p>
+                <p className={`text-sm w-[80%] mx-auto md:text-base text-center font-light`}>{`Vous n'avez rien reçu ? Vérifiez vos spams ou`} <Link onClick={reSendOtp} className={`duration-200 hover:font-semibold font-medium  ${isLoading && 'opacity-50 cursor-not-allowed'}`} href="#">Renvoyer le code</Link> </p>
 
                 <div className={`mt-[7rem] md:mt-[10rem]`}>
                     <div className={`flex flex-col md:flex-row justify-center items-center space-y-1 md:space-x-5`}>
-                        <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`}>
+                        <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`} disabled={isLoading}>
                             Retour
                         </Button>
-                        <Button type={`button`} onClick={() =>  formRef.current?.click()} className={`!mb-1 w-full md:w-[9rem] h-[2.8rem]`}>
+                        <Button type={`button`} onClick={() =>  formRef.current?.click()} className={`!mb-1 w-full md:w-[9rem] h-[2.8rem]`} disabled={isLoading}>
                             Continuer
                         </Button>
                     </div>

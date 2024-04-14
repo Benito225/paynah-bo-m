@@ -19,17 +19,18 @@ interface SignUpONGProfileFormProps {
     showConErrorONGProfile: boolean,
     lang: string,
     onSubmitThreeONGProfile: any,
-    handleGoToBack: () => void
+    handleGoToBack: () => void,
+    isLoading: boolean,
+    legalFormsData: { id: string; name: string; code: string; skaleetId: string; sk_document: any[]; company_type: number }[]
 }
 
-export default function SignUpONGProfile({showErrorONGProfile, errorsArrayONGProfile, stepThreeONGProfile, showConErrorONGProfile, lang, onSubmitThreeONGProfile, handleGoToBack}: SignUpONGProfileFormProps) {
-    const positions = [
-        {key: 'Association', value: 'Association'},
-        {key: 'Syndicat', value: 'Syndicat'},
-        {key: 'Fédération', value: 'Fédération'},
-        {key: 'Institution religieuse', value: 'Institution religieuse'},
-        {key: 'Autre', value: 'Autre'},
-    ];
+export default function SignUpONGProfile({ showErrorONGProfile, errorsArrayONGProfile, stepThreeONGProfile, showConErrorONGProfile, lang, onSubmitThreeONGProfile, handleGoToBack, isLoading, legalFormsData }: SignUpONGProfileFormProps) {
+    const positions = legalFormsData.map(element => {
+        return {
+            key: element.id,
+            value: element.name + ' (' + element.code + ')'
+        };
+    });
 
     const occupations = [
         {key: 'Président', value: 'Président'},
@@ -72,7 +73,7 @@ export default function SignUpONGProfile({showErrorONGProfile, errorsArrayONGPro
                                             <FormItem>
                                                 <FormControl>
                                                     <div>
-                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                                                             <SelectTrigger className={`w-full ${stepThreeONGProfile.formState.errors.country?.message && "!border-[#e95d5d]"} px-5 font-light text-sm ${showConErrorONGProfile && "border-[#e95d5d]"}`} style={{
                                                                 backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                             }}>
@@ -101,9 +102,9 @@ export default function SignUpONGProfile({showErrorONGProfile, errorsArrayONGPro
                                                 <FormControl>
                                                     <div>
                                                         <Input type={`text`} className={`font-light text-sm ${showConErrorONGProfile && "border-[#e95d5d]"}`}
-                                                               placeholder="Dénomination" {...field} style={{
+                                                               placeholder="Nom du compte" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                        }} />
+                                                        }} disabled={isLoading}/>
                                                     </div>
                                                 </FormControl>
                                             </FormItem>
@@ -118,11 +119,11 @@ export default function SignUpONGProfile({showErrorONGProfile, errorsArrayONGPro
                                             <FormItem>
                                                 <FormControl>
                                                     <div>
-                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                                                             <SelectTrigger className={`w-full ${stepThreeONGProfile.formState.errors.country?.message && "!border-[#e95d5d]"} px-5 font-light text-sm ${showConErrorONGProfile && "border-[#e95d5d]"}`} style={{
                                                                 backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                             }}>
-                                                                <SelectValue  placeholder="Votre fonction"/>
+                                                                <SelectValue  placeholder="Secteur d'activité"/>
                                                             </SelectTrigger>
                                                             <SelectContent className={`bg-[#f0f0f0]`}>
                                                                 {occupations.map((accupation, index) =>
@@ -149,7 +150,7 @@ export default function SignUpONGProfile({showErrorONGProfile, errorsArrayONGPro
                                                         <Input type={`text`} className={`font-light text-sm ${showConErrorONGProfile && "border-[#e95d5d]"}`}
                                                                placeholder="Votre nom" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                        }} />
+                                                        }} disabled={isLoading}/>
                                                     </div>
                                                 </FormControl>
                                             </FormItem>
@@ -167,7 +168,7 @@ export default function SignUpONGProfile({showErrorONGProfile, errorsArrayONGPro
                                                         <Input type={`text`} className={`font-light text-sm ${showConErrorONGProfile && "border-[#e95d5d]"}`}
                                                                placeholder="Votre prénoms" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                        }} />
+                                                        }} disabled={isLoading}/>
                                                     </div>
                                                 </FormControl>
                                             </FormItem>
@@ -187,7 +188,7 @@ export default function SignUpONGProfile({showErrorONGProfile, errorsArrayONGPro
                                                         style={
                                                             {
                                                                 '--react-international-phone-text-color': '#000',
-                                                                '--react-international-phone-border-color': '#f0f0f0',
+                                                                '--react-international-phone-border-color': showConErrorONGProfile ? '#e95d5d' : '#f0f0f0',
                                                                 '--react-international-phone-height': '3.3rem',
                                                                 '--react-international-phone-font-size': '14px',
                                                                 '--react-international-phone-border-radius': '0.75rem',
@@ -195,6 +196,7 @@ export default function SignUpONGProfile({showErrorONGProfile, errorsArrayONGPro
                                                         }
                                                         defaultCountry="ci"
                                                         placeholder="Numéro de téléphone"
+                                                        disabled={isLoading}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -221,10 +223,10 @@ export default function SignUpONGProfile({showErrorONGProfile, errorsArrayONGPro
                                 {/*</div>*/}
                             </div>
                             <div className={`flex flex-col md:flex-row justify-center items-center space-y-1 md:space-x-5 mt-[3.5rem] md:mt-[5rem]`}>
-                                <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`}>
+                                <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`} disabled={isLoading}>
                                     Retour
                                 </Button>
-                                <Button type={`submit`} className={`!mb-1 w-full md:w-[9rem] h-[2.8rem]`}>
+                                <Button type={`submit`} className={`!mb-1 w-full md:w-[9rem] h-[2.8rem]`} disabled={isLoading}>
                                     Continuer
                                 </Button>
                             </div>

@@ -19,16 +19,18 @@ interface SignUpIndividualProfileFormProps {
     showConErrorIndividualProfile: boolean,
     lang: string,
     onSubmitThreeIndividualProfile: any,
-    handleGoToBack: () => void
+    handleGoToBack: () => void,
+    isLoading: boolean,
+    legalFormsData: { id: string; name: string; code: string; skaleetId: string; sk_document: any[]; company_type: number }[]
 }
 
-export default function SignUpIndividualProfile({showErrorIndividualProfile, errorsArrayIndividualProfile, stepThreeIndividualProfile, showConErrorIndividualProfile, lang, onSubmitThreeIndividualProfile, handleGoToBack}: SignUpIndividualProfileFormProps) {
-    const positions = [
-        {key: 'Entreprise individuelle', value: 'Entreprise individuelle'},
-        {key: 'Consultant', value: 'Consultant'},
-        {key: 'Commerçant', value: 'Commerçant'},
-        {key: 'Entrepreneur', value: 'Entrepreneur'},
-    ];
+export default function SignUpIndividualProfile({ showErrorIndividualProfile, errorsArrayIndividualProfile, stepThreeIndividualProfile, showConErrorIndividualProfile, lang, onSubmitThreeIndividualProfile, handleGoToBack, isLoading, legalFormsData }: SignUpIndividualProfileFormProps) {
+    const positions = legalFormsData.map(element => {
+        return {
+            key: element.id,
+            value: element.name + ' (' + element.code + ')'
+        };
+    });
 
     const activitySectors = [
         {key: 'Informatique', value: 'Informatique'},
@@ -69,7 +71,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                             <FormItem>
                                                 <FormControl>
                                                     <div>
-                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                                                             <SelectTrigger className={`w-full ${stepThreeIndividualProfile.formState.errors.country?.message && "!border-[#e95d5d]"} px-5 font-light text-sm ${showConErrorIndividualProfile && "border-[#e95d5d]"}`} style={{
                                                                 backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                             }}>
@@ -100,7 +102,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                                         <Input type={`text`} className={`font-light text-sm ${showConErrorIndividualProfile && "border-[#e95d5d]"}`}
                                                                placeholder="Nom du compte" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                        }} />
+                                                        }} disabled={isLoading} />
                                                     </div>
                                                 </FormControl>
                                             </FormItem>
@@ -115,7 +117,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                             <FormItem>
                                                 <FormControl>
                                                     <div>
-                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                                                             <SelectTrigger className={`w-full ${stepThreeIndividualProfile.formState.errors.country?.message && "!border-[#e95d5d]"} px-5 font-light text-sm ${showConErrorIndividualProfile && "border-[#e95d5d]"}`} style={{
                                                                 backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                             }}>
@@ -146,7 +148,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                                         <Input type={`text`} className={`font-light text-sm ${showConErrorIndividualProfile && "border-[#e95d5d]"}`}
                                                                placeholder="Votre nom" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                        }} />
+                                                        }} disabled={isLoading}/>
                                                     </div>
                                                 </FormControl>
                                             </FormItem>
@@ -164,7 +166,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                                         <Input type={`text`} className={`font-light text-sm ${showConErrorIndividualProfile && "border-[#e95d5d]"}`}
                                                                placeholder="Votre prénoms" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                        }} />
+                                                        }} disabled={isLoading}/>
                                                     </div>
                                                 </FormControl>
                                             </FormItem>
@@ -184,7 +186,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                                         style={
                                                             {
                                                                 '--react-international-phone-text-color': '#000',
-                                                                '--react-international-phone-border-color': '#f0f0f0',
+                                                                '--react-international-phone-border-color': showConErrorIndividualProfile ? '#e95d5d' : '#f0f0f0',
                                                                 '--react-international-phone-height': '3.3rem',
                                                                 '--react-international-phone-font-size': '14px',
                                                                 '--react-international-phone-border-radius': '0.75rem',
@@ -192,6 +194,7 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                                         }
                                                         defaultCountry="ci"
                                                         placeholder="Numéro de téléphone"
+                                                        disabled={isLoading}
                                                     />
                                                 </FormControl>
                                             </FormItem>
@@ -216,44 +219,44 @@ export default function SignUpIndividualProfile({showErrorIndividualProfile, err
                                 {/*        )}*/}
                                 {/*    />*/}
                                 {/*</div>*/}
-                                <FormField
-                                    control={stepThreeIndividualProfile.control}
-                                    name="companyStatus"
-                                    render={({ field }) => (
-                                        <FormItem className="col-span-2">
-                                            <FormControl>
-                                                <RadioGroup
-                                                    onValueChange={field.onChange}
-                                                    defaultValue={field.value}
-                                                    className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mt-3"
-                                                >
-                                                    <FormItem className="inline-flex items-start space-x-3 space-y-0">
-                                                        <FormControl>
-                                                            <RadioGroupItem className={`mt-1`} value="new-company" />
-                                                        </FormControl>
-                                                        <FormLabel className="text-xs font-normal">
-                                                            Entreprise naissante (le client teste ses idées avec des clients et prépare la constitution de sa société)
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                    <FormItem className="inline-flex items-start space-x-3 space-y-0">
-                                                        <FormControl>
-                                                            <RadioGroupItem className={`mt-1`} value="existing-company" />
-                                                        </FormControl>
-                                                        <FormLabel className="text-xs font-normal">
-                                                            Entreprise existante (le client a déjà créé son entreprise et en a ses documents)
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                </RadioGroup>
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
+                                {/*<FormField*/}
+                                {/*    control={stepThreeIndividualProfile.control}*/}
+                                {/*    name="companyStatus"*/}
+                                {/*    render={({ field }) => (*/}
+                                {/*        <FormItem className="col-span-2">*/}
+                                {/*            <FormControl>*/}
+                                {/*                <RadioGroup*/}
+                                {/*                    onValueChange={field.onChange}*/}
+                                {/*                    defaultValue={field.value}*/}
+                                {/*                    className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mt-3"*/}
+                                {/*                >*/}
+                                {/*                    <FormItem className="inline-flex items-start space-x-3 space-y-0">*/}
+                                {/*                        <FormControl>*/}
+                                {/*                            <RadioGroupItem className={`mt-1`} value="new-company" />*/}
+                                {/*                        </FormControl>*/}
+                                {/*                        <FormLabel className="text-xs font-normal">*/}
+                                {/*                            Entreprise naissante (le client teste ses idées avec des clients et prépare la constitution de sa société)*/}
+                                {/*                        </FormLabel>*/}
+                                {/*                    </FormItem>*/}
+                                {/*                    <FormItem className="inline-flex items-start space-x-3 space-y-0">*/}
+                                {/*                        <FormControl>*/}
+                                {/*                            <RadioGroupItem className={`mt-1`} value="existing-company" />*/}
+                                {/*                        </FormControl>*/}
+                                {/*                        <FormLabel className="text-xs font-normal">*/}
+                                {/*                            Entreprise existante (le client a déjà créé son entreprise et en a ses documents)*/}
+                                {/*                        </FormLabel>*/}
+                                {/*                    </FormItem>*/}
+                                {/*                </RadioGroup>*/}
+                                {/*            </FormControl>*/}
+                                {/*        </FormItem>*/}
+                                {/*    )}*/}
+                                {/*/>*/}
                             </div>
                             <div className={`flex flex-col md:flex-row justify-center items-center space-y-1 md:space-x-5 mt-[4rem] md:mt-[5rem]`}>
-                                <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`}>
+                                <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`} disabled={isLoading}>
                                     Retour
                                 </Button>
-                                <Button type={`submit`} className={`!mb-1 w-full md:w-[9rem] h-[2.8rem]`}>
+                                <Button type={`submit`} className={`!mb-1 w-full md:w-[9rem] h-[2.8rem]`} disabled={isLoading}>
                                     Continuer
                                 </Button>
                             </div>

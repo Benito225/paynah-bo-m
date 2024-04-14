@@ -4,6 +4,7 @@ export interface IUser {
     login?: string;
     firstname?: string;
     lastname?: string;
+    country?: string;
     isFirstConnection?: boolean;
     codeOTP?: string;
     merchantsIds?: [];

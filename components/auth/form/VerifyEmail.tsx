@@ -16,10 +16,11 @@ interface VerifyEmailProps {
     showConErrorVerifyEmail: boolean,
     lang: string,
     onSubmitVerifyEmail: any,
-    handleGoToBack: () => void
+    handleGoToBack: () => void,
+    isLoading: boolean
 }
 
-export default function VerifyEmail({ showErrorVerifyEmail, errorsArrayVerifyEmail, stepVerifyEmail, showConErrorVerifyEmail, lang, onSubmitVerifyEmail, handleGoToBack}: VerifyEmailProps) {
+export default function VerifyEmail({showErrorVerifyEmail, errorsArrayVerifyEmail, stepVerifyEmail, showConErrorVerifyEmail, lang, onSubmitVerifyEmail, handleGoToBack, isLoading}: VerifyEmailProps) {
 
     return (
         <div className={`formContainer mx-auto max-w-lg`}>
@@ -57,7 +58,7 @@ export default function VerifyEmail({ showErrorVerifyEmail, errorsArrayVerifyEma
                                                         <Input type={`text`} className={`font-light ${stepVerifyEmail.formState.errors.email?.message && "!border-[#e95d5d]"} text-sm ${showConErrorVerifyEmail && "border-[#e95d5d]"}`}
                                                                placeholder="Email" {...field} style={{
                                                             backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                        }} />
+                                                        }} disabled={isLoading}/>
                                                     </div>
                                                 </FormControl>
                                                 {/*<FormMessage className={`text-xs`}/>*/}
@@ -69,10 +70,10 @@ export default function VerifyEmail({ showErrorVerifyEmail, errorsArrayVerifyEma
                             <div className={`mt-[7rem] md:mt-[10rem]`}>
                                 <p className={`font-light text-sm md:text-base text-center mb-5 md:mb-5`}>En continuant, vous acceptez notre <Link className={`font-medium underline`} href={`#`}>contrat de confidatialité</Link> applicable au traitement de vos données personnelles.</p>
                                 <div className={`flex flex-col md:flex-row justify-center items-center space-y-1 md:space-x-5`}>
-                                    <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`}>
+                                    <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`} disabled={isLoading}>
                                         Retour
                                     </Button>
-                                    <Button type={`submit`} className={`!mb-1 w-full md:w-[9rem] h-[2.8rem]`}>
+                                    <Button type={`submit`} className={`!mb-1 w-full md:w-[9rem] h-[2.8rem]`} disabled={isLoading}>
                                         Continuer
                                     </Button>
                                 </div>

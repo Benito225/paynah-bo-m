@@ -16,13 +16,17 @@ interface SignUpProfileChoiceProps {
     showConErrorTwo: boolean,
     lang: string,
     onSubmitTwo: any,
-    handleGoToBack: () => void
+    handleGoToBack: () => void,
+    isLoading: boolean,
+    setProfilID: (value: (((prevState: number) => number) | number)) => void
 }
 
-export default function SignUpProfileChoice({showErrorTwo, errorsArrayTwo, stepTwo, showConErrorTwo, lang, onSubmitTwo, handleGoToBack}: SignUpProfileChoiceProps) {
+export default function SignUpProfileChoice({ showErrorTwo, errorsArrayTwo, stepTwo, showConErrorTwo, lang, onSubmitTwo, handleGoToBack, isLoading, setProfilID }: SignUpProfileChoiceProps) {
 
     async function triggerRadio(inputName: string) {
         stepTwo.setValue('profileType', inputName);
+        const pId = inputName == 'individual' ? 1 : (inputName == 'company' ? 2 : 3);
+        setProfilID(pId);
     }
 
     async function handleCadenaLock() {
@@ -143,8 +147,8 @@ export default function SignUpProfileChoice({showErrorTwo, errorsArrayTwo, stepT
                                                         <div onClick={() => triggerRadio('ong')} className={`w-full cursor-pointer ${field.value == 'ong' ? 'bg-white border border-black' : 'bg-[#f0f0f0]'} md:h-[12rem] flex items-center rounded-3xl md:rounded-[2.5rem] pt-[1rem] md:pt-8 pb-5 md:pb-9 px-4 text-center relative z-[7]`}>
                                                             <div className={`flex flex-col h-full justify-between items-center`}>
                                                                 <div>
-                                                                    <h2 className={`font-semibold text-lg mb-2 md:mb-3 leading-5`}>Professions <br /> réglementées</h2>
-                                                                    <p className={`text-xs font-light`}>Pharmacies, hôtels, ONG, Santé Publique, Partis Politiques, Maisons de jeux, Associations ...</p>
+                                                                    <h2 className={`font-semibold text-lg mb-2 md:mb-3`}>ONG</h2>
+                                                                    <p className={`text-xs font-light`}>Sociétés civiles (Associations, Syndicats), organisations à but non lucratif ...</p>
                                                                 </div>
                                                                 <FormControl className={`${field.value == 'ong' ? "bg-black border-black" : "bg-[#909090] border-[#909090]"} -mb-4 h-[1.15rem] w-[1.15rem] hidden md:block`}>
                                                                     <RadioGroupItem id={"ong"} value="ong" />

@@ -7,7 +7,7 @@ import Routes from "@/components/Routes";
 import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {getCountriesList} from "@/core/apis/signup";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {fetchData} from "@/lib/api";
 import { FlagImage } from "react-international-phone";
 import AuthSignUpFormProps from "@/components/auth/form/SignUp";
@@ -28,7 +28,8 @@ export default function SignUpCountryChoice({ showError, errorsArray, stepOne, s
     return (
         <div className={`formContainer mx-auto max-w-lg`}>
             <div className={`text-center mb-28`}>
-                <h2 className={`font-semibold text-center text-2xl md:text-3xl mb-3`}>Sélectionnez votre pays</h2>
+                <h2 className={`font-semibold text-center text-2xl md:text-3xl mb-3`}>Où est domiciliée {`l'activité`} ?</h2>
+                <p className={`text-center text-[#626262 text-sm md:text-base]`}>Les documents nécessaires pour ouvrir un compte dépendent du pays où vous exercez votre activité</p>
             </div>
             <div className={`px-4 md:px-16 mb-[8.5rem] md:mb-[10.5rem]`}>
                 <div className={`flex items-center flex-col space-y-2 mb-4`}>
