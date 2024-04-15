@@ -52,8 +52,12 @@ export async function resetPassword(values: any, token: string) {
     return resData;
 }
 
-export async function generateNewToken() {
-    const newTokenRes = await fetchData('/user-accounts/refresh-token', 'POST');
+export async function generateNewToken(refreshToken: string) {
+    const data = {
+        refreshToken: refreshToken
+    };
+
+    const newTokenRes = await fetchData('/user-accounts/refresh-token', 'POST', data);
 
     if (!newTokenRes.success) {
         throw Error('RefreshToken dont work');
