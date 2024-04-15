@@ -14,7 +14,7 @@ import {auth} from "@/auth";
 import {redirect} from "next/navigation";
 
 const fontPaynah = Poppins({
-    weight: ['100', '300', '400', '500', '600', '800'],
+    weight: ['100', '300', '400', '500', '600', '800', '900'],
     style: ['normal', 'italic'],
     subsets: ['latin'],
 });

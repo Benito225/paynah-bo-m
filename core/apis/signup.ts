@@ -32,5 +32,6 @@ export async function createPassword(values: any, token: string) {
 export async function addMerchant(data: any, merchant: IUser) {
     const resData = await fetchData('/user-accounts', 'POST', data, merchant.accessToken);
     console.log(resData);
+    console.log(merchant.accessToken);
     return resData;
 }

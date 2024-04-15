@@ -37,6 +37,8 @@ export async function validateOtp(values: any, username: string) {
 
 export async function resetPassword(values: any, token: string) {
     const user = decodeToken(token) as IUser;
+    console.log('resetP-user-dec', user);
+    console.log(token);
 
     const data = {
         'token': token,
@@ -44,5 +46,18 @@ export async function resetPassword(values: any, token: string) {
         'id': user?.id
     };
 
-    return await fetchData('/user-accounts/reset-password', 'POST', data);
+    const resData = await fetchData('/user-accounts/reset-password', 'POST', data);
+    console.log(resData);
+
+    return resData;
+}
+
+export async function generateNewToken() {
+    const newTokenRes = await fetchData('/user-accounts/refresh-token', 'POST');
+
+    if (!newTokenRes.success) {
+        throw Error('RefreshToken dont work');
+    }
+
+    return newTokenRes.data;
 }

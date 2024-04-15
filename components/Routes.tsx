@@ -6,6 +6,8 @@ const Routes = {
         validateAccount: '/{lang}/auth/validate-account',
         resetAccess: '/{lang}/auth/reset-access',
         signUp: '/{lang}/auth/sign-up',
+        onboardingKyc: '/{lang}/onboarding/add-merchant-kyc',
+        onboardingAddMMerchant: '/{lang}/onboarding/add-merchant',
     },
     dashboard: {
         home: '/{lang}/dashboard',

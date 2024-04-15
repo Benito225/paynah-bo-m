@@ -9,4 +9,5 @@ export interface IUser {
     codeOTP?: string;
     merchantsIds?: [];
     accessToken?: string | undefined;
+    refreshToken?: string | undefined;
 }

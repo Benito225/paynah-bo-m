@@ -13,15 +13,17 @@ const config = {
             type: "credentials",
             credentials: {},
             async authorize(credentials, req) {
-                const {username, password, accessToken} = credentials as {
+                const {username, password, accessToken, refreshToken} = credentials as {
                     username: string;
                     password: string;
                     accessToken: string;
+                    refreshToken: string;
                 }
 
                 if (accessToken) {
                     const user = decodeToken(accessToken) as IUser;
                     user.accessToken = accessToken;
+                    user.refreshToken = refreshToken;
                     console.log('- l_user direct', user);
 
                     return user as any;
@@ -41,6 +43,7 @@ const config = {
 
                 const user = decodeToken(authResponse.data.accessToken) as IUser;
                 user.accessToken = authResponse.data.accessToken;
+                user.refreshToken = authResponse.data.refreshToken;
                 console.log('user', user);
 
                 return user as any;
@@ -84,6 +87,7 @@ const config = {
                 params.token.codeOTP = params.user.codeOTP;
                 params.token.merchantsIds = params.user.merchantsIds;
                 params.token.accessToken = params.user.accessToken;
+                params.token.refreshToken = params.user.refreshToken;
             }
             return params.token;
         },
@@ -98,6 +102,7 @@ const config = {
                 session.user.codeOTP = token.codeOTP;
                 session.user.merchantsIds = token.merchantsIds;
                 session.user.accessToken = token.accessToken;
+                session.user.refreshToken = token.refreshToken;
             }
             return session;
         }

@@ -277,6 +277,7 @@ export default function AuthSignUpForm({ lang, countries }: AuthSignUpFormProps)
 
             await signIn("merchant", {
                 accessToken: createPasswordRes.data.accessToken,
+                refreshToken: createPasswordRes.data.refreshToken,
                 redirect: true
             });
         }

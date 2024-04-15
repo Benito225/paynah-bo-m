@@ -16,7 +16,7 @@ import {IUser} from "@/core/interfaces/user";
 import {auth} from "@/auth";
 
 const fontPaynah = Poppins({
-  weight: ['100', '300', '400', '500', '600', '800'],
+  weight: ['100', '300', '400', '500', '600', '800', '900'],
   style: ['normal', 'italic'],
   subsets: ['latin'],
   display: 'swap',
@@ -52,7 +52,7 @@ export default async function RootLayout({
 
     if (session && session.user) {
         const merchant = session.user as IUser;
-
+        console.log(merchant);
         if (merchant.merchantsIds && merchant.merchantsIds.length == 0) {
             return redirect('/onboarding/add-merchant');
         }

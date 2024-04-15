@@ -183,9 +183,9 @@ export default function SignUpProfileChoice({ showErrorTwo, errorsArrayTwo, step
                                     <p><Link className={`underline font-medium hover:font-semibold duration-200 text-sm`} href={`#`}>Voir toutes les conditions tarifaires</Link></p>
                                 </div>
                                 <div className={`flex flex-col md:flex-row justify-center items-center space-y-1 md:space-x-5`}>
-                                    <Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`}>
-                                        Retour
-                                    </Button>
+                                    {/*<Button onClick={handleGoToBack} type={"button"} className={`!mb-1 bg-transparent text-black hover:text-white border border-black w-full md:w-[9rem] h-[2.8rem]`}>*/}
+                                    {/*    Retour*/}
+                                    {/*</Button>*/}
                                     <Button type={`submit`} className={`!mb-1 w-full md:w-[9rem] h-[2.8rem]`}>
                                         Continuer
                                     </Button>

@@ -26,6 +26,8 @@ import SignUpOK from "@/components/auth/form/SignUpOK";
 import {addMerchant} from "@/core/apis/signup";
 import {IUser} from "@/core/interfaces/user";
 import {redirect} from "next/navigation";
+import {signIn} from "next-auth/react";
+import {generateNewToken} from "@/core/apis/login";
 
 interface AddMerchantProps {
     lang: Locale,
@@ -277,7 +279,15 @@ export default function AddMerchant({ lang, legalForms, merchant }: AddMerchantP
                 className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
             });
 
-            return redirect('/onboarding/add-merchant-kyc');
+            const newToken = await generateNewToken();
+
+            await signIn("merchant", {
+                accessToken: newToken.accessToken,
+                refreshToken: merchant.refreshToken,
+                redirect: false
+            });
+
+            router.push(Routes.auth.onboardingKyc.replace('{lang}', lang));
         }
     }
 
@@ -310,12 +320,18 @@ export default function AddMerchant({ lang, legalForms, merchant }: AddMerchantP
             ownerEmail: merchant.login
         }
         const merchantRes = await addMerchant(data, merchant);
-        console.log(data);
 
         if (!merchantRes.success) {
             setLoading(false);
             setShowConErrorCompanyProfile(true);
             toast.dismiss(toastLoading);
+
+            // await signIn("merchant", {
+            //     accessToken: merchant.accessToken,
+            //     redirect: false
+            // });
+            //
+            // router.push(Routes.auth.onboardingKyc.replace('{lang}', lang));
 
             return toast.error(merchantRes.message, {
                 className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
@@ -329,7 +345,15 @@ export default function AddMerchant({ lang, legalForms, merchant }: AddMerchantP
                 className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
             });
 
-            return redirect('/onboarding/add-merchant-kyc');
+            const newToken = await generateNewToken();
+
+            await signIn("merchant", {
+                accessToken: newToken.accessToken,
+                refreshToken: merchant.refreshToken,
+                redirect: false
+            });
+
+            router.push(Routes.auth.onboardingKyc.replace('{lang}', lang));
         }
     }
 
@@ -381,7 +405,15 @@ export default function AddMerchant({ lang, legalForms, merchant }: AddMerchantP
                 className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
             });
 
-            return redirect('/onboarding/add-merchant-kyc');
+            const newToken = await generateNewToken();
+
+            await signIn("merchant", {
+                accessToken: newToken.accessToken,
+                refreshToken: merchant.refreshToken,
+                redirect: false
+            });
+
+            router.push(Routes.auth.onboardingKyc.replace('{lang}', lang));
         }
     }
 

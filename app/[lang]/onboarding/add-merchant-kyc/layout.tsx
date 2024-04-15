@@ -15,7 +15,7 @@ import {redirect} from "next/navigation";
 import {IUser} from "@/core/interfaces/user";
 
 const fontPaynah = Poppins({
-    weight: ['100', '300', '400', '500', '600', '800'],
+    weight: ['100', '300', '400', '500', '600', '800', '900'],
     style: ['normal', 'italic'],
     subsets: ['latin'],
 });

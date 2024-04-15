@@ -71,7 +71,7 @@ export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) 
             return router.push(Routes.auth.sendOtp.replace('{lang}', lang));
         }
 
-        const resetPasswordRes = await resetPassword(values, userToken);
+        const resetPasswordRes = await resetPassword(values, userToken.passwordToken);
         console.log(resetPasswordRes);
 
         if (!resetPasswordRes.success) {
@@ -95,7 +95,8 @@ export default function AuthResetAccessForm({ lang }: AuthResetAccessFormProps) 
             removeCookie('username');
 
             await signIn("merchant", {
-                accessToken: resetPasswordRes.data,
+                accessToken: resetPasswordRes.data.accessToken,
+                refreshToken: resetPasswordRes.data.refreshToken,
                 redirect: true
             });
         }
