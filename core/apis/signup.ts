@@ -35,3 +35,23 @@ export async function addMerchant(data: any, merchant: IUser) {
     console.log(merchant.accessToken);
     return resData;
 }
+
+export async function getMerchantIdsInfos(merchant: IUser, url: string) {
+    const resData = await fetchData(url, 'GET', null, merchant.accessToken);
+
+    if (!resData.success) {
+        throw Error("get not existing specific merchant");
+    }
+
+    return resData.data;
+}
+
+export async function getLegalFormInfos(merchant: IUser, url: string) {
+    const resData = await fetchData(url, 'GET', null, merchant.accessToken);
+
+    if (!resData.success) {
+        throw Error("get not existing specific legal form");
+    }
+
+    return resData.data;
+}

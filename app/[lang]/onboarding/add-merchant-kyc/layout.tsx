@@ -45,20 +45,6 @@ export default async function RootLayout({children, params}: Readonly<{
     params: { lang: Locale }
 }>) {
 
-    const session  = await auth();
-
-    let merchant;
-    if (session && session.user) {
-        merchant = session.user as IUser;
-    } else {
-        merchant = {} as IUser;
-        return redirect('/auth/sign-up');
-    }
-
-    if (merchant.merchantsIds && merchant.merchantsIds.length == 0) {
-        return redirect('/onboarding/add-merchant');
-    }
-
     return (
         <AuthProvider>
             <html lang={params.lang}>

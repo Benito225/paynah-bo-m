@@ -279,6 +279,7 @@ export default function AddMerchant({ lang, legalForms, merchant }: AddMerchantP
                 className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
             });
 
+            // @ts-ignore
             const newToken = await generateNewToken(merchant.refreshToken);
 
             await signIn("merchant", {
@@ -345,6 +346,7 @@ export default function AddMerchant({ lang, legalForms, merchant }: AddMerchantP
                 className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
             });
 
+            // @ts-ignore
             const newToken = await generateNewToken(merchant.refreshToken);
 
             await signIn("merchant", {
@@ -405,6 +407,7 @@ export default function AddMerchant({ lang, legalForms, merchant }: AddMerchantP
                 className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
             });
 
+            // @ts-ignore
             const newToken = await generateNewToken(merchant.refreshToken);
 
             await signIn("merchant", {

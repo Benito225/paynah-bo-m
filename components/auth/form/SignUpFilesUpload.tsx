@@ -2,15 +2,19 @@
 
 import React from "react";
 import {Button} from "@/components/ui/button";
+import AddMerchantKycProps from "@/components/auth/form/AddMerchantKyc";
 
 
 interface SignUpFilesUploadProps {
     lang: string,
     handleGoToBack: () => void,
-    handleGoToNext: () => void
+    handleGoToNext: () => void,
+    legalForm: { id: string; name: string; code: string; skaleetId: string; sk_document: any[]; company_type: number },
+    isLoading: boolean,
+    errorsArray: any[]
 }
 
-export default function SignUpFilesUpload({ lang, handleGoToBack, handleGoToNext }: SignUpFilesUploadProps) {
+export default function SignUpFilesUpload({ lang, handleGoToBack, handleGoToNext, legalForm, isLoading, errorsArray }: SignUpFilesUploadProps) {
 
     return (
         <div className={`formContainer mx-auto max-w-4xl`}>
