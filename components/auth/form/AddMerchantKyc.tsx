@@ -56,6 +56,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
     });
 
     const kycFilesRef = stepOne.register("kycFiles");
+    // setLoading(false);
 
 
     const errorsArray = Object.values(stepOne.formState.errors);
@@ -79,7 +80,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
             })
         );
 
-        // console.log('DataToUpload', fileToUpload);
+        console.log('DataToUpload', fileToUpload);
 
         const toastLoading = toast.loading('Action en cours de traitement...', {
             className: 'text-sm font-medium !max-w-xl !shadow-2xl border border-[#ededed]'
@@ -107,7 +108,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
             setStep(3);
             setTimeout(() => {
                 router.push(Routes.dashboard.home.replace('{lang}', lang))
-            }, 700);
+            }, 1500);
         }
     }
 

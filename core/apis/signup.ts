@@ -64,10 +64,10 @@ export async function makeKycFilesUpload(merchant: IUser, data: any[]) {
 
     // @ts-ignore
     const url = `/user-accounts/${merchant.merchantsIds[0].id}/documents`;
-    console.log(url);
+    console.log(url)
 
-    // @ts-ignore
-    const resData = await fetchData(url, 'POST', dataObject, merchant.accessToken);
+    const resData = await fetchData(url, 'POST', dataObject, merchant.accessToken)
+    console.log(resData);
 
     return resData;
 }
