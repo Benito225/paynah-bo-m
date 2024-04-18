@@ -31,7 +31,9 @@ const formSchema = z.object({
     kycFiles: z.array(
         z.object({
             type: z.string(),
-            file: z.any(),
+            file: z.any().refine((file) => file != undefined, {
+                message: 'File is required',
+            }),
         })
     ),
 })
@@ -41,7 +43,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
     // console.log(legalForm);
 
     const [isLoading, setLoading] = useState(false);
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(2);
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
 
@@ -81,6 +83,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
         );
 
         console.log('DataToUpload', fileToUpload);
+        // console.log(values);
 
         const toastLoading = toast.loading('Action en cours de traitement...', {
             className: 'text-sm font-medium !max-w-xl !shadow-2xl border border-[#ededed]'
@@ -108,7 +111,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
             setStep(3);
             setTimeout(() => {
                 router.push(Routes.dashboard.home.replace('{lang}', lang))
-            }, 1500);
+            }, 2500);
         }
     }
 
@@ -137,9 +140,17 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
     }
 
     useEffect(() => {
-        stepOne.setValue('kycFiles.0.type', 'CERTIFICAT_FISCAL');
-        stepOne.setValue('kycFiles.1.type', 'PREUVE_IDENTITE_MANDATAIRE');
-        stepOne.setValue('kycFiles.2.type', 'REGISTRE_DE_COMMERCE');
+        if (legalForm.company_type == 1) {
+            stepOne.setValue('kycFiles.0.type', 'PREUVE_IDENTITE_INDIVIDUEL');
+        } else if (legalForm.company_type == 2) {
+            stepOne.setValue('kycFiles.0.type', 'CERTIFICAT_FISCAL');
+            stepOne.setValue('kycFiles.1.type', 'PREUVE_IDENTITE_MANDATAIRE');
+            stepOne.setValue('kycFiles.2.type', 'REGISTRE_DE_COMMERCE');
+        } else if (legalForm.company_type == 3) {
+            stepOne.setValue('kycFiles.0.type', 'CERTIFICAT_FISCAL');
+            stepOne.setValue('kycFiles.1.type', 'PREUVE_IDENTITE_MANDATAIRE');
+            stepOne.setValue('kycFiles.2.type', 'DECISION');
+        }
     }, []);
 
     return (
