@@ -56,9 +56,9 @@ export async function getLegalFormInfos(merchant: IUser, url: string) {
     return resData.data;
 }
 
-export async function makeKycFilesUpload(merchant: IUser, data: any[]) {
+export async function makeKycFilesUpload(merchant: IUser, data: {}) {
     const dataObject = {
-        documents: data,
+        document: data,
     };
     console.log(dataObject)
 

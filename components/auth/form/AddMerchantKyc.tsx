@@ -43,9 +43,16 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
     // console.log(legalForm);
 
     const [isLoading, setLoading] = useState(false);
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(2);
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
+
+    const ProgressArray = {
+        CERTIFICAT_FISCAL: 0,
+        PREUVE_IDENTITE_MANDATAIRE: 0,
+        REGISTRE_DE_COMMERCE: 0,
+    }
+    const [progress, setProgress] = useState(ProgressArray)
 
 
     const router = useRouter();
@@ -62,6 +69,16 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
 
 
     const errorsArray = Object.values(stepOne.formState.errors);
+
+    const findValueByKey = (array: any[], key: number) => {
+        for (let i = 0; i < array.length; i++) {
+            const subArray = array[i];
+            if (subArray[0] === key) {
+                return subArray[1];
+            }
+        }
+        return null;
+    };
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true);
@@ -89,22 +106,61 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
         const toastLoading = toast.loading('Action en cours de traitement...', {
             className: 'text-sm font-medium !max-w-xl !shadow-2xl border border-[#ededed]'
         });
-        const uploadKycFileRes = await makeKycFilesUpload(merchant, fileToUpload);
-        console.log(uploadKycFileRes);
 
-        if (!uploadKycFileRes.success) {
-            setLoading(false);
-            setShowConError(true);
-            toast.dismiss(toastLoading);
+        // const intervalId = setInterval(() => {
+        //     currentTime += incrementTime;
+        //     const percent = (currentTime / totalTime) * 100;
+        //     updateProgress(percent);
+        //
+        //     if (currentTime >= totalTime) {
+        //         clearInterval(intervalId); // Arrêter l'intervalle une fois la requête terminée
+        //     }
+        // }, incrementTime);
 
-            return toast.error(uploadKycFileRes.message, {
-                className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
-            });
-        } else {
+        for (let i = 0; i < fileToUpload.length; i++) {
+            const file = fileToUpload[i];
+
+                const type: any = file.type;
+                let progressObject = Object.entries(progress);
+                let currentTime = findValueByKey(progressObject, type);
+                // console.log(currentTime)
+
+                const intervalId = setInterval(() => {
+                    if (currentTime <= 50) {
+                        currentTime += 1;
+                    }
+
+                    setProgress((prevProgress) => ({
+                        ...prevProgress,
+                        [type]: currentTime,
+                    }));
+                }, 100);
+
+                const uploadKycFileRes = await makeKycFilesUpload(merchant, file);
+                console.log(uploadKycFileRes);
+
+                if (!uploadKycFileRes.success) {
+                    setLoading(false);
+                    setShowConError(true);
+                    toast.dismiss(toastLoading);
+
+                    return toast.error(uploadKycFileRes.message, {
+                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                    });
+                } else {
+                    clearInterval(intervalId);
+                    setProgress((prevProgress) => ({
+                        ...prevProgress,
+                        [type]: 100,
+                    }));
+                }
+        }
+
+        if (!showConError) {
             setLoading(false);
             setShowConError(false);
-            toast.dismiss(toastLoading);
 
+            toast.dismiss(toastLoading);
             toast.success("Fichier(s) ajouté(s) avec succès", {
                 className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
             });
@@ -163,7 +219,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
             <div className={`duration-200 ${step == 2 ? 'block fade-in' : 'hidden fade-out'}`}>
                 <SignUpFilesUpload lang={lang} handleGoToBack={handleGoToBack} handleGoToNext={handleGoToNext}
                                    legalForm={legalForm} isLoading={isLoading} onSubmit={onSubmit} stepOne={stepOne}
-                                   errorsArray={errorsArray}/>
+                                   errorsArray={errorsArray} progress={progress}/>
             </div>
             <div className={`duration-200 ${step == 3 ? 'block fade-in' : 'hidden fade-out'}`}>
                 <SignUpOK lang={lang}/>

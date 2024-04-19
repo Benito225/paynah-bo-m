@@ -17,6 +17,9 @@ import {AudioWaveform, File, FileDown, FileImage, FolderArchive, UploadCloud, Vi
 import axios, {AxiosProgressEvent, CancelTokenSource} from "axios";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import ProgressBar from "@/components/custom/progress";
+import {Progress} from "@/components/ui/progress";
+import Link from "next/link";
+import Routes from "@/components/Routes";
 
 
 interface SignUpFilesUploadProps {
@@ -28,6 +31,7 @@ interface SignUpFilesUploadProps {
     errorsArray: any[],
     stepOne: any,
     onSubmit: any,
+    progress: { PREUVE_IDENTITE_MANDATAIRE: number, CERTIFICAT_FISCAL: number, REGISTRE_DE_COMMERCE: number }
 }
 
 interface FileUploadProgress {
@@ -36,10 +40,21 @@ interface FileUploadProgress {
     source: CancelTokenSource | null;
 }
 
-export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext, legalForm, isLoading, errorsArray, stepOne, onSubmit}: SignUpFilesUploadProps) {
+export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext, legalForm, isLoading, errorsArray, stepOne, onSubmit, progress}: SignUpFilesUploadProps) {
 
-    console.log(errorsArray);
+    // console.log(errorsArray);
     // console.log(legalForm);
+
+    let progressObject = Object.entries(progress);
+    const findValueByKey = (array: any[], key: number) => {
+        for (let i = 0; i < array.length; i++) {
+            const subArray = array[i];
+            if (subArray[0] === key) {
+                return subArray[1];
+            }
+        }
+        return null;
+    };
 
     return (
         <div className={`formContainer mx-auto max-w-5xl`}>
@@ -49,14 +64,17 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                 <p className={`text-[#626262] w-full md:w-[60%] md:mx-auto text-sm md:text-base`}>{`Joignez vos pièces d'identité et les documents d'entreprise en suivant l'ordre définie. `}
                 </p>
             </div>
+            <div className={`flex items-center justify-end px-4 mb-2`}>
+                <p className={`font-light text-xs`}>Ajoutez avant de continuer. <Link className={`font-medium underline`} href={Routes.dashboard.home.replace('{lang}', lang)}>Ajouter plus tard</Link></p>
+            </div>
             <div className={`px-4 mb-[0.5rem] md:mb-[5.5rem]`}>
                 <Form {...stepOne}>
                     <form onSubmit={stepOne.handleSubmit(onSubmit)} className="" encType={`multipart/form-data`}>
                         {legalForm.company_type == 1 &&
-                            <div className={`grid grid-cols-6 gap-4`}>
-                                <div className={`col-span-2`}>
+                            <div className={`grid grid-cols-1 md:grid-cols-6 gap-4`}>
+                                <div className={`col-span-1 md:col-span-2`}>
                                 </div>
-                                <div className={`col-span-2`}>
+                                <div className={`col-span-1 md:col-span-2`}>
                                     <FormField
                                         control={stepOne.control}
                                         name="kycFiles.0.file"
@@ -102,6 +120,21 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                             </Dropzone>
                                         )}
                                     />
+                                    <div className={`mt-1 md:mt-2.5`}>
+                                        <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type')) ?? 0}%</span>
+                                        <div className={`relative`}>
+                                            <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
+                                            <svg className={`${findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type')) == 100 ? "block" : "hidden"} duration-200 absolute -right-[2px] top-[-7px]`} width="22" height="22" viewBox="0 0 22 22">
+                                                <g transform="translate(-646.519 -863.519)">
+                                                    <g transform="translate(648.519 865.519)" stroke="#f4f4f7" strokeWidth="2">
+                                                        <circle cx="9" cy="9" r="9" stroke="none"/>
+                                                        <circle cx="9" cy="9" r="10" fill="none"/>
+                                                    </g>
+                                                    <path d="M11.942,7.064a.507.507,0,0,0-.72,0L7.444,10.847,5.856,9.255a.518.518,0,1,0-.72.745l1.947,1.947a.507.507,0,0,0,.72,0L11.942,7.81a.507.507,0,0,0,0-.745Z" transform="translate(649.061 865.013)" fill="#fff" stroke="#fff" strokeWidth="1.5"/>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </div>
                                     <FormField
                                         control={stepOne.control}
                                         name="kycFiles.0.type"
@@ -114,13 +147,13 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                         )}
                                     />
                                 </div>
-                                <div className={`col-span-2`}>
+                                <div className={`col-span-1 md:col-span-2`}>
                                 </div>
                             </div>
                         }
                         {legalForm.company_type == 2 &&
-                            <div className={`grid grid-cols-6 gap-4`}>
-                                <div className={`col-span-2`}>
+                            <div className={`grid grid-cols-1 md:grid-cols-6 gap-4`}>
+                                <div className={`col-span-1 md:col-span-2`}>
                                     <FormField
                                         control={stepOne.control}
                                         name="kycFiles.0.file"
@@ -180,6 +213,22 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                     {/*        </FormItem>*/}
                                     {/*    )}*/}
                                     {/*/>*/}
+
+                                    <div className={`mt-1 md:mt-2.5`}>
+                                        <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type')) ?? 0}%</span>
+                                        <div className={`relative`}>
+                                            <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
+                                            <svg className={`${findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type')) == 100 ? "block" : "hidden"} duration-200 absolute -right-[2px] top-[-7px]`} width="22" height="22" viewBox="0 0 22 22">
+                                                <g transform="translate(-646.519 -863.519)">
+                                                    <g transform="translate(648.519 865.519)" stroke="#f4f4f7" strokeWidth="2">
+                                                        <circle cx="9" cy="9" r="9" stroke="none"/>
+                                                        <circle cx="9" cy="9" r="10" fill="none"/>
+                                                    </g>
+                                                    <path d="M11.942,7.064a.507.507,0,0,0-.72,0L7.444,10.847,5.856,9.255a.518.518,0,1,0-.72.745l1.947,1.947a.507.507,0,0,0,.72,0L11.942,7.81a.507.507,0,0,0,0-.745Z" transform="translate(649.061 865.013)" fill="#fff" stroke="#fff" strokeWidth="1.5"/>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </div>
                                     <FormField
                                         control={stepOne.control}
                                         name="kycFiles.0.type"
@@ -192,7 +241,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                         )}
                                     />
                                 </div>
-                                <div className={`col-span-2`}>
+                                <div className={`col-span-1 md:col-span-2`}>
                                     {/*<Label htmlFor="picture" className={`mb-2 block`}>{`Justificatif d'identité`}</Label>*/}
                                     {/*<FormField*/}
                                     {/*    control={stepOne.control}*/}
@@ -252,6 +301,21 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                             </Dropzone>
                                         )}
                                     />
+                                    <div className={`mt-1 md:mt-2.5`}>
+                                        <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.1.type')) ?? 0}%</span>
+                                        <div className={`relative`}>
+                                            <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.1.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
+                                            <svg className={`${findValueByKey(progressObject, stepOne.getValues('kycFiles.1.type')) == 100 ? "block" : "hidden"} duration-200 absolute -right-[2px] top-[-7px]`} width="22" height="22" viewBox="0 0 22 22">
+                                                <g transform="translate(-646.519 -863.519)">
+                                                    <g transform="translate(648.519 865.519)" stroke="#f4f4f7" strokeWidth="2">
+                                                        <circle cx="9" cy="9" r="9" stroke="none"/>
+                                                        <circle cx="9" cy="9" r="10" fill="none"/>
+                                                    </g>
+                                                    <path d="M11.942,7.064a.507.507,0,0,0-.72,0L7.444,10.847,5.856,9.255a.518.518,0,1,0-.72.745l1.947,1.947a.507.507,0,0,0,.72,0L11.942,7.81a.507.507,0,0,0,0-.745Z" transform="translate(649.061 865.013)" fill="#fff" stroke="#fff" strokeWidth="1.5"/>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </div>
                                     <FormField
                                         control={stepOne.control}
                                         name="kycFiles.1.type"
@@ -264,7 +328,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                         )}
                                     />
                                 </div>
-                                <div className={`col-span-2`}>
+                                <div className={`col-span-1 md:col-span-2`}>
                                     {/*<Label htmlFor="picture" className={`mb-2 block`}>{`RCCM`}</Label>*/}
                                     {/*<FormField*/}
                                     {/*    control={stepOne.control}*/}
@@ -324,6 +388,21 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                             </Dropzone>
                                         )}
                                     />
+                                    <div className={`mt-1 md:mt-2.5`}>
+                                        <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type')) ?? 0}%</span>
+                                        <div className={`relative`}>
+                                            <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
+                                            <svg className={`${findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type')) == 100 ? "block" : "hidden"} duration-200 absolute -right-[2px] top-[-7px]`} width="22" height="22" viewBox="0 0 22 22">
+                                                <g transform="translate(-646.519 -863.519)">
+                                                    <g transform="translate(648.519 865.519)" stroke="#f4f4f7" strokeWidth="2">
+                                                        <circle cx="9" cy="9" r="9" stroke="none"/>
+                                                        <circle cx="9" cy="9" r="10" fill="none"/>
+                                                    </g>
+                                                    <path d="M11.942,7.064a.507.507,0,0,0-.72,0L7.444,10.847,5.856,9.255a.518.518,0,1,0-.72.745l1.947,1.947a.507.507,0,0,0,.72,0L11.942,7.81a.507.507,0,0,0,0-.745Z" transform="translate(649.061 865.013)" fill="#fff" stroke="#fff" strokeWidth="1.5"/>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </div>
                                     <FormField
                                         control={stepOne.control}
                                         name="kycFiles.2.type"
@@ -339,8 +418,8 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                             </div>
                         }
                         {legalForm.company_type == 3 &&
-                            <div className={`grid grid-cols-6 gap-4`}>
-                                <div className={`col-span-2`}>
+                            <div className={`grid grid-cols-1 md:grid-cols-6 gap-4`}>
+                                <div className={`col-span-1 md:col-span-2`}>
                                     <FormField
                                         control={stepOne.control}
                                         name="kycFiles.0.file"
@@ -400,6 +479,21 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                     {/*        </FormItem>*/}
                                     {/*    )}*/}
                                     {/*/>*/}
+                                    <div className={`mt-1 md:mt-2.5`}>
+                                        <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type')) ?? 0}%</span>
+                                        <div className={`relative`}>
+                                            <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
+                                            <svg className={`${findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type')) == 100 ? "block" : "hidden"} duration-200 absolute -right-[2px] top-[-7px]`} width="22" height="22" viewBox="0 0 22 22">
+                                                <g transform="translate(-646.519 -863.519)">
+                                                    <g transform="translate(648.519 865.519)" stroke="#f4f4f7" strokeWidth="2">
+                                                        <circle cx="9" cy="9" r="9" stroke="none"/>
+                                                        <circle cx="9" cy="9" r="10" fill="none"/>
+                                                    </g>
+                                                    <path d="M11.942,7.064a.507.507,0,0,0-.72,0L7.444,10.847,5.856,9.255a.518.518,0,1,0-.72.745l1.947,1.947a.507.507,0,0,0,.72,0L11.942,7.81a.507.507,0,0,0,0-.745Z" transform="translate(649.061 865.013)" fill="#fff" stroke="#fff" strokeWidth="1.5"/>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </div>
                                     <FormField
                                         control={stepOne.control}
                                         name="kycFiles.0.type"
@@ -412,7 +506,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                         )}
                                     />
                                 </div>
-                                <div className={`col-span-2`}>
+                                <div className={`col-span-1 md:col-span-2`}>
                                     {/*<Label htmlFor="picture" className={`mb-2 block`}>{`Justificatif d'identité`}</Label>*/}
                                     {/*<FormField*/}
                                     {/*    control={stepOne.control}*/}
@@ -472,6 +566,21 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                             </Dropzone>
                                         )}
                                     />
+                                    <div className={`mt-1 md:mt-2.5`}>
+                                        <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.1.type')) ?? 0}%</span>
+                                        <div className={`relative`}>
+                                            <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.1.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
+                                            <svg className={`${findValueByKey(progressObject, stepOne.getValues('kycFiles.1.type')) == 100 ? "block" : "hidden"} duration-200 absolute -right-[2px] top-[-7px]`} width="22" height="22" viewBox="0 0 22 22">
+                                                <g transform="translate(-646.519 -863.519)">
+                                                    <g transform="translate(648.519 865.519)" stroke="#f4f4f7" strokeWidth="2">
+                                                        <circle cx="9" cy="9" r="9" stroke="none"/>
+                                                        <circle cx="9" cy="9" r="10" fill="none"/>
+                                                    </g>
+                                                    <path d="M11.942,7.064a.507.507,0,0,0-.72,0L7.444,10.847,5.856,9.255a.518.518,0,1,0-.72.745l1.947,1.947a.507.507,0,0,0,.72,0L11.942,7.81a.507.507,0,0,0,0-.745Z" transform="translate(649.061 865.013)" fill="#fff" stroke="#fff" strokeWidth="1.5"/>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </div>
                                     <FormField
                                         control={stepOne.control}
                                         name="kycFiles.1.type"
@@ -484,7 +593,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                         )}
                                     />
                                 </div>
-                                <div className={`col-span-2`}>
+                                <div className={`col-span-1 md:col-span-2`}>
                                     {/*<Label htmlFor="picture" className={`mb-2 block`}>{`RCCM`}</Label>*/}
                                     {/*<FormField*/}
                                     {/*    control={stepOne.control}*/}
@@ -544,6 +653,21 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                             </Dropzone>
                                         )}
                                     />
+                                    <div className={`mt-1 md:mt-2.5`}>
+                                        <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type')) ?? 0}%</span>
+                                        <div className={`relative`}>
+                                            <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
+                                            <svg className={`${findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type')) == 100 ? "block" : "hidden"} duration-200 absolute -right-[2px] top-[-7px]`} width="22" height="22" viewBox="0 0 22 22">
+                                                <g transform="translate(-646.519 -863.519)">
+                                                    <g transform="translate(648.519 865.519)" stroke="#f4f4f7" strokeWidth="2">
+                                                        <circle cx="9" cy="9" r="9" stroke="none"/>
+                                                        <circle cx="9" cy="9" r="10" fill="none"/>
+                                                    </g>
+                                                    <path d="M11.942,7.064a.507.507,0,0,0-.72,0L7.444,10.847,5.856,9.255a.518.518,0,1,0-.72.745l1.947,1.947a.507.507,0,0,0,.72,0L11.942,7.81a.507.507,0,0,0,0-.745Z" transform="translate(649.061 865.013)" fill="#fff" stroke="#fff" strokeWidth="1.5"/>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </div>
                                     <FormField
                                         control={stepOne.control}
                                         name="kycFiles.2.type"
