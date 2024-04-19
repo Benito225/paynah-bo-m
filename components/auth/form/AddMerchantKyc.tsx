@@ -72,6 +72,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
                 const base64 = await readFileAsBase64(kyc.file);
                 // @ts-ignore
                 const base64WithoutPrefix = base64.split(',')[1];
+                // const base64WithoutPrefix = JSON.stringify(base64.replace(/^data:\w+\/\w+;base64,/, ''));
 
                 return {
                     type: kyc.type,

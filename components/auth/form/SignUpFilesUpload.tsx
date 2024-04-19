@@ -75,7 +75,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
-                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[0]?.file && !stepOne.getValues('kycFiles.0.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.0.file') ? "border-green-800 bg-green-100" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
+                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[0]?.file && !stepOne.getValues('kycFiles.0.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.0.file') ? "border-green-800 bg-green-50" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
                                                         <div className={`inline-flex flex-col items-center cursor-pointer`}>
                                                             <FileDown className={`h-10 w-10 text-[#AFAFAF]`} />
                                                             <h3 className={`mt-2 text-sm`}>{`Justificatif d'identité`}</h3>
@@ -139,7 +139,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
-                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[0]?.file && !stepOne.getValues('kycFiles.0.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.0.file') ? "border-green-800 bg-green-100" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
+                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[0]?.file && !stepOne.getValues('kycFiles.0.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.0.file') ? "border-green-800 bg-green-50" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
                                                         <div className={`inline-flex flex-col items-center cursor-pointer`}>
                                                             <FileDown className={`h-10 w-10 text-[#AFAFAF]`} />
                                                             <h3 className={`mt-2 text-sm`}>Déclaration fiscale</h3>
@@ -225,7 +225,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
-                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[1]?.file && !stepOne.getValues('kycFiles.1.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.1.file') ? "border-green-800 bg-green-100" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
+                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[1]?.file && !stepOne.getValues('kycFiles.1.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.1.file') ? "border-green-800 bg-green-50" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
                                                         <div className={`inline-flex flex-col items-center cursor-pointer`}>
                                                             <FileDown className={`h-10 w-10 text-[#AFAFAF]`} />
                                                             <h3 className={`mt-2 text-sm`}>{`Justificatif d'identité`}</h3>
@@ -297,7 +297,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
-                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[2]?.file && !stepOne.getValues('kycFiles.2.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.2.file') ? "border-green-800 bg-green-100" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
+                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[2]?.file && !stepOne.getValues('kycFiles.2.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.2.file') ? "border-green-800 bg-green-50" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
                                                         <div className={`inline-flex flex-col items-center cursor-pointer`}>
                                                             <FileDown className={`h-10 w-10 text-[#AFAFAF]`} />
                                                             <h3 className={`mt-2 text-sm`}>RCCM</h3>
@@ -359,7 +359,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
-                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[0]?.file && !stepOne.getValues('kycFiles.0.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.0.file') ? "border-green-800 bg-green-100" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
+                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[0]?.file && !stepOne.getValues('kycFiles.0.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.0.file') ? "border-green-800 bg-green-50" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
                                                         <div className={`inline-flex flex-col items-center cursor-pointer`}>
                                                             <FileDown className={`h-10 w-10 text-[#AFAFAF]`} />
                                                             <h3 className={`mt-2 text-sm`}>Déclaration fiscale</h3>
@@ -445,7 +445,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
-                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[1]?.file && !stepOne.getValues('kycFiles.1.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.1.file') ? "border-green-800 bg-green-100" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
+                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[1]?.file && !stepOne.getValues('kycFiles.1.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.1.file') ? "border-green-800 bg-green-50" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
                                                         <div className={`inline-flex flex-col items-center cursor-pointer`}>
                                                             <FileDown className={`h-10 w-10 text-[#AFAFAF]`} />
                                                             <h3 className={`mt-2 text-sm`}>{`Justificatif d'identité`}</h3>
@@ -517,7 +517,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
-                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[2]?.file && !stepOne.getValues('kycFiles.2.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.2.file') ? "border-green-800 bg-green-100" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
+                                                    <div  {...getRootProps()} className={`min-h-[15rem] ${stepOne.formState.errors.kycFiles?.[2]?.file && !stepOne.getValues('kycFiles.2.file') ? "border-[#e95d5d] bg-[#FFF8F8]" : ""} flex justify-center items-center rounded-3xl border border-dashed py-4 px-6 ${stepOne.getValues('kycFiles.2.file') ? "border-green-800 bg-green-50" : "border-[#AFAFAF] bg-[#F0F0F0]"}`}>
                                                         <div className={`inline-flex flex-col items-center cursor-pointer`}>
                                                             <FileDown className={`h-10 w-10 text-[#AFAFAF]`} />
                                                             <h3 className={`mt-2 text-sm`}>Décision Ministériel</h3>
