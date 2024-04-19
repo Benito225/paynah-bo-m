@@ -43,7 +43,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
     // console.log(legalForm);
 
     const [isLoading, setLoading] = useState(false);
-    const [step, setStep] = useState(2);
+    const [step, setStep] = useState(1);
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
 
