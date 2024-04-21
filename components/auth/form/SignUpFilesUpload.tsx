@@ -2,36 +2,39 @@
 
 import React, {useCallback, useState} from "react";
 import {Button} from "@/components/ui/button";
-import AddMerchantKycProps from "@/components/auth/form/AddMerchantKyc";
 import {Form, FormControl, FormField, FormItem} from "@/components/ui/form";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import {PhoneInput} from "react-international-phone";
-import {UseFormRegisterReturn, UseFormReturn} from "react-hook-form";
-import {infer, ZodArray, ZodEffects, ZodObject, ZodString, ZodTypeAny} from "zod";
-import onSubmit from "@/components/auth/form/AddMerchantKyc";
-import {Label} from "@/components/ui/label";
 import Dropzone, {useDropzone} from "react-dropzone";
-import {cn} from "@/lib/utils";
-import {AudioWaveform, File, FileDown, FileImage, FolderArchive, UploadCloud, Video, X} from "lucide-react";
+import {FileDown} from "lucide-react";
 import axios, {AxiosProgressEvent, CancelTokenSource} from "axios";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import ProgressBar from "@/components/custom/progress";
 import {Progress} from "@/components/ui/progress";
 import Link from "next/link";
 import Routes from "@/components/Routes";
+import toast from "react-hot-toast";
 
 
 interface SignUpFilesUploadProps {
     lang: string,
     handleGoToBack: () => void,
     handleGoToNext: () => void,
-    legalForm: { id: string; name: string; code: string; skaleetId: string; sk_document: any[]; company_type: number },
+    legalForm: {
+        id: string;
+        name: string;
+        code: string;
+        skaleetId: string;
+        sk_document: any[];
+        company_type: number
+    },
     isLoading: boolean,
     errorsArray: any[],
     stepOne: any,
     onSubmit: any,
-    progress: { PREUVE_IDENTITE_MANDATAIRE: number, CERTIFICAT_FISCAL: number, REGISTRE_DE_COMMERCE: number }
+    progress: {
+        PREUVE_IDENTITE_MANDATAIRE: number,
+        CERTIFICAT_FISCAL: number,
+        REGISTRE_DE_COMMERCE: number
+    },
+    showProgressBars: boolean
 }
 
 interface FileUploadProgress {
@@ -40,9 +43,9 @@ interface FileUploadProgress {
     source: CancelTokenSource | null;
 }
 
-export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext, legalForm, isLoading, errorsArray, stepOne, onSubmit, progress}: SignUpFilesUploadProps) {
+export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext, legalForm, isLoading, errorsArray, stepOne, onSubmit, progress, showProgressBars}: SignUpFilesUploadProps) {
 
-    // console.log(errorsArray);
+    console.log(errorsArray);
     // console.log(legalForm);
 
     let progressObject = Object.entries(progress);
@@ -63,9 +66,6 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                     justificatives</h2>
                 <p className={`text-[#626262] w-full md:w-[60%] md:mx-auto text-sm md:text-base`}>{`Joignez vos pièces d'identité et les documents d'entreprise en suivant l'ordre définie. `}
                 </p>
-            </div>
-            <div className={`flex items-center justify-end px-4 mb-2`}>
-                <p className={`font-light text-xs`}>Ajoutez avant de continuer. <Link className={`font-medium underline`} href={Routes.dashboard.home.replace('{lang}', lang)}>Ajouter plus tard</Link></p>
             </div>
             <div className={`px-4 mb-[0.5rem] md:mb-[5.5rem]`}>
                 <Form {...stepOne}>
@@ -89,7 +89,13 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                         return stepOne.setValue('kycFiles.0.file', acceptedFile);
                                                     });
                                                 }}
-                                                multiple={true}
+                                                onDropRejected={(rejectedFiles) => {
+                                                    console.log(rejectedFiles);
+                                                    return toast.error(rejectedFiles[0].errors[0].code == 'file-too-large' ? "La taille du fichier est supérieur à limite autorisée (2MB)" : rejectedFiles[0].errors[0].message, {
+                                                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                                                    });
+                                                }}
+                                                multiple={false}
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
@@ -120,7 +126,10 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                             </Dropzone>
                                         )}
                                     />
-                                    <div className={`mt-1 md:mt-2.5`}>
+                                    <div className={`flex items-center justify-end mt-2`}>
+                                        <p className={`font-light text-xs md:text-[9.6px] lg:text-[11px] xl:text-xs`}>Ajoutez avant de continuer. <Link className={`font-medium underline`} href={Routes.dashboard.home.replace('{lang}', lang)}>Ajouter plus tard</Link></p>
+                                    </div>
+                                    <div className={`mt-1 md:mt-3 ${showProgressBars ? "block" : "hidden"} duration-200`}>
                                         <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type')) ?? 0}%</span>
                                         <div className={`relative`}>
                                             <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
@@ -168,7 +177,13 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                         return stepOne.setValue('kycFiles.0.file', acceptedFile);
                                                     });
                                                 }}
-                                                multiple={true}
+                                                onDropRejected={(rejectedFiles) => {
+                                                    console.log(rejectedFiles);
+                                                    return toast.error(rejectedFiles[0].errors[0].code == 'file-too-large' ? "La taille du fichier est supérieur à limite autorisée (2MB)" : rejectedFiles[0].errors[0].message, {
+                                                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                                                    });
+                                                }}
+                                                multiple={false}
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
@@ -214,7 +229,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                     {/*    )}*/}
                                     {/*/>*/}
 
-                                    <div className={`mt-1 md:mt-2.5`}>
+                                    <div className={`mt-1 md:mt-2.5 ${showProgressBars ? "block" : "hidden"} duration-200`}>
                                         <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type')) ?? 0}%</span>
                                         <div className={`relative`}>
                                             <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
@@ -270,7 +285,13 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                         return stepOne.setValue('kycFiles.1.file', acceptedFile);
                                                     });
                                                 }}
-                                                multiple={true}
+                                                onDropRejected={(rejectedFiles) => {
+                                                    console.log(rejectedFiles);
+                                                    return toast.error(rejectedFiles[0].errors[0].code == 'file-too-large' ? "La taille du fichier est supérieur à limite autorisée (2MB)" : rejectedFiles[0].errors[0].message, {
+                                                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                                                    });
+                                                }}
+                                                multiple={false}
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
@@ -301,7 +322,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                             </Dropzone>
                                         )}
                                     />
-                                    <div className={`mt-1 md:mt-2.5`}>
+                                    <div className={`mt-1 md:mt-2.5 ${showProgressBars ? "block" : "hidden"} duration-200`}>
                                         <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.1.type')) ?? 0}%</span>
                                         <div className={`relative`}>
                                             <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.1.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
@@ -357,7 +378,13 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                         return stepOne.setValue('kycFiles.2.file', acceptedFile);
                                                     });
                                                 }}
-                                                multiple={true}
+                                                onDropRejected={(rejectedFiles) => {
+                                                    console.log(rejectedFiles);
+                                                    return toast.error(rejectedFiles[0].errors[0].code == 'file-too-large' ? "La taille du fichier est supérieur à limite autorisée (2MB)" : rejectedFiles[0].errors[0].message, {
+                                                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                                                    });
+                                                }}
+                                                multiple={false}
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
@@ -388,8 +415,11 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                             </Dropzone>
                                         )}
                                     />
-                                    <div className={`mt-1 md:mt-2.5`}>
-                                        <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type')) ?? 0}%</span>
+                                    <div className={`flex items-center justify-end mt-2`}>
+                                        <p className={`font-light text-xs md:text-[9.6px] lg:text-[11px] xl:text-xs`}>Ajoutez avant de continuer. <Link className={`font-medium underline`} href={Routes.dashboard.home.replace('{lang}', lang)}>Ajouter plus tard</Link></p>
+                                    </div>
+                                    <div className={`mt-1 md:mt-3 ${showProgressBars ? "block" : "hidden"} duration-200`}>
+                                        {/*<span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type')) ?? 0}%</span>*/}
                                         <div className={`relative`}>
                                             <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
                                             <svg className={`${findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type')) == 100 ? "block" : "hidden"} duration-200 absolute -right-[2px] top-[-7px]`} width="22" height="22" viewBox="0 0 22 22">
@@ -434,7 +464,13 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                         return stepOne.setValue('kycFiles.0.file', acceptedFile);
                                                     });
                                                 }}
-                                                multiple={true}
+                                                onDropRejected={(rejectedFiles) => {
+                                                    console.log(rejectedFiles);
+                                                    return toast.error(rejectedFiles[0].errors[0].code == 'file-too-large' ? "La taille du fichier est supérieur à limite autorisée (2MB)" : rejectedFiles[0].errors[0].message, {
+                                                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                                                    });
+                                                }}
+                                                multiple={false}
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
@@ -479,7 +515,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                     {/*        </FormItem>*/}
                                     {/*    )}*/}
                                     {/*/>*/}
-                                    <div className={`mt-1 md:mt-2.5`}>
+                                    <div className={`mt-1 md:mt-2.5 ${showProgressBars ? "block" : "hidden"} duration-200`}>
                                         <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type')) ?? 0}%</span>
                                         <div className={`relative`}>
                                             <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.0.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
@@ -535,7 +571,13 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                         return stepOne.setValue('kycFiles.1.file', acceptedFile);
                                                     });
                                                 }}
-                                                multiple={true}
+                                                onDropRejected={(rejectedFiles) => {
+                                                    console.log(rejectedFiles);
+                                                    return toast.error(rejectedFiles[0].errors[0].code == 'file-too-large' ? "La taille du fichier est supérieur à limite autorisée (2MB)" : rejectedFiles[0].errors[0].message, {
+                                                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                                                    });
+                                                }}
+                                                multiple={false}
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
@@ -566,7 +608,7 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                             </Dropzone>
                                         )}
                                     />
-                                    <div className={`mt-1 md:mt-2.5`}>
+                                    <div className={`mt-1 md:mt-2.5 ${showProgressBars ? "block" : "hidden"} duration-200`}>
                                         <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.1.type')) ?? 0}%</span>
                                         <div className={`relative`}>
                                             <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.1.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
@@ -622,7 +664,13 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                                         return stepOne.setValue('kycFiles.2.file', acceptedFile);
                                                     });
                                                 }}
-                                                multiple={true}
+                                                onDropRejected={(rejectedFiles) => {
+                                                    console.log(rejectedFiles);
+                                                    return toast.error(rejectedFiles[0].errors[0].code == 'file-too-large' ? "La taille du fichier est supérieur à limite autorisée (2MB)" : rejectedFiles[0].errors[0].message, {
+                                                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                                                    });
+                                                }}
+                                                multiple={false}
                                                 maxSize={2000000}
                                             >
                                                 {({ getRootProps, getInputProps }) => (
@@ -653,8 +701,11 @@ export default function SignUpFilesUpload({lang, handleGoToBack, handleGoToNext,
                                             </Dropzone>
                                         )}
                                     />
-                                    <div className={`mt-1 md:mt-2.5`}>
-                                        <span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type')) ?? 0}%</span>
+                                    <div className={`flex items-center justify-end mt-2`}>
+                                        <p className={`font-light text-xs md:text-[9.6px] lg:text-[11px] xl:text-xs`}>Ajoutez avant de continuer. <Link className={`font-medium underline`} href={Routes.dashboard.home.replace('{lang}', lang)}>Ajouter plus tard</Link></p>
+                                    </div>
+                                    <div className={`mt-1 md:mt-3 ${showProgressBars ? "block" : "hidden"} duration-200`}>
+                                        {/*<span className={`text-sm font-light`}>{findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type')) ?? 0}%</span>*/}
                                         <div className={`relative`}>
                                             <Progress value={findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type'))} className="w-[100%] bg-[#DBDBDB] mt-0.5 h-2" />
                                             <svg className={`${findValueByKey(progressObject, stepOne.getValues('kycFiles.2.type')) == 100 ? "block" : "hidden"} duration-200 absolute -right-[2px] top-[-7px]`} width="22" height="22" viewBox="0 0 22 22">

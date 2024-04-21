@@ -27,12 +27,22 @@ interface AddMerchantKycProps {
     }
 }
 
+// .refine((file) => {
+//     const byteSize = new Blob([file]).size;
+//     const maxSize = 2 * 1024 * 1024;
+//     return byteSize <= maxSize;
+// }, {
+//     message: 'La taille de l’image doit être inférieure ou égale à 2 Mo',
+// })
+
 const formSchema = z.object({
     kycFiles: z.array(
         z.object({
             type: z.string(),
-            file: z.any().refine((file) => file != undefined, {
-                message: 'File is required',
+            file: z.any().refine((file) => {
+                return file != undefined;
+            }, {
+                message: 'Fichier requis',
             }),
         })
     ),
@@ -41,11 +51,15 @@ const formSchema = z.object({
 export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalForm}: AddMerchantKycProps) {
 
     // console.log(legalForm);
+    // console.log(merchant);
 
     const [isLoading, setLoading] = useState(false);
     const [step, setStep] = useState(1);
     const [showError, setShowError] = useState(false);
     const [showConError, setShowConError] = useState(false);
+
+    const [showProgressBars, setShowProgressBars] = useState(false);
+
 
     const ProgressArray = {
         CERTIFICAT_FISCAL: 0,
@@ -80,6 +94,13 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
         return null;
     };
 
+    // if (errorsArray.length > 0) {
+    //     // @ts-ignore
+    //     toast.error(errorsArray[0][0].file.message, {
+    //         className: '!bg-yellow-50 !max-w-xl !text-yellow-600 !shadow-2xl !shadow-yellow-50/50 text-sm font-medium'
+    //     });
+    // }
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true);
 
@@ -107,15 +128,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
             className: 'text-sm font-medium !max-w-xl !shadow-2xl border border-[#ededed]'
         });
 
-        // const intervalId = setInterval(() => {
-        //     currentTime += incrementTime;
-        //     const percent = (currentTime / totalTime) * 100;
-        //     updateProgress(percent);
-        //
-        //     if (currentTime >= totalTime) {
-        //         clearInterval(intervalId); // Arrêter l'intervalle une fois la requête terminée
-        //     }
-        // }, incrementTime);
+        setShowProgressBars(true);
 
         for (let i = 0; i < fileToUpload.length; i++) {
             const file = fileToUpload[i];
@@ -134,7 +147,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
                         ...prevProgress,
                         [type]: currentTime,
                     }));
-                }, 100);
+                }, 50);
 
                 const uploadKycFileRes = await makeKycFilesUpload(merchant, file);
                 console.log(uploadKycFileRes);
@@ -219,7 +232,7 @@ export default function AddMerchantKyc({lang, merchant, merchantIdsInfos, legalF
             <div className={`duration-200 ${step == 2 ? 'block fade-in' : 'hidden fade-out'}`}>
                 <SignUpFilesUpload lang={lang} handleGoToBack={handleGoToBack} handleGoToNext={handleGoToNext}
                                    legalForm={legalForm} isLoading={isLoading} onSubmit={onSubmit} stepOne={stepOne}
-                                   errorsArray={errorsArray} progress={progress}/>
+                                   errorsArray={errorsArray} progress={progress} showProgressBars={showProgressBars}/>
             </div>
             <div className={`duration-200 ${step == 3 ? 'block fade-in' : 'hidden fade-out'}`}>
                 <SignUpOK lang={lang}/>
