@@ -1,7 +1,7 @@
 "use client"
 
 import {Locale} from "@/i18n.config";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {
@@ -24,8 +24,13 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem} from "@/components/ui/form";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 
+import {IUser} from "@/core/interfaces/user";
+import {ITransaction} from "@/core/interfaces/transaction";
+import {getTransactions} from "@/core/apis/transaction";
+
 interface LastTransactionsProps {
-    lang: Locale
+    lang: Locale,
+    merchant: IUser
 }
 
 export enum TransactionsStatus {
@@ -40,76 +45,93 @@ export enum TransactionsType {
     CREDIT = 'credit',
 }
 
-export default function LastTransactions({lang}: LastTransactionsProps) {
-    const transactions = [
-        {
-            tId: "24553FS3AS",
-            date: "2024-04-20T11:00:00",
-            description: "Envoi d'argent",
-            type: "debit",
-            amount: 50000,
-            status: 'approved',
-        },
-        {
-            tId: "24557FS3AS",
-            date: "2023-03-24T14:00:00",
-            description: "Envoi d'argent",
-            type: "credit",
-            amount: 50000,
-            status: 'approved',
-        },
-        {
-            tId: "24556FS3AS",
-            date: "2024-03-24T08:00:00",
-            description: "Lien de paiement",
-            type: "credit",
-            amount: 20000,
-            status: 'pending',
-        },
-        {
-            tId: "24555FS3AS",
-            date: "2024-04-20T20:00:00",
-            description: "Envoi d'argent",
-            type: "debit",
-            amount: 50000,
-            status: 'approved',
-        },
-        {
-            tId: "24554FS3AS",
-            date: "2024-03-24T12:00:00",
-            description: "Lien de paiement",
-            type: "debit",
-            amount: 50000,
-            status: 'approved',
-        },
-        {
-            tId: "24558FS3AS",
-            date: "2024-12-20T13:00:00",
-            description: "Envoi d'argent",
-            type: "credit",
-            amount: 100000,
-            status: 'declined',
-        },
-        {
-            tId: "24559FS3AS",
-            date: "2024-09-05T06:00:00",
-            description: "Envoi d'argent",
-            type: "debit",
-            amount: 500000,
-            status: 'approved',
-        },
-        {
-            tId: "24513FS3AS",
-            date: "2024-03-09T10:00:00",
-            description: "Lien de paiement",
-            type: "credit",
-            amount: 50000,
-            status: 'expired',
-        }
-    ];
+export default function LastTransactions({lang, merchant}: LastTransactionsProps) {
+    // const transactions = [
+    //     {
+    //         tId: "24553FS3AS",
+    //         date: "2024-04-20T11:00:00",
+    //         description: "Envoi d'argent",
+    //         type: "debit",
+    //         amount: 50000,
+    //         status: 'approved',
+    //     },
+    //     {
+    //         tId: "24557FS3AS",
+    //         date: "2023-03-24T14:00:00",
+    //         description: "Envoi d'argent",
+    //         type: "credit",
+    //         amount: 50000,
+    //         status: 'approved',
+    //     },
+    //     {
+    //         tId: "24556FS3AS",
+    //         date: "2024-03-24T08:00:00",
+    //         description: "Lien de paiement",
+    //         type: "credit",
+    //         amount: 20000,
+    //         status: 'pending',
+    //     },
+    //     {
+    //         tId: "24555FS3AS",
+    //         date: "2024-04-20T20:00:00",
+    //         description: "Envoi d'argent",
+    //         type: "debit",
+    //         amount: 50000,
+    //         status: 'approved',
+    //     },
+    //     {
+    //         tId: "24554FS3AS",
+    //         date: "2024-03-24T12:00:00",
+    //         description: "Lien de paiement",
+    //         type: "debit",
+    //         amount: 50000,
+    //         status: 'approved',
+    //     },
+    //     {
+    //         tId: "24558FS3AS",
+    //         date: "2024-12-20T13:00:00",
+    //         description: "Envoi d'argent",
+    //         type: "credit",
+    //         amount: 100000,
+    //         status: 'declined',
+    //     },
+    //     {
+    //         tId: "24559FS3AS",
+    //         date: "2024-09-05T06:00:00",
+    //         description: "Envoi d'argent",
+    //         type: "debit",
+    //         amount: 500000,
+    //         status: 'approved',
+    //     },
+    //     {
+    //         tId: "24513FS3AS",
+    //         date: "2024-03-09T10:00:00",
+    //         description: "Lien de paiement",
+    //         type: "credit",
+    //         amount: 50000,
+    //         status: 'expired',
+    //     }
+    // ];
 
     const [isLoading, setLoading] = useState(false);
     const [showConError, setShowConError] = useState(false);
+    const [transactions, setTransactions] = useState([]);
+
+    function fecthTransactions() {
+        getTransactions(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            // console.log(data, data);
+            setTransactions(data);
+        })
+        .catch(err => {
+            setTransactions([]);
+        });
+    }
+
+    useEffect(() => {
+        fecthTransactions()
+    }, []);
+
 
     const formSchema = z.object({
         pAccount: z.string().min(1, {
@@ -188,7 +210,7 @@ export default function LastTransactions({lang}: LastTransactionsProps) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {transactions.map((transaction) => (
+                        {transactions.map((transaction: ITransaction) => (
                             <TableRow className={`border-[#f4f4f4]`} key={transaction.tId}>
                                 <TableCell className="text-xs font-medium !py-3.5">{transaction.tId}</TableCell>
                                 <TableCell className="text-xs !py-3.5">{transaction.description}</TableCell>
