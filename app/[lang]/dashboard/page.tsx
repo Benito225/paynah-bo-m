@@ -16,14 +16,14 @@ import LastTransactions from "@/components/dashboard/serenity-space/LastTransact
 export default async function Home({params: { lang }}: {
     params: { lang: Locale }
 }) {
-    // const session = await auth();
-    //
-    // let merchant;
-    // if (session && session.user) {
-    //     merchant = session.user as IUser;
-    // } else {
-    //     merchant = {} as IUser;
-    // }
+    const session = await auth();
+    
+    let merchant;
+    if (session && session.user) {
+        merchant = session.user as IUser;
+    } else {
+        merchant = {} as IUser;
+    }
 
     return (
         <>
@@ -44,8 +44,8 @@ export default async function Home({params: { lang }}: {
                     </div>
                     <div className={`w-[50%] 2xl:w-[53%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
-                            <AccountList lang={lang} />
-                            <LastTransactions lang={lang} />
+                            <AccountList lang={lang} merchant={merchant}/>
+                            <LastTransactions lang={lang} merchant={merchant} />
                         </div>
                     </div>
                     <div className={`w-[25%] 2xl:w-[24%]`}>
