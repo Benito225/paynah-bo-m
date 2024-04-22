@@ -61,7 +61,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                             </g>
                                         </svg>
                                     </div>
-                                    <span className={`text-[12px] font-light text-[#626262]`}>{account?.name !== undefined ? account.name : 'Compte Principal'}</span>
+                                    <span className={`text-[12px] font-light text-[#626262]`}>{account.name ? account.name : 'Compte Principal'}</span>
                                 </div>
                             </div>
                             <DropdownMenu>
@@ -103,7 +103,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                         </svg>
                                         <span className={`mt-[1.5px]`}>Règle du compte</span>
                                     </DropdownMenuItem> */}
-                                    <DropdownMenuSeparator />
+                                    {/*<DropdownMenuSeparator />*/}
                                     <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                         <Trash2 className="mr-2 h-3.5 w-3.5" />
                                         <span className={`mt-[1.5px]`}>Supprimer le compte</span>
