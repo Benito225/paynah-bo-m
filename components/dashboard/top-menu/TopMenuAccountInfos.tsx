@@ -36,9 +36,9 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
         }
     });
 
-    const extractCurrentAccountData = (reference) => {}
+    const extractCurrentAccountData = (reference: any) => {}
 
-    const handleChangeAccount = (event) => {
+    const handleChangeAccount = (event: any) => {
         setCurrentAccount(event.target.value); 
     };
 
@@ -48,8 +48,9 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
     }
 
     useEffect(() => {
-
+        // @ts-ignore
         if (merchant?.merchantsIds[0]['bank-account'][0] !== undefined){
+            // @ts-ignore
             setCurrentAccount(merchant?.merchantsIds[0]['bank-account'][0].coreBankId);
         }
     },[]);
@@ -70,6 +71,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                             </div>
                             <div className={`inline-flex items-center space-x-2`}>
                                 <div className={`flex flex-col justify-start items-start text-xs`}>
+                                    {/*@ts-ignore*/}
                                     <span className={`font-semibold`}>{merchant.merchantsIds[0].name}</span>
                                     <span className={`font-light text-[#767676]`}>{currentAccount}</span>
                                 </div>
@@ -102,13 +104,12 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                                                                     <SelectValue  placeholder="Choisir un compte"/>
                                                                     </SelectTrigger>
                                                                     <SelectContent className={`bg-[#f0f0f0]`} onChange={handleChangeAccount}>
-                                                                        {
-                                                                            merchant.merchantsIds[0]['bank-account'].map((account) => (
+                                                                        {/*@ts-ignore*/}
+                                                                        {merchant.merchantsIds[0]['bank-account'].map((account: any) => (
                                                                                 <SelectItem key={account.id} className={`font-light px-7 focus:bg-gray-100`} value={account.coreBankId}>
                                                                                     {account.coreBankId}
                                                                                 </SelectItem>
-                                                                            ))
-                                                                        }
+                                                                            ))}
                                                                     </SelectContent>
                                                                 </Select>
                                                             </div>
