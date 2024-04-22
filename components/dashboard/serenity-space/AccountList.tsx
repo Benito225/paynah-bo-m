@@ -61,7 +61,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                             </g>
                                         </svg>
                                     </div>
-                                    <span className={`text-[12px] font-light text-[#626262]`}>Salaire Prestataire</span>
+                                    <span className={`text-[12px] font-light text-[#626262]`}>{account?.name !== undefined ? account.name : 'Compte Principal'}</span>
                                 </div>
                             </div>
                             <DropdownMenu>
@@ -87,7 +87,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                         <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    {/* <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                         <svg className="mr-2 h-3.5 w-3.5" viewBox="0 0 24 24"
                                             fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
                                             strokeLinejoin="round">
@@ -102,7 +102,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                             <line x1="18" x2="22" y1="16" y2="16"/>
                                         </svg>
                                         <span className={`mt-[1.5px]`}>Règle du compte</span>
-                                    </DropdownMenuItem>
+                                    </DropdownMenuItem> */}
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                         <Trash2 className="mr-2 h-3.5 w-3.5" />

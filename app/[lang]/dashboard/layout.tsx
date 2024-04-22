@@ -49,9 +49,9 @@ export default async function RootLayout({
   params: { lang: Locale };
 }>) {
     const session  = await auth();
-
+    let merchant: IUser = {}
     if (session && session.user) {
-        const merchant = session.user as IUser;
+        merchant = session.user as IUser;
         console.log(merchant);
         if (merchant.merchantsIds && merchant.merchantsIds.length == 0) {
             return redirect('/onboarding/add-merchant');
@@ -65,7 +65,7 @@ export default async function RootLayout({
             <NavigationLoadingProviders>
                 <div className={`min-h-screen`}>
                     <div className={`flex flex-col min-h-screen pb-[6.6rem]`}>
-                        <DashboardTopMenu lang={params.lang}/>
+                        <DashboardTopMenu lang={params.lang} merchant={merchant}/>
                         <div className={`mt-3 flex-grow`}>
                             {children}
                         </div>
