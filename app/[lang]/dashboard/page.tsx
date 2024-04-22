@@ -38,7 +38,7 @@ export default async function Home({params: { lang }}: {
                 <div className={`flex gap-3 mt-2.5 flex-grow`}>
                     <div className={`w-[25%] 2xl:w-[23%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
-                            <PaynahCard lang={lang}/>
+                            <PaynahCard lang={lang} merchant={merchant}/>
                             <OperationShortcut lang={lang} />
                         </div>
                     </div>
