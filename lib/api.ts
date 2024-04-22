@@ -1,5 +1,5 @@
 "use server";
-export async function fetchData(url: string, method = 'GET', body: any = null, token: any = null) {
+export async function fetchData(url: string, method = 'GET', body: any = null, token: any = null, defaultApi: boolean = true) {
 
     const headers: any = {
         'Content-Type': 'application/json',
@@ -16,7 +16,7 @@ export async function fetchData(url: string, method = 'GET', body: any = null, t
         cache: 'no-store'
     };
 
-    const endpoint = process.env.BO_API_BASE_URL+url;
+    const endpoint = defaultApi ? process.env.BO_API_BASE_URL+url : process.env.BO_TRANS_API_BASE_URL+url;
 
     const response = await fetch(endpoint, options);
 
