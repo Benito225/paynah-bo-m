@@ -10,17 +10,20 @@ import {Button} from "@/components/ui/button";
 import {formatCFA} from "@/lib/utils";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Form, FormControl, FormField, FormItem} from "@/components/ui/form";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {IUser} from "@/core/interfaces/user";
 
 interface TopMenuAccountInfosProps {
-    lang: Locale
+    lang: Locale,
+    merchant: IUser
 }
 
-export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
+export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfosProps) {
 
     const [isLoading, setLoading] = useState(false);
+    const [currentAccount, setCurrentAccount] = useState('');
 
     const formSchema = z.object({
         activeAccount: z.string(),
@@ -33,10 +36,25 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
         }
     });
 
+    const extractCurrentAccountData = (reference) => {}
+
+    const handleChangeAccount = (event) => {
+        setCurrentAccount(event.target.value); 
+    };
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values)
         setLoading(true);
     }
+
+    useEffect(() => {
+
+        if (merchant?.merchantsIds[0]['bank-account'][0] !== undefined){
+            setCurrentAccount(merchant?.merchantsIds[0]['bank-account'][0].coreBankId);
+        }
+    },[]);
+
+    console.log(merchant);
 
     return (
         <div>
@@ -52,8 +70,8 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
                             </div>
                             <div className={`inline-flex items-center space-x-2`}>
                                 <div className={`flex flex-col justify-start items-start text-xs`}>
-                                    <span className={`font-semibold`}>Total Energie CI</span>
-                                    <span className={`font-light text-[#767676]`}>Npa487738CI</span>
+                                    <span className={`font-semibold`}>{merchant.merchantsIds[0].name}</span>
+                                    <span className={`font-light text-[#767676]`}>{currentAccount}</span>
                                 </div>
                                 <ChevronDown className={`text-[#626262] h-[1.3rem] w-auto`} />
                             </div>
@@ -77,19 +95,20 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
                                                     <FormItem>
                                                         <FormControl>
                                                             <div>
-                                                                <Select onValueChange={field.onChange} defaultValue={'value'}>
+                                                                <Select onValueChange={field.onChange} defaultValue={currentAccount}>
                                                                     <SelectTrigger className={`min-w-[10rem] h-[2.5rem] border-[#717171] pl-3 pr-3 font-light text-sm`} style={{
                                                                         backgroundColor: field.value ? '#f0f0f0' : '#f0f0f0',
                                                                     }}>
-                                                                        <SelectValue  placeholder="Choisir un compte"/>
+                                                                    <SelectValue  placeholder="Choisir un compte"/>
                                                                     </SelectTrigger>
-                                                                    <SelectContent className={`bg-[#f0f0f0]`}>
-                                                                        <SelectItem className={`font-light px-7 focus:bg-gray-100`} value={'value'}>
-                                                                            Npa487738CI
-                                                                        </SelectItem>
-                                                                        <SelectItem className={`font-light px-7 focus:bg-gray-100`} value={'value2'}>
-                                                                            Npa367738CI
-                                                                        </SelectItem>
+                                                                    <SelectContent className={`bg-[#f0f0f0]`} onChange={handleChangeAccount}>
+                                                                        {
+                                                                            merchant.merchantsIds[0]['bank-account'].map((account) => (
+                                                                                <SelectItem key={account.id} className={`font-light px-7 focus:bg-gray-100`} value={account.coreBankId}>
+                                                                                    {account.coreBankId}
+                                                                                </SelectItem>
+                                                                            ))
+                                                                        }
                                                                     </SelectContent>
                                                                 </Select>
                                                             </div>
@@ -132,7 +151,7 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
                                            alt={`logo entité`} width={172}
                                            height={140}/>
                                 </div>
-                                <p className={`text-sm font-light text-center text-[#767676] mb-6`}>Npa487738CI</p>
+                                <p className={`text-sm font-light text-center text-[#767676] mb-6`}>{currentAccount}</p>
                                 <Button className={`bg-transparent font-light text-xs h-[2.2rem] text-black hover:text-white border border-[#858587] inline-flex items-center`}>
                                     <Download className={`h-[1rem]`} />
                                     <span>Télécharger le Paynah ID</span>

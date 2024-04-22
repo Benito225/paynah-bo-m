@@ -200,7 +200,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
             <div className={`mt-3`}>
             {
                 transactions.length == 0 ?
-                <div className={`flex justify-center items-center h-full`}>
+                <div className={`flex justify-center items-center h-full mt-4`}>
                     <div className={`inline-flex flex-col justify-center`}>
                         <svg className={`h-[4rem] w-auto`} viewBox="0 0 102.839 102.308">
                             <defs>
