@@ -38,7 +38,8 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                         <span className={`text-xs font-light mt-1 w-[80%] mx-auto text-center`}>Créer un nouveau compte</span>
                     </div>
                 </button>
-                {merchant.merchantsIds[0]['bank-account'].map((account) => (
+                {/*@ts-ignore*/}
+                {merchant.merchantsIds[0]['bank-account'].map((account: any) => (
                     <div key={account.id} className={`snap-end shrink-0 w-[30%] 2xl:w-[24%] bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}>
                         <div className={`flex justify-between items-start`}>
                             <div>

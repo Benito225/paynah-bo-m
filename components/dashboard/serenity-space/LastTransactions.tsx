@@ -118,6 +118,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
     const [transactions, setTransactions] = useState([]);
 
     function fecthTransactions() {
+        // @ts-ignore
         getTransactions(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             // console.log(data, data);

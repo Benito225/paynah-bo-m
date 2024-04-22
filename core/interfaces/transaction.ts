@@ -1,9 +1,9 @@
 export interface ITransaction {
     tId?: string;
-    date?: string;
+    date: string;
     description?: string;
     type?: string;
-    amount?: number;
+    amount: number;
     country?: string;
-    status?: string;
+    status: string;
 }
