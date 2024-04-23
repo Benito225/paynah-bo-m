@@ -91,6 +91,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                             </div>
                             <div className={`inline-flex items-center space-x-2`}>
                                 <div className={`flex flex-col justify-start items-start text-xs`}>
+                                    {/*@ts-ignore*/}
                                     <span className={`font-semibold`}>{merchant.merchantsIds[0].name}</span>
                                     <span className={`font-light text-[#767676]`}>{currentAccount?.coreBankId}</span>
                                 </div>
@@ -128,8 +129,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                                                                                 <SelectItem key={account.id} className={`font-light px-7 focus:bg-gray-100`} value={account.coreBankId}>
                                                                                     {account.coreBankId}
                                                                                 </SelectItem>
-                                                                            ))
-                                                                        }
+                                                                            ))}
                                                                     </SelectContent>
                                                                 </Select>
                                                             </div>

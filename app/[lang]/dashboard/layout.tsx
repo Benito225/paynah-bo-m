@@ -49,7 +49,7 @@ export default async function RootLayout({
   params: { lang: Locale };
 }>) {
     const session  = await auth();
-    let merchant: IUser = {}
+    let merchant: IUser = {} as IUser
     if (session && session.user) {
         merchant = session.user as IUser;
         console.log(merchant);
