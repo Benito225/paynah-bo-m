@@ -14,6 +14,8 @@ import React, {useState, useEffect} from "react";
 import {Form, FormControl, FormField, FormItem} from "@/components/ui/form";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {IUser} from "@/core/interfaces/user";
+import {IAccount} from "@/core/interfaces/account";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 
 interface TopMenuAccountInfosProps {
     lang: Locale,
@@ -23,7 +25,9 @@ interface TopMenuAccountInfosProps {
 export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfosProps) {
 
     const [isLoading, setLoading] = useState(false);
-    const [currentAccount, setCurrentAccount] = useState('');
+    const [currentAccount, setCurrentAccount] = useState(null);
+    const [accounts, setAccounts] = useState([]);
+
 
     const formSchema = z.object({
         activeAccount: z.string(),
@@ -36,10 +40,13 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
         }
     });
 
-    const extractCurrentAccountData = (reference) => {}
-
-    const handleChangeAccount = (event) => {
-        setCurrentAccount(event.target.value); 
+    const handleChangeAccount = (event: any) => {
+        const selectedCoreBankId = event.target.value; 
+        const accoundFounded = accounts.filter((account: IAccount) => account.coreBankId == selectedCoreBankId);
+        if (accoundFounded.length === 0) {
+            setCurrentAccount(accoundFounded[0]);
+        }
+        console.log(accoundFounded);
     };
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -47,12 +54,26 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
         setLoading(true);
     }
 
-    useEffect(() => {
-
-        if (merchant?.merchantsIds[0]['bank-account'][0] !== undefined){
-            setCurrentAccount(merchant?.merchantsIds[0]['bank-account'][0].coreBankId);
+    function initializeCurrentAccount(accounts: IAccount[]) {
+        if (accounts.length > 0) {
+            setCurrentAccount(accounts[0]);
         }
-    },[]);
+    }
+
+    function fetchMerchantBankAccounts() {
+        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setAccounts(data.accounts);
+            initializeCurrentAccount(data.accounts)
+        })
+        .catch(err => {
+            setAccounts([]);
+        });
+    }
+
+    useEffect(() => {
+        fetchMerchantBankAccounts();
+    }, []);
 
     console.log(merchant);
 
@@ -71,7 +92,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                             <div className={`inline-flex items-center space-x-2`}>
                                 <div className={`flex flex-col justify-start items-start text-xs`}>
                                     <span className={`font-semibold`}>{merchant.merchantsIds[0].name}</span>
-                                    <span className={`font-light text-[#767676]`}>{currentAccount}</span>
+                                    <span className={`font-light text-[#767676]`}>{currentAccount?.coreBankId}</span>
                                 </div>
                                 <ChevronDown className={`text-[#626262] h-[1.3rem] w-auto`} />
                             </div>
@@ -95,7 +116,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                                                     <FormItem>
                                                         <FormControl>
                                                             <div>
-                                                                <Select onValueChange={field.onChange} defaultValue={currentAccount}>
+                                                                <Select onValueChange={field.onChange} defaultValue={currentAccount?.coreBankId}>
                                                                     <SelectTrigger className={`min-w-[10rem] h-[2.5rem] border-[#717171] pl-3 pr-3 font-light text-sm`} style={{
                                                                         backgroundColor: field.value ? '#f0f0f0' : '#f0f0f0',
                                                                     }}>
@@ -103,7 +124,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                                                                     </SelectTrigger>
                                                                     <SelectContent className={`bg-[#f0f0f0]`} onChange={handleChangeAccount}>
                                                                         {
-                                                                            merchant.merchantsIds[0]['bank-account'].map((account) => (
+                                                                            accounts.map((account) => (
                                                                                 <SelectItem key={account.id} className={`font-light px-7 focus:bg-gray-100`} value={account.coreBankId}>
                                                                                     {account.coreBankId}
                                                                                 </SelectItem>
@@ -151,7 +172,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                                            alt={`logo entité`} width={172}
                                            height={140}/>
                                 </div>
-                                <p className={`text-sm font-light text-center text-[#767676] mb-6`}>{currentAccount}</p>
+                                <p className={`text-sm font-light text-center text-[#767676] mb-6`}>{currentAccount?.coreBankId}</p>
                                 <Button className={`bg-transparent font-light text-xs h-[2.2rem] text-black hover:text-white border border-[#858587] inline-flex items-center`}>
                                     <Download className={`h-[1rem]`} />
                                     <span>Télécharger le Paynah ID</span>
@@ -164,25 +185,25 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Nom du compte</span>
-                                            <span className={`uppercase text-xs font-semibold`}>COMPTE USINE DE Bonoua</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{currentAccount.name === undefined ? 'Compte Principal': currentAccount.name}</span>
                                         </div>
                                     </div>
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Numéro du compte</span>
-                                            <span className={`uppercase text-xs font-semibold`}>PA4839CI</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{currentAccount?.coreBankId}</span>
                                         </div>
                                     </div>
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Solde du compte</span>
-                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(34850345)}</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(currentAccount?.balance)}</span>
                                         </div>
                                     </div>
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Solde effectif disponible</span>
-                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(34850105)}</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(currentAccount?.skaleetBalance)}</span>
                                         </div>
                                     </div>
                                 </div>

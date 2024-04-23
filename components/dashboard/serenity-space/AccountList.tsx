@@ -1,7 +1,7 @@
 "use client"
 
 import {Locale} from "@/i18n.config";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -20,6 +20,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 import {IUser} from "@/core/interfaces/user";
 
 interface AccountListProps {
@@ -28,6 +29,23 @@ interface AccountListProps {
 }
 
 export default function AccountList({lang, merchant}: AccountListProps) {
+
+    const [accounts, setAccounts] = useState([]);
+
+    function fetchMerchantBankAccounts() {
+        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setAccounts(data.accounts);
+        })
+        .catch(err => {
+            setAccounts([]);
+        });
+    }
+
+    useEffect(() => {
+        fetchMerchantBankAccounts()
+    }, []);
+
 
     return (
         <div className={`account-list`}>
@@ -38,7 +56,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                         <span className={`text-xs font-light mt-1 w-[80%] mx-auto text-center`}>Créer un nouveau compte</span>
                     </div>
                 </button>
-                {merchant.merchantsIds[0]['bank-account'].map((account) => (
+                {accounts.map((account) => (
                     <div key={account.id} className={`snap-end shrink-0 w-[30%] 2xl:w-[24%] bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}>
                         <div className={`flex justify-between items-start`}>
                             <div>
