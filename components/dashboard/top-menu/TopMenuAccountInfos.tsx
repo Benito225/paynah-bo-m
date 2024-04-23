@@ -185,7 +185,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Nom du compte</span>
-                                            <span className={`uppercase text-xs font-semibold`}>{currentAccount?.name === undefined ? 'Compte Principal': currentAccount.name}</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{currentAccount?.isMain ? 'Compte Principal': (currentAccount?.name ? currentAccount.name : 'Compte')}</span>
                                         </div>
                                     </div>
                                     <div>
