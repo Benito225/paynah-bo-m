@@ -15,8 +15,8 @@ export default function TopMenuBalanceInfos({lang, merchant}: TopMenuBalanceInfo
 
     const [displayBalance, setDisplayBalance] = useState(true);
     const [displayAvailableBalance, setDisplayAvailableBalance] = useState(false);
-    const [balance, setBalance] = useState(800300);
-    const [availableBalance, setAvailableBalance] = useState(800100);
+    const [balance, setBalance] = useState(0);
+    const [availableBalance, setAvailableBalance] = useState(0);
 
     function fetchMerchantBankAccounts() {
         // @ts-ignore
