@@ -1,7 +1,7 @@
 "use client"
 
 import {Locale} from "@/i18n.config";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -12,15 +12,16 @@ import Image from "next/image";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {formatCFA, hiddeBalance} from "@/lib/utils";
 import {IUser} from "@/core/interfaces/user";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 
 interface PaynahCardProps {
     lang: Locale,
     className?: string,
     onClick?: () => any,
-    merchant?: IUser
+    merchant: IUser,
 }
 
-export default function PaynahCard({lang, className, onClick, merchant}: PaynahCardProps) {
+export default function PaynahCard({ lang, className, onClick, merchant }: PaynahCardProps) {
 
     const [isLoading, setLoading] = useState(false);
     const [showConError, setShowConError] = useState(false);
@@ -28,6 +29,21 @@ export default function PaynahCard({lang, className, onClick, merchant}: PaynahC
     const [displayAvailableBalance, setDisplayAvailableBalance] = useState(true);
     const [balance, setBalance] = useState(7873456);
     const [availableBalance, setAvailableBalance] = useState(6873456);
+
+    function fetchMerchantBankAccounts() {
+        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setBalance(data.total_balance);
+            setAvailableBalance(data.total_skaleet_balance);
+        })
+        .catch(err => {
+            setAccounts([]);
+        });
+    }
+
+    useEffect(() => {
+        fetchMerchantBankAccounts()
+    }, []);
 
     function toggleAllBalanceView() {
         setDisplayBalance(!displayBalance)

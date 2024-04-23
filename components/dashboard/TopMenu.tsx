@@ -46,7 +46,7 @@ export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps
                         </svg>
                     </Link>
                     <div className={`inline-flex items-center space-x-[5rem]`}>
-                        <TopMenuSoldInfos lang={lang} />
+                        <TopMenuSoldInfos lang={lang} merchant={merchant} />
                         <TopMenuAccountInfos lang={lang} merchant={merchant} />
                     </div>
                 </div>

@@ -2,18 +2,36 @@
 
 import {Locale} from "@/i18n.config";
 import {formatCFA, hiddeBalance} from "@/lib/utils";
-import {useState} from "react";
+import {useState, useEffect} from "react";
+import {IUser} from "@/core/interfaces/user";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 
 interface TopMenuBalanceInfosProps {
-    lang: Locale
+    lang: Locale,
+    merchant: IUser
 }
 
-export default function TopMenuBalanceInfos({lang}: TopMenuBalanceInfosProps) {
+export default function TopMenuBalanceInfos({lang, merchant}: TopMenuBalanceInfosProps) {
 
     const [displayBalance, setDisplayBalance] = useState(true);
     const [displayAvailableBalance, setDisplayAvailableBalance] = useState(false);
     const [balance, setBalance] = useState(800300);
     const [availableBalance, setAvailableBalance] = useState(800100);
+
+    function fetchMerchantBankAccounts() {
+        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setBalance(data.total_balance);
+            setAvailableBalance(data.total_skaleet_balance);
+        })
+        .catch(err => {
+            setAccounts([]);
+        });
+    }
+
+    useEffect(() => {
+        fetchMerchantBankAccounts()
+    }, []);
 
     function toggleBalanceView() {
         setDisplayBalance(!displayBalance)
