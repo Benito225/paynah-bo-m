@@ -27,17 +27,18 @@ export default function PaynahCard({ lang, className, onClick, merchant }: Payna
     const [showConError, setShowConError] = useState(false);
     const [displayBalance, setDisplayBalance] = useState(true);
     const [displayAvailableBalance, setDisplayAvailableBalance] = useState(true);
-    const [balance, setBalance] = useState(7873456);
-    const [availableBalance, setAvailableBalance] = useState(6873456);
+    const [balance, setBalance] = useState(0);
+    const [availableBalance, setAvailableBalance] = useState(0);
 
     function fetchMerchantBankAccounts() {
+        // @ts-ignore
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             setBalance(data.total_balance);
             setAvailableBalance(data.total_skaleet_balance);
         })
         .catch(err => {
-            setAccounts([]);
+            // setAccounts([]);
         });
     }
 

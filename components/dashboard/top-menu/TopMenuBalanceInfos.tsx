@@ -19,13 +19,14 @@ export default function TopMenuBalanceInfos({lang, merchant}: TopMenuBalanceInfo
     const [availableBalance, setAvailableBalance] = useState(800100);
 
     function fetchMerchantBankAccounts() {
+        // @ts-ignore
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             setBalance(data.total_balance);
             setAvailableBalance(data.total_skaleet_balance);
         })
         .catch(err => {
-            setAccounts([]);
+            // setAccounts([]);
         });
     }
 

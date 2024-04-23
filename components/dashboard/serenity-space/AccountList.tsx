@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 import {IUser} from "@/core/interfaces/user";
+import {IAccount} from "@/core/interfaces/account";
 
 interface AccountListProps {
     lang: Locale,
@@ -33,6 +34,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
     const [accounts, setAccounts] = useState([]);
 
     function fetchMerchantBankAccounts() {
+        // @ts-ignore
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             setAccounts(data.accounts);
@@ -56,7 +58,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                         <span className={`text-xs font-light mt-1 w-[80%] mx-auto text-center`}>Créer un nouveau compte</span>
                     </div>
                 </button>
-                {accounts.map((account) => (
+                {accounts.map((account: IAccount) => (
                     <div key={account.id} className={`snap-end shrink-0 w-[30%] 2xl:w-[24%] bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}>
                         <div className={`flex justify-between items-start`}>
                             <div>
@@ -78,7 +80,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                             </g>
                                         </svg>
                                     </div>
-                                    <span className={`text-[12px] font-light text-[#626262]`}>{account.name ? account.name : 'Compte Principal'}</span>
+                                    <span className={`text-[12px] font-light text-[#626262]`}>{account.name ? account.name : (account.isMain ? 'Compte Principal' : 'Compte')}</span>
                                 </div>
                             </div>
                             <DropdownMenu>
@@ -130,7 +132,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                         </div>
                         <div className={`inline-flex flex-col`}>
                             <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Solde disponible</h3>
-                            <span className={`text-base font-semibold`}>{formatCFA(account.balance)}</span>
+                            <span className={`text-base font-semibold`}>{formatCFA(account.skaleet_balance)}</span>
                         </div>
                     </div>
                 ))}

@@ -25,7 +25,7 @@ interface TopMenuAccountInfosProps {
 export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfosProps) {
 
     const [isLoading, setLoading] = useState(false);
-    const [currentAccount, setCurrentAccount] = useState(null);
+    const [currentAccount, setCurrentAccount] = useState<IAccount | null>(null);
     const [accounts, setAccounts] = useState([]);
 
 
@@ -61,6 +61,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
     }
 
     function fetchMerchantBankAccounts() {
+        // @ts-ignore
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             setAccounts(data.accounts);
@@ -124,8 +125,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                                                                     <SelectValue  placeholder="Choisir un compte"/>
                                                                     </SelectTrigger>
                                                                     <SelectContent className={`bg-[#f0f0f0]`} onChange={handleChangeAccount}>
-                                                                        {
-                                                                            accounts.map((account) => (
+                                                                        {accounts.map((account: IAccount) => (
                                                                                 <SelectItem key={account.id} className={`font-light px-7 focus:bg-gray-100`} value={account.coreBankId}>
                                                                                     {account.coreBankId}
                                                                                 </SelectItem>
@@ -185,7 +185,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Nom du compte</span>
-                                            <span className={`uppercase text-xs font-semibold`}>{currentAccount.name === undefined ? 'Compte Principal': currentAccount.name}</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{currentAccount?.name === undefined ? 'Compte Principal': currentAccount.name}</span>
                                         </div>
                                     </div>
                                     <div>
@@ -197,13 +197,13 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Solde du compte</span>
-                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(currentAccount?.balance)}</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(currentAccount != null ? currentAccount.balance : 0)}</span>
                                         </div>
                                     </div>
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Solde effectif disponible</span>
-                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(currentAccount?.skaleetBalance)}</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(currentAccount != null ? currentAccount.skaleet_balance : 0)}</span>
                                         </div>
                                     </div>
                                 </div>
