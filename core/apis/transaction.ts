@@ -4,8 +4,13 @@
 
 import {fetchData} from "@/lib/api";
 
-export async function getTransactions(merchantId: string, token: string) {
-    const resData = await fetchData("/transactions/all-transactions/with-filters?merchantId="+merchantId+"&csv=false", 'GET', null, token, false);
+interface queryParams {
+    merchantId?: string;
+    coreBankId?: string;
+}
+
+export async function getTransactions(query: queryParams, token: string) {
+    const resData = await fetchData(`/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&bankAccountId=${query.coreBankId}&csv=false`, 'GET', null, token, false);
     console.log(resData);
     console.log(token);
     return resData.data;

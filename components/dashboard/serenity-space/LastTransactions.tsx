@@ -26,7 +26,9 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 
 import {IUser} from "@/core/interfaces/user";
 import {ITransaction} from "@/core/interfaces/transaction";
+import {IAccount} from "@/core/interfaces/account";
 import {getTransactions} from "@/core/apis/transaction";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 
 interface LastTransactionsProps {
     lang: Locale,
@@ -116,20 +118,42 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
     const [isLoading, setLoading] = useState(false);
     const [showConError, setShowConError] = useState(false);
     const [transactions, setTransactions] = useState([]);
+    const [accounts, setAccounts] = useState([]);
+    const [currentAccount, setCurrentAccount] = useState('');
 
-    function fecthTransactions() {
+    const handleChangeAccount = (event: any) => {
+        const selectedCoreBankId = event.target.value;
+        console.log(selectedCoreBankId);
+        fecthTransactions(selectedCoreBankId); 
+        setCurrentAccount(selectedCoreBankId);
+    }
+    
+    function fecthTransactions(coreBankId: string) {
         // @ts-ignore
-        getTransactions(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        const query = {coreBankId: coreBankId, merchantId: merchant.merchantsIds[0].id }
+        getTransactions(query, String(merchant.accessToken))
         .then(data => {
-            setTransactions(data);
+            console.log(data);
+            setTransactions(data.data);
         })
         .catch(err => {
             setTransactions([]);
         });
     }
 
+    function fetchMerchantBankAccounts() {
+        // @ts-ignore
+        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setAccounts(data.accounts);
+        })
+        .catch(err => {
+            setAccounts([]);
+        });
+    }
+
     useEffect(() => {
-        fecthTransactions()
+        fetchMerchantBankAccounts()
     }, []);
 
 
@@ -167,19 +191,20 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                                     <FormItem>
                                         <FormControl>
                                             <div>
-                                                <Select onValueChange={field.onChange} defaultValue={'cp'}>
+                                                <Select onValueChange={field.onChange} defaultValue={currentAccount}>
                                                     <SelectTrigger className={`h-[2.2rem] text-xs rounded-xl border border-[#f4f4f7] pl-2.5 pr-1 font-normal`} style={{
                                                         backgroundColor: field.value ? '#f4f4f7' : '#f4f4f7',
                                                     }}>
-                                                        <SelectValue  placeholder="Choisir une devise"/>
+                                                        <SelectValue  placeholder="Choisir un compte"/>
                                                     </SelectTrigger>
-                                                    <SelectContent className={`bg-[#f0f0f0]`}>
-                                                        <SelectItem className={`font-normal text-xs px-7 focus:bg-gray-100`} value={'cp'}>
-                                                            Compte principale
-                                                        </SelectItem>
-                                                        <SelectItem className={`font-normal text-xs px-7 focus:bg-gray-100`} value={'sc'}>
-                                                            Salaire corporate
-                                                        </SelectItem>
+                                                    <SelectContent className={`bg-[#f0f0f0]`} onChange={handleChangeAccount}>
+                                                        {
+                                                            accounts.map((account: IAccount) => (
+                                                            <SelectItem key={account.id} className={`font-normal text-xs px-7 focus:bg-gray-100`} value={account.coreBankId}>
+                                                                {account.name ? account.name : (account.isMain ? 'Compte Principal' : 'Compte')}
+                                                            </SelectItem>
+                                                            ))
+                                                        }
                                                     </SelectContent>
                                                 </Select>
                                             </div>
