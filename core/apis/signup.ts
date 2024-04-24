@@ -55,3 +55,19 @@ export async function getLegalFormInfos(merchant: IUser, url: string) {
 
     return resData.data;
 }
+
+export async function makeKycFilesUpload(merchant: IUser, data: {}) {
+    const dataObject = {
+        document: data,
+    };
+    console.log(dataObject)
+
+    // @ts-ignore
+    const url = `/user-accounts/${merchant.merchantsIds[0].id}/documents`;
+    console.log(url)
+
+    const resData = await fetchData(url, 'POST', dataObject, merchant.accessToken)
+    console.log(resData);
+
+    return resData;
+}

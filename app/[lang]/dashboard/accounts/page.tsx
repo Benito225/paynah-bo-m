@@ -6,6 +6,8 @@ import Routes from "@/components/Routes";
 import {ChevronRight} from "lucide-react";
 import SupportShortcut from "@/components/dashboard/serenity-space/SupportShortcut";
 import AccountListAndOperations from "@/components/dashboard/accounts/AccountListAndOperations";
+import {auth} from "@/auth";
+import {IUser} from "@/core/interfaces/user";
 
 export interface AccountsProps {
     searchParams: SearchParams,
@@ -14,6 +16,15 @@ export interface AccountsProps {
 
 export default async function AccountsPage({params: { lang }, searchParams}: AccountsProps) {
     const searchItems = searchParamsSchema.parse(searchParams);
+
+    const session = await auth();
+
+    let merchant;
+    if (session && session.user) {
+        merchant = session.user as IUser;
+    } else {
+        merchant = {} as IUser;
+    }
 
     return (
         <>
@@ -31,7 +42,7 @@ export default async function AccountsPage({params: { lang }, searchParams}: Acc
                 </div>
                 {/*<div className={`flex gap-3 mt-2.5 flex-grow`}>*/}
                 <div className={`gap-3 mt-2.5 flex-grow`}>
-                    <AccountListAndOperations lang={lang} searchItems={searchItems} />
+                    <AccountListAndOperations lang={lang} searchItems={searchItems} merchant={merchant} />
                 </div>
             </div>
         </>

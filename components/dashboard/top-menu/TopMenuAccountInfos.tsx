@@ -10,17 +10,26 @@ import {Button} from "@/components/ui/button";
 import {formatCFA} from "@/lib/utils";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Form, FormControl, FormField, FormItem} from "@/components/ui/form";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {IUser} from "@/core/interfaces/user";
+import {IAccount} from "@/core/interfaces/account";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
+import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 
 interface TopMenuAccountInfosProps {
-    lang: Locale
+    lang: Locale,
+    merchant: IUser
 }
 
-export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
+export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfosProps) {
 
     const [isLoading, setLoading] = useState(false);
+    const [currentAccount, setCurrentAccount] = useState<IAccount | null>(null);
+    const [accounts, setAccounts] = useState([]);
+    const [merchantAvatar, setMerchantAvatar] = useState('');
+
 
     const formSchema = z.object({
         activeAccount: z.string(),
@@ -33,10 +42,50 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
         }
     });
 
+    const handleChangeAccount = (event: any) => {
+        const selectedCoreBankId = event.target.value; 
+        const accoundFounded = accounts.filter((account: IAccount) => account.coreBankId == selectedCoreBankId);
+        if (accoundFounded.length === 0) {
+            setCurrentAccount(accoundFounded[0]);
+        }
+        console.log(accoundFounded);
+    };
+
+    const transformMerchantNameToMerchantAvatar = (merchantName: string) => {
+        const merchantNameSplit = merchantName.trim().length > 0 ? merchantName.split(' ') : [];
+        const merchantNameAvatar = merchantNameSplit.length > 0 ? ( merchantNameSplit.length >= 2 ? `${merchantNameSplit[0][0]}${merchantNameSplit[1][0]}` : `${merchantNameSplit[0][0]}`) : '';
+        setMerchantAvatar(merchantNameAvatar);
+    }
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values)
         setLoading(true);
     }
+
+    function initializeCurrentAccount(accounts: IAccount[]) {
+        if (accounts.length > 0) {
+            setCurrentAccount(accounts[0]);
+        }
+    }
+
+    function fetchMerchantBankAccounts() {
+        // @ts-ignore
+        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setAccounts(data.accounts);
+            initializeCurrentAccount(data.accounts)
+        })
+        .catch(err => {
+            setAccounts([]);
+        });
+    }
+
+    useEffect(() => {
+        fetchMerchantBankAccounts();
+        transformMerchantNameToMerchantAvatar(merchant.merchantsIds[0].name)
+    }, []);
+
+    console.log(merchant);
 
     return (
         <div>
@@ -46,14 +95,15 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
                         <div className={`inline-flex items-center space-x-4`}>
                             <div
                                 className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center`}>
-                                <Image className={`w-auto h-[2rem]`} src={`/${lang}/images/Logo_TotalEnergies.png`}
-                                       alt={`logo entité`} width={172}
-                                       height={140}/>
+                                    <Avatar className={`!rounded-lg h-8 w-8 md:h-10 md:w-10`}>
+                                        <AvatarFallback className={`!rounded-lg bg-[#ffc5b0] font-medium text-[#fe733c]`}>{merchantAvatar}</AvatarFallback>
+                                    </Avatar>
                             </div>
                             <div className={`inline-flex items-center space-x-2`}>
                                 <div className={`flex flex-col justify-start items-start text-xs`}>
-                                    <span className={`font-semibold`}>Total Energie CI</span>
-                                    <span className={`font-light text-[#767676]`}>Npa487738CI</span>
+                                    {/*@ts-ignore*/}
+                                    <span className={`font-semibold`}>{merchant.merchantsIds[0].name}</span>
+                                    <span className={`font-light text-[#767676]`}>{currentAccount?.coreBankId}</span>
                                 </div>
                                 <ChevronDown className={`text-[#626262] h-[1.3rem] w-auto`} />
                             </div>
@@ -77,19 +127,18 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
                                                     <FormItem>
                                                         <FormControl>
                                                             <div>
-                                                                <Select onValueChange={field.onChange} defaultValue={'value'}>
+                                                                <Select onValueChange={field.onChange} defaultValue={currentAccount?.coreBankId}>
                                                                     <SelectTrigger className={`min-w-[10rem] h-[2.5rem] border-[#717171] pl-3 pr-3 font-light text-sm`} style={{
                                                                         backgroundColor: field.value ? '#f0f0f0' : '#f0f0f0',
                                                                     }}>
-                                                                        <SelectValue  placeholder="Choisir un compte"/>
+                                                                    <SelectValue  placeholder="Choisir un compte"/>
                                                                     </SelectTrigger>
-                                                                    <SelectContent className={`bg-[#f0f0f0]`}>
-                                                                        <SelectItem className={`font-light px-7 focus:bg-gray-100`} value={'value'}>
-                                                                            Npa487738CI
-                                                                        </SelectItem>
-                                                                        <SelectItem className={`font-light px-7 focus:bg-gray-100`} value={'value2'}>
-                                                                            Npa367738CI
-                                                                        </SelectItem>
+                                                                    <SelectContent className={`bg-[#f0f0f0]`} onChange={handleChangeAccount}>
+                                                                        {accounts.map((account: IAccount) => (
+                                                                                <SelectItem key={account.id} className={`font-light px-7 focus:bg-gray-100`} value={account.coreBankId}>
+                                                                                    {account.coreBankId}
+                                                                                </SelectItem>
+                                                                            ))}
                                                                     </SelectContent>
                                                                 </Select>
                                                             </div>
@@ -128,11 +177,11 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
                             <div className={`flex flex-col items-center justify-center`}>
                                 <div
                                     className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center mb-2`}>
-                                    <Image className={`w-auto h-[3.5rem]`} src={`/${lang}/images/Logo_TotalEnergies.png`}
-                                           alt={`logo entité`} width={172}
-                                           height={140}/>
+                                    <Avatar className={`!rounded-lg h-8 w-8 md:h-10 md:w-10`}>
+                                        <AvatarFallback className={`!rounded-lg bg-[#ffc5b0] font-medium text-[#fe733c]`}>{merchantAvatar}</AvatarFallback>
+                                    </Avatar>
                                 </div>
-                                <p className={`text-sm font-light text-center text-[#767676] mb-6`}>Npa487738CI</p>
+                                <p className={`text-sm font-light text-center text-[#767676] mb-6`}>{currentAccount?.coreBankId}</p>
                                 <Button className={`bg-transparent font-light text-xs h-[2.2rem] text-black hover:text-white border border-[#858587] inline-flex items-center`}>
                                     <Download className={`h-[1rem]`} />
                                     <span>Télécharger le Paynah ID</span>
@@ -145,25 +194,25 @@ export default function TopMenuAccountInfos({lang}: TopMenuAccountInfosProps) {
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Nom du compte</span>
-                                            <span className={`uppercase text-xs font-semibold`}>COMPTE USINE DE Bonoua</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{currentAccount?.isMain ? 'Compte Principal': (currentAccount?.name ? currentAccount.name : 'Compte')}</span>
                                         </div>
                                     </div>
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Numéro du compte</span>
-                                            <span className={`uppercase text-xs font-semibold`}>PA4839CI</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{currentAccount?.coreBankId}</span>
                                         </div>
                                     </div>
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Solde du compte</span>
-                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(34850345)}</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(currentAccount != null ? currentAccount.balance : 0)}</span>
                                         </div>
                                     </div>
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Solde effectif disponible</span>
-                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(34850105)}</span>
+                                            <span className={`uppercase text-xs font-semibold`}>{formatCFA(currentAccount != null ? currentAccount.skaleet_balance : 0)}</span>
                                         </div>
                                     </div>
                                 </div>

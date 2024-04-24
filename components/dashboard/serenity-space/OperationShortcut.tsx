@@ -19,17 +19,30 @@ import IMask from 'imask';
 import {PhoneInput, PhoneInputRefType, CountryData} from 'react-international-phone';
 import 'react-international-phone/style.css';
 import {getBankName} from "@/lib/utils";
+import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
+import {IUser} from "@/core/interfaces/user";
+import {IBeneficiary} from "@/core/interfaces/beneficiary";
 
 interface OperationShortcutProps {
-    lang: Locale
+    lang: Locale,
+    merchant?: IUser, 
 }
 
-export default function OperationShortcut({lang}: OperationShortcutProps) {
+export const RANDOM_AVATAR_COLORS_CONFIG = [
+    {bg: '#ffc5ae', text: '#ff723b'},
+    {bg: '#aedaff', text: '#31a1ff'},
+    {bg: '#e0aeff', text: '#bc51ff'},
+    {bg: '#aeffba', text: '#02b71a'},
+    {bg: '#ffadae', text: '#e03c3e'},
+]
+
+export default function OperationShortcut({lang, merchant}: OperationShortcutProps) {
 
     const [isLoading, setLoading] = useState(false);
     const [showConError, setShowConError] = useState(false);
     const [activeSendMode, setActiveSendMode] = useState('direct');
     const [bankName, setBankName] = useState('');
+    const [beneficiaries, setBeneficiaries] = useState([]);
     // const [pCountry, setPCountry] = useState('');
 
     const refPhone = useRef<PhoneInputRefType>(null);
@@ -109,7 +122,27 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
         refPhone.current?.setCountry(value.toLowerCase());
     }
 
+    const transformBeneficiaryFullNameToBeneficiaryAvatar = (beneficiaryFullName: string) => {
+        const beneficiaryFullNameSplit = beneficiaryFullName.trim().length > 0 ? beneficiaryFullName.split(' ') : [];
+        const beneficiaryFullNameAvatar = beneficiaryFullNameSplit.length > 0 ? ( beneficiaryFullNameSplit.length >= 2 ? `${beneficiaryFullNameSplit[0][0]}${beneficiaryFullNameSplit[1][0]}` : `${beneficiaryFullNameSplit[0][0]}`) : '';
+        return beneficiaryFullNameAvatar;
+    }
+
+    function fetchMerchantBeneficiaries() {
+        // @ts-ignore
+        getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setBeneficiaries(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            setBeneficiaries([]);
+        });
+    }
+
     useEffect(() => {
+        fetchMerchantBeneficiaries();
         if (refBankAccountNumber.current) {
             const mask = IMask(refBankAccountNumber.current, {
                 mask: 'CCNNN NNNNN NNNNNNNNNNNN NN',
@@ -153,23 +186,18 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                         <TabsContent value="send">
                             <div className={`mt-5 min-h-[20rem]`}>
                                 <div className={`beneficiary-fav mb-5`}>
-                                    <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires favoris</h3>
+                                    <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires</h3>
                                     <div className={`inline-flex space-x-1 mt-2`}>
-                                        <Avatar className={`cursor-pointer`}>
-                                            <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
-                                        </Avatar>
-                                        <Avatar className={`cursor-pointer`}>
-                                            <AvatarFallback className={`bg-[#aedaff] text-[#31a1ff]`}>DB</AvatarFallback>
-                                        </Avatar>
-                                        <Avatar className={`cursor-pointer`}>
-                                            <AvatarFallback className={`bg-[#e0aeff] text-[#bc51ff]`}>JK</AvatarFallback>
-                                        </Avatar>
-                                        <Avatar className={`cursor-pointer`}>
-                                            <AvatarFallback className={`bg-[#aeffba] text-[#02b71a]`}>RA</AvatarFallback>
-                                        </Avatar>
-                                        <Avatar className={`cursor-pointer`}>
-                                            <AvatarFallback className={`bg-[#ffadae] text-[#e03c3e]`}>YA</AvatarFallback>
-                                        </Avatar>
+                                        {
+                                            beneficiaries && beneficiaries.length > 0 &&
+                                            beneficiaries.slice(0,5).map((beneficiary: IBeneficiary, index: number) => (
+                                                <Avatar key={beneficiary.id} className={`cursor-pointer`}>
+                                                    <AvatarFallback className={`bg-[${RANDOM_AVATAR_COLORS_CONFIG[index].bg}] text-[${RANDOM_AVATAR_COLORS_CONFIG[index].text}]`}>
+                                                    {transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                            ))
+                                        }
                                         <button>
                                             <Avatar className={`cursor-pointer border border-[#cdcdcd] border-dashed`}>
                                                 <AvatarFallback className={`bg-transparent text-[#cdcdcd]`}>

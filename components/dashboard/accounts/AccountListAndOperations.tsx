@@ -19,6 +19,7 @@ import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Input} from "@/components/ui/input";
+import {IUser} from "@/core/interfaces/user";
 
 interface AccountListAndOperationsProps {
     lang: Locale,
@@ -29,11 +30,12 @@ interface AccountListAndOperationsProps {
         from?: string,
         sort?: string,
         to?: string,
-        status?: string
-    }
+        status?: string,
+    },
+    merchant: IUser
 }
 
-export default function AccountListAndOperations({lang, searchItems}: AccountListAndOperationsProps) {
+export default function AccountListAndOperations({lang, searchItems, merchant}: AccountListAndOperationsProps) {
     const [selectedAccount, setSelectedAccount] = useState('all');
     const [pSearch, setPSearch] = useState('');
 
@@ -75,7 +77,7 @@ export default function AccountListAndOperations({lang, searchItems}: AccountLis
                 </div>
                 <div className={`flex p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto`}>
                     {/*<PaynahCard onClick={() => setSelectedAccount('all')} lang={lang} className={`snap-end shrink-0 w-[40%] 2xl:w-[31%] cursor-pointer rounded-3xl ${selectedAccount == 'all' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`} />*/}
-                    <PaynahCard onClick={() => setSelectedAccount('all')} lang={lang} className={`snap-end shrink-0 w-[28.5%] 2xl:w-[23%] cursor-pointer rounded-3xl ${selectedAccount == 'all' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`} />
+                    <PaynahCard merchant={merchant} onClick={() => setSelectedAccount('all')} lang={lang} className={`snap-end shrink-0 w-[28.5%] 2xl:w-[23%] cursor-pointer rounded-3xl ${selectedAccount == 'all' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`} />
 
                     <div onClick={() => setSelectedAccount('1')} className={`snap-end shrink-0 w-[28.5%] 2xl:w-[23%] bg-white flex flex-col justify-between cursor-pointer ${selectedAccount == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                         <div className={`flex justify-between items-start`}>

@@ -14,12 +14,14 @@ import {Button} from "@/components/ui/button";
 import {formatCFA} from "@/lib/utils";
 import TopMenuAccountInfos from "@/components/dashboard/top-menu/TopMenuAccountInfos";
 import Routes from "@/components/Routes";
+import {IUser} from "@/core/interfaces/user";
 
 interface DashboardTopMenuProps {
-    lang: Locale
+    lang: Locale,
+    merchant: IUser,
 }
 
-export default function DashboardTopMenu({lang}: DashboardTopMenuProps) {
+export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps) {
     return (
         <div className={`bg-white border-b border-[#d2d3d3] py-2`}>
             <div className={`max-w-screen-2xl 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8`}>
@@ -44,8 +46,8 @@ export default function DashboardTopMenu({lang}: DashboardTopMenuProps) {
                         </svg>
                     </Link>
                     <div className={`inline-flex items-center space-x-[5rem]`}>
-                        <TopMenuSoldInfos lang={lang} />
-                        <TopMenuAccountInfos lang={lang} />
+                        <TopMenuSoldInfos lang={lang} merchant={merchant} />
+                        <TopMenuAccountInfos lang={lang} merchant={merchant} />
                     </div>
                 </div>
             </div>
