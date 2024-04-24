@@ -31,7 +31,7 @@ interface AccountListProps {
 
 export default function AccountList({lang, merchant}: AccountListProps) {
 
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(true);
     const [accounts, setAccounts] = useState([]);
 
     function fetchMerchantBankAccounts() {
@@ -73,7 +73,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                     </div>
                 </button>
                 {
-                    !isLoading ? showLoader() : 
+                    isLoading ? showLoader() : 
                     accounts.map((account: IAccount) => (
                         <div key={account.id} className={`snap-end shrink-0 w-[30%] 2xl:w-[24%] bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}>
                             <div className={`flex justify-between items-start`}>
