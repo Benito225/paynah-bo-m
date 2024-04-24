@@ -153,7 +153,7 @@ export default function OperationShortcut({lang}: OperationShortcutProps) {
                         <TabsContent value="send">
                             <div className={`mt-5 min-h-[20rem]`}>
                                 <div className={`beneficiary-fav mb-5`}>
-                                    <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires favoris</h3>
+                                    <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires</h3>
                                     <div className={`inline-flex space-x-1 mt-2`}>
                                         <Avatar className={`cursor-pointer`}>
                                             <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
