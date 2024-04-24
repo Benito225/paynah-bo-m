@@ -39,10 +39,10 @@ export default function AccountList({lang, merchant}: AccountListProps) {
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             setAccounts(data.accounts);
-            setLoading(true);
+            setLoading(false);
         })
         .catch(err => {
-            setLoading(true);
+            setLoading(false);
             setAccounts([]);
         });
     }
