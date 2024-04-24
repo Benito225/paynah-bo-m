@@ -16,6 +16,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {IUser} from "@/core/interfaces/user";
 import {IAccount} from "@/core/interfaces/account";
 import {getMerchantBankAccounts} from "@/core/apis/bank-account";
+import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 
 interface TopMenuAccountInfosProps {
     lang: Locale,
@@ -27,6 +28,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
     const [isLoading, setLoading] = useState(false);
     const [currentAccount, setCurrentAccount] = useState<IAccount | null>(null);
     const [accounts, setAccounts] = useState([]);
+    const [merchantAvatar, setMerchantAvatar] = useState('');
 
 
     const formSchema = z.object({
@@ -48,6 +50,12 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
         }
         console.log(accoundFounded);
     };
+
+    const transformMerchantNameToMerchantAvatar = (merchantName: string) => {
+        const merchantNameSplit = merchantName.trim().length > 0 ? merchantName.split(' ') : [];
+        const merchantNameAvatar = merchantNameSplit.length > 0 ? ( merchantNameSplit.length >= 2 ? `${merchantNameSplit[0][0]}${merchantNameSplit[1][0]}` : `${merchantNameSplit[0][0]}`) : '';
+        setMerchantAvatar(merchantNameAvatar);
+    }
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         console.log(values)
@@ -74,6 +82,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
 
     useEffect(() => {
         fetchMerchantBankAccounts();
+        transformMerchantNameToMerchantAvatar(merchant.merchantsIds[0].name)
     }, []);
 
     console.log(merchant);
@@ -86,9 +95,9 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                         <div className={`inline-flex items-center space-x-4`}>
                             <div
                                 className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center`}>
-                                <Image className={`w-auto h-[2rem]`} src={`/${lang}/images/Logo_TotalEnergies.png`}
-                                       alt={`logo entité`} width={172}
-                                       height={140}/>
+                                    <Avatar className={`!rounded-lg h-8 w-8 md:h-10 md:w-10`}>
+                                        <AvatarFallback className={`!rounded-lg bg-[#ffc5b0] font-medium text-[#fe733c]`}>{merchantAvatar}</AvatarFallback>
+                                    </Avatar>
                             </div>
                             <div className={`inline-flex items-center space-x-2`}>
                                 <div className={`flex flex-col justify-start items-start text-xs`}>
@@ -168,9 +177,9 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                             <div className={`flex flex-col items-center justify-center`}>
                                 <div
                                     className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center mb-2`}>
-                                    <Image className={`w-auto h-[3.5rem]`} src={`/${lang}/images/Logo_TotalEnergies.png`}
-                                           alt={`logo entité`} width={172}
-                                           height={140}/>
+                                    <Avatar className={`!rounded-lg h-8 w-8 md:h-10 md:w-10`}>
+                                        <AvatarFallback className={`!rounded-lg bg-[#ffc5b0] font-medium text-[#fe733c]`}>{merchantAvatar}</AvatarFallback>
+                                    </Avatar>
                                 </div>
                                 <p className={`text-sm font-light text-center text-[#767676] mb-6`}>{currentAccount?.coreBankId}</p>
                                 <Button className={`bg-transparent font-light text-xs h-[2.2rem] text-black hover:text-white border border-[#858587] inline-flex items-center`}>
