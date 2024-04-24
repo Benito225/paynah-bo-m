@@ -23,7 +23,7 @@ interface PaynahCardProps {
 
 export default function PaynahCard({ lang, className, onClick, merchant }: PaynahCardProps) {
 
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(true);
     const [showConError, setShowConError] = useState(false);
     const [displayBalance, setDisplayBalance] = useState(true);
     const [displayAvailableBalance, setDisplayAvailableBalance] = useState(true);
@@ -36,6 +36,7 @@ export default function PaynahCard({ lang, className, onClick, merchant }: Payna
         .then(data => {
             setBalance(data.total_balance);
             setAvailableBalance(data.total_skaleet_balance);
+            setLoading(false)
         })
         .catch(err => {
             // setAccounts([]);
@@ -45,6 +46,14 @@ export default function PaynahCard({ lang, className, onClick, merchant }: Payna
     useEffect(() => {
         fetchMerchantBankAccounts()
     }, []);
+
+    const showLoader = () => {
+        return (
+            <div className="space-y-2 mt-1">
+                <div className="animate-pulse bg-gray-200 h-4 w-40 rounded-2xl"></div>
+            </div>
+        );
+    }
 
     function toggleAllBalanceView() {
         setDisplayBalance(!displayBalance)
@@ -140,13 +149,19 @@ export default function PaynahCard({ lang, className, onClick, merchant }: Payna
                         <div className={`flex flex-col`}>
                             <span
                                 className={`${className ? 'text-[11px]' : 'text-xs'} font-light text-[#afafaf]`}>Solde</span>
-                            <span
-                                className={`font-semibold text-white ${className ? 'text-base' : 'text-base'}`}>{displayBalance ? formatCFA(balance) : hiddeBalance(formatCFA(balance))}</span>
+                            {
+                                isLoading ? showLoader() :
+                                <span
+                                    className={`font-semibold text-white ${className ? 'text-base' : 'text-base'}`}>{displayBalance ? formatCFA(balance) : hiddeBalance(formatCFA(balance))}</span>
+                            }
                         </div>
                         <div className={`flex flex-col`}>
                             <span className={`${className ? 'text-[11px]' : 'text-xs'} font-light text-[#afafaf]`}>Solde disponible</span>
-                            <span
-                                className={`font-semibold text-white ${className ? 'text-base' : 'text-base'}`}>{displayAvailableBalance ? formatCFA(availableBalance) : hiddeBalance(formatCFA(availableBalance))}</span>
+                            {
+                                isLoading ? showLoader() :
+                                <span
+                                    className={`font-semibold text-white ${className ? 'text-base' : 'text-base'}`}>{displayAvailableBalance ? formatCFA(availableBalance) : hiddeBalance(formatCFA(availableBalance))}</span>
+                            }
                         </div>
                     </div>
                 </div>
