@@ -81,7 +81,7 @@ export default function PendingOperation({lang}: PendingOperationProps) {
                 {/*        </div>*/}
                 {/*    </li>*/}
                 {/*</ul>*/}
-                <div className={`flex justify-center items-center h-full pb-20`}>
+                <div className={`flex justify-center items-center min-h-[228px] h-full pb-16`}>
                     <div className={`inline-flex flex-col justify-center`}>
                         <svg className={`h-[4rem] w-auto`} viewBox="0 0 200.09 172.44">
                             <g>
