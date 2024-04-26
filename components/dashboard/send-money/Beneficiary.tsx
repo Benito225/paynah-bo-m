@@ -5,6 +5,7 @@ import React, {useState} from "react";
 import {ChevronRight, Plus, Send} from "lucide-react";
 import Link from "next/link";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
+import Routes from "@/components/Routes";
 
 interface BeneficiaryProps {
     lang: Locale
@@ -17,7 +18,7 @@ export default function Beneficiary({lang}: BeneficiaryProps) {
             <div className={`flex items-center justify-between pb-1.5 border-dashed`}>
                 <h2 className={`font-medium text-base 2xl:text-lg`}>Bénéficiaires enregistrés</h2>
                 <div>
-                    <Link className={`inline-flex text-xs text-[#909090] hover:underline duration-200 mb-1`} href={`#`}>
+                    <Link className={`inline-flex text-xs text-[#909090] hover:underline duration-200 mb-1`} href={Routes.dashboard.beneficiaries.replace('{lang}', lang)}>
                         <span>Voir tout</span>
                         <ChevronRight className={`h-4 w-auto`} />
                     </Link>
