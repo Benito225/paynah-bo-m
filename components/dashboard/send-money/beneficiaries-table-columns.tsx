@@ -77,7 +77,7 @@ export function getColumns(lang: string): ColumnDef<IBeneficiary>[] {
             },
         },
         {
-            accessorKey: "aa",
+            accessorKey: "merchantId",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Compte mobile money" />
             ),
@@ -90,7 +90,7 @@ export function getColumns(lang: string): ColumnDef<IBeneficiary>[] {
             },
         },
         {
-            accessorKey: "bank",
+            accessorKey: "merchantId",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Compte bancaire" />
             ),
@@ -218,11 +218,8 @@ export const searchableColumns: DataTableSearchableColumn[] = [
 
 export const filterableColumns: DataTableFilterableColumn<IBeneficiary>[] = [
     {
-        id: "status",
-        title: "Statut de transaction",
-        options: TStatus.map((status) => ({
-            label: status[0]?.toUpperCase() + status.slice(1),
-            value: status,
-        })),
+        id: "id",
+        title: "",
+        options: []
     },
 ]
