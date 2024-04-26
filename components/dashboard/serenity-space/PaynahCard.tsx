@@ -85,7 +85,7 @@ export default function PaynahCard({ lang, className, onClick, merchant }: Payna
                 <div className={`bg-black w-full h-full rounded-3xl absolute z-[-1] top-0 right-0`}>
                 </div>
                 <Image className={`object-cover rounded-3xl z-[-1]`} src={`/${lang}/images/cover-test.png`} fill
-                       alt={`cover-card`}/>
+                       alt={`cover-card`} priority={true} sizes={`100w`}/>
                 <div className={`flex justify-between ${className ? 'mb-[2.4rem]' : 'mb-[3rem]'} `}>
                     <div className={`inline-flex`}>
                         <div>

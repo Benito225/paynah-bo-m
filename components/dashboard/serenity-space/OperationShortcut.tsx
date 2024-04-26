@@ -46,13 +46,15 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
     // const [pCountry, setPCountry] = useState('');
 
     const refPhone = useRef<PhoneInputRefType>(null);
+    // const refPhone =  React.forwardRef<PhoneInputRefType>(0);
     const refBankAccountNumber = useRef(null);
 
 
     const formSchema = z.object({
-        beneficiary: z.string().min(1, {
-            message: 'Le champ est requis'
-        }),
+        // beneficiary: z.string().min(1, {
+        //     message: 'Le champ est requis'
+        // }),
+        beneficiary: z.string(),
         accountNumber: z.string(),
         bankAccountNumber: z.string(),
         bankAmount: z.string(),
@@ -296,8 +298,10 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                 <div>
                                                                     <div className="relative">
                                                                         <NumericFormat
-                                                                            id="amount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field}
-                                                                            thousandSeparator=" " prefix="FCFA " />
+                                                                            id="amount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" "
+                                                                            thousandSeparator=" " prefix="FCFA " onValueChange={(e) => {
+                                                                            sendMoney.setValue('amount', e.value);
+                                                                        }}/>
                                                                         {/*<input type="text" id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
                                                                         <label htmlFor="amount"
                                                                                className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
@@ -571,8 +575,10 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                 <div>
                                                                     <div className="relative">
                                                                         <NumericFormat
-                                                                            id="mmAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field}
-                                                                            thousandSeparator=" " prefix="FCFA " />
+                                                                            id="mmAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" "
+                                                                            thousandSeparator=" " prefix="FCFA " onValueChange={(e) => {
+                                                                            sendMoney.setValue('mmAmount', e.value);
+                                                                        }}/>
                                                                         {/*<input type="text" id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
                                                                         <label htmlFor="mmAmount"
                                                                                className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
@@ -671,8 +677,10 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                 <div>
                                                                     <div className="relative">
                                                                         <NumericFormat
-                                                                            id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field}
-                                                                            thousandSeparator=" " prefix="FCFA " />
+                                                                            id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" "
+                                                                            thousandSeparator=" " prefix="FCFA " onValueChange={(e) => {
+                                                                            sendMoney.setValue('bankAmount', e.value);
+                                                                        }}/>
                                                                         {/*<input type="text" id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
                                                                         <label htmlFor="bankAmount"
                                                                                className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
@@ -735,8 +743,10 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                         <div>
                                                             <div className="relative">
                                                                 <NumericFormat
-                                                                    id="amount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field}
-                                                                    thousandSeparator=" " prefix="FCFA " />
+                                                                    id="amount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" "
+                                                                    thousandSeparator=" " prefix="FCFA " onValueChange={(e) => {
+                                                                    paymentLink.setValue('amount', e.value);
+                                                                }}/>
                                                                 {/*<input type="text" id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
                                                                 <label htmlFor="amount"
                                                                        className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
