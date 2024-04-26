@@ -133,7 +133,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
         getTransactions(query, String(merchant.accessToken))
             .then(data => {
                 console.log(data);
-                setTransactions(data);
+                setTransactions(data ?? []);
             })
             .catch(err => {
                 setTransactions([]);
