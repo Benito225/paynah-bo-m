@@ -43,8 +43,8 @@ export enum TransactionsStatus {
 }
 
 export enum TransactionsType {
-    DEBIT = 'debit',
-    CREDIT = 'credit',
+    DEBIT = 'PAYOUT',
+    CREDIT = 'PAYIN',
 }
 
 export default function LastTransactions({lang, merchant}: LastTransactionsProps) {
@@ -144,7 +144,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
         // @ts-ignore
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
-            setAccounts(data.accounts);
+            setAccounts(data.accounts ?? []);
         })
         .catch(err => {
             setAccounts([]);
@@ -361,7 +361,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                                 <TableCell className="text-xs !py-3.5">{transaction.description}</TableCell>
                                 <TableCell className="text-xs font-medium !py-3.5">
                                     <div
-                                        className={`${transaction.type == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>{transaction.type == TransactionsType.DEBIT ? '-' : ''}{formatCFA(transaction.amount)}</div>
+                                        className={`${transaction.transaction_type.name == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>{transaction.transaction_type.name == TransactionsType.DEBIT ? '-' : ''}{formatCFA(transaction.amount)}</div>
                                 </TableCell>
                                 <TableCell className="text-xs !py-3.5">{formatDate(transaction.createdAt, lang)}</TableCell>
                                 {/*<TableCell className="text-xs !py-3.5">*/}
