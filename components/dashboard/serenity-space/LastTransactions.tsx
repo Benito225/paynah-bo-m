@@ -36,10 +36,10 @@ interface LastTransactionsProps {
 }
 
 export enum TransactionsStatus {
-    DONE = 'approved',
-    PENDING = 'pending',
-    DECLINED = 'declined',
-    EXPIRED = 'expired',
+    DONE = 'Approved',
+    PENDING = 'Pending',
+    DECLINED = 'Declined',
+    EXPIRED = 'Expired',
 }
 
 export enum TransactionsType {
@@ -121,24 +121,23 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
     const [accounts, setAccounts] = useState([]);
     const [currentAccount, setCurrentAccount] = useState('');
 
-    const handleChangeAccount = (event: any) => {
-        const selectedCoreBankId = event.target.value;
-        console.log(selectedCoreBankId);
-        fecthTransactions(selectedCoreBankId); 
+    const handleChangeAccount = async (value: any) => {
+        const selectedCoreBankId = value == "all" ? "" : value;
+        fecthTransactions(selectedCoreBankId);
         setCurrentAccount(selectedCoreBankId);
     }
     
     function fecthTransactions(coreBankId: string) {
         // @ts-ignore
-        const query = {coreBankId: coreBankId, merchantId: merchant.merchantsIds[0].id }
+        const query = {coreBankId: coreBankId, merchantId: merchant.merchantsIds[0].id}
         getTransactions(query, String(merchant.accessToken))
-        .then(data => {
-            console.log(data);
-            setTransactions(data.data);
-        })
-        .catch(err => {
-            setTransactions([]);
-        });
+            .then(data => {
+                console.log(data);
+                setTransactions(data);
+            })
+            .catch(err => {
+                setTransactions([]);
+            });
     }
 
     function fetchMerchantBankAccounts() {
@@ -154,6 +153,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
 
     useEffect(() => {
         fetchMerchantBankAccounts()
+        fecthTransactions("");
     }, []);
 
 
@@ -161,7 +161,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
         pAccount: z.string().min(1, {
             message: 'Le champ est requis'
         }),
-    })
+    });
 
     const selectAccount = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -191,20 +191,25 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                                     <FormItem>
                                         <FormControl>
                                             <div>
-                                                <Select onValueChange={field.onChange} defaultValue={currentAccount}>
+                                                <Select onValueChange={(value) => handleChangeAccount(value)} defaultValue={"all"}>
                                                     <SelectTrigger className={`h-[2.2rem] text-xs rounded-xl border border-[#f4f4f7] pl-2.5 pr-1 font-normal`} style={{
                                                         backgroundColor: field.value ? '#f4f4f7' : '#f4f4f7',
                                                     }}>
                                                         <SelectValue  placeholder="Choisir un compte"/>
                                                     </SelectTrigger>
-                                                    <SelectContent className={`bg-[#f0f0f0]`} onChange={handleChangeAccount}>
-                                                        {
-                                                            accounts.map((account: IAccount) => (
-                                                            <SelectItem key={account.id} className={`font-normal text-xs px-7 focus:bg-gray-100`} value={account.coreBankId}>
-                                                                {account.name ? account.name : (account.isMain ? 'Compte Principal' : 'Compte')}
-                                                            </SelectItem>
-                                                            ))
-                                                        }
+                                                    <SelectContent className={`bg-[#f0f0f0]`}>
+                                                        {accounts.map((account: IAccount) => (
+                                                                <SelectItem key={account.id}
+                                                                            className={`font-normal text-xs px-7 focus:bg-gray-100`}
+                                                                            value={account.coreBankId}>
+                                                                    {account.name ? account.name : (account.isMain ? 'Compte Principal' : 'Compte')}
+                                                                </SelectItem>
+                                                            ))}
+                                                        <SelectItem
+                                                            className={`font-normal text-xs px-7 focus:bg-gray-100`}
+                                                            value="all">
+                                                            Tous
+                                                        </SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </div>
@@ -351,14 +356,14 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                     </TableHeader>
                     <TableBody>
                         {transactions.map((transaction: ITransaction) => (
-                            <TableRow className={`border-[#f4f4f4]`} key={transaction.tId}>
-                                <TableCell className="text-xs font-medium !py-3.5">{transaction.tId}</TableCell>
+                            <TableRow className={`border-[#f4f4f4]`} key={transaction.transactionId}>
+                                <TableCell className="text-xs font-medium !py-3.5">{transaction.transactionId}</TableCell>
                                 <TableCell className="text-xs !py-3.5">{transaction.description}</TableCell>
                                 <TableCell className="text-xs font-medium !py-3.5">
                                     <div
                                         className={`${transaction.type == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>{transaction.type == TransactionsType.DEBIT ? '-' : ''}{formatCFA(transaction.amount)}</div>
                                 </TableCell>
-                                <TableCell className="text-xs !py-3.5">{formatDate(transaction.date, lang)}</TableCell>
+                                <TableCell className="text-xs !py-3.5">{formatDate(transaction.createdAt, lang)}</TableCell>
                                 {/*<TableCell className="text-xs !py-3.5">*/}
                                 {/*    <div>*/}
                                 {/*        {transaction.type == "debit" ?*/}
