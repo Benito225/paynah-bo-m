@@ -50,66 +50,7 @@ export default function BeneficiariesTable({ searchItems, lang, selectedAccount,
         to: searchItems.to ? new Date(searchItems.to) : endOfDay(new Date()),
     })
 
-    let data: IBeneficiary[] = [
-        // {
-        //     id: "1",
-        //     reference: "245653FS34S",
-        //     createdAt: "2024-04-20T11:00:00",
-        //     firstName: "Didier Aney",
-        //     lastName: "Didier Aney",
-        // },
-        // {
-        //     id: "2",
-        //     reference: "245653FS34S",
-        //     createdAt: "2023-04-20T11:00:00",
-        //     firstName: "Didier Aney",
-        //     lastName: "Didier Aney",
-        // },
-        // {
-        //     id: "3",
-        //     reference: "245653FS34S",
-        //     createdAt: "2024-02-20T08:00:00",
-        //     firstName: "Didier Aney",
-        //     lastName: "Didier Aney",
-        // },
-        // {
-        //     id: "4",
-        //     merchantId: "245653FS34S",
-        //     date: "2024-04-20T11:00:00",
-        //     amount: 3493774,
-        //     beneficiary: "Koffi Olivier",
-        //     account: "+225 07 73 44 11 00",
-        //     status: "declined"
-        // },
-        // {
-        //     id: "5",
-        //     merchantId: "245653FS34S",
-        //     date: "2024-01-20T11:00:00",
-        //     amount: 3493774,
-        //     beneficiary: "Didier Aney",
-        //     account: "+225 07 77 40 41 36",
-        //     status: "approved"
-        // },
-        // {
-        //     id: "6",
-        //     merchantId: "245653FS34S",
-        //     date: "2024-04-20T11:00:00",
-        //     amount: 3493774,
-        //     beneficiary: "Didier Aney",
-        //     account: "+225 07 77 40 41 36",
-        //     status: "approved"
-        // },
-        // {
-        //     id: "7",
-        //     merchantId: "245653FS34S",
-        //     date: "2024-04-20T11:00:00",
-        //     amount: 3493774,
-        //     beneficiary: "Didier Aney",
-        //     account: "+225 07 77 40 41 36",
-        //     status: "approved"
-        // }
-    ];
-    //data = beneficiaries as IBeneficiary;
+    let data: IBeneficiary[] = beneficiaries as IBeneficiary[];
     const pageCount = 2;
 
     const columns = React.useMemo<ColumnDef<IBeneficiary, unknown>[]>(
