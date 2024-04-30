@@ -177,6 +177,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
 
     return (
         <div className={`operation-shortcut flex-grow`}>
+            <span className={`hidden bg-[#ffc5ae] bg-[#aedaff] bg-[#e0aeff] bg-[#aeffba] bg-[#ffadae] text-[#ff723b] text-[#31a1ff] text-[#bc51ff] text-[#02b71a] text-[#e03c3e]`}></span>
             <div className={`bg-white rounded-2xl px-3 2xl:px-[.8rem] py-5 h-full`}>
                 <h2 className={`font-medium text-base`}>Opérations rapides</h2>
                 <div className={`mt-2`}>

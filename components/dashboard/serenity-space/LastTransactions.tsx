@@ -227,7 +227,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                     </Link>
                 </div>
             </div>
-            <div className={`mt-3 h-full pb-12`}>
+            <div className={`mt-3 h-full  ${transactions.length == 0 ? 'pb-12' : 'pb-0'}`}>
             {transactions && transactions.length == 0 ?
                 <div className={`flex justify-center items-center h-full`}>
                     <div className={`inline-flex flex-col justify-center`}>

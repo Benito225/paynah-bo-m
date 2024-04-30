@@ -25,9 +25,12 @@ interface TopMenuAccountInfosProps {
 }
 
 export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfosProps) {
+    // @ts-ignore
+    // console.log(merchant.merchantsIds[0]['bank-account'][0]);
 
     const [isLoading, setLoading] = useState(false);
     const [isDataLoading, setDataLoading] = useState(true);
+    // @ts-ignore
     const [currentAccount, setCurrentAccount] = useState<IAccount | null>(null);
     const [accounts, setAccounts] = useState([]);
 
@@ -49,7 +52,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
         if (accoundFounded.length === 0) {
             setCurrentAccount(accoundFounded[0]);
         }
-        console.log(accoundFounded);
+        // console.log(accoundFounded);
     };
 
     const transformMerchantNameToMerchantAvatar = (merchantName: string) => {
@@ -85,7 +88,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
         fetchMerchantBankAccounts();
     }, []);
 
-    console.log(merchant);
+    // console.log(merchant);
 
     return (
         <div>
