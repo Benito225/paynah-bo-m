@@ -9,6 +9,8 @@ import {searchParamsSchema} from "@/components/dashboard/send-money/validations"
 import MainActions from "@/components/dashboard/send-money/modals/MainActions";
 import Link from "next/link";
 import Routes from "@/components/Routes";
+import {auth, signOut} from "@/auth";
+import {IUser} from "@/core/interfaces/user";
 
 export interface IndexPageProps {
     searchParams: SearchParams,
@@ -17,6 +19,15 @@ export interface IndexPageProps {
 
 export default async function SendMoneyPage({params: { lang }, searchParams}: IndexPageProps) {
     const searchItems = searchParamsSchema.parse(searchParams);
+
+    const session = await auth();
+    
+    let merchant;
+    if (session && session.user) {
+        merchant = session.user as IUser;
+    } else {
+        merchant = {} as IUser;
+    }
 
     return (
         <>
@@ -38,7 +49,7 @@ export default async function SendMoneyPage({params: { lang }, searchParams}: In
                             <div className={`flex flex-col space-y-2.5`}>
                                <MainActions lang={lang} />
                             </div>
-                            <Beneficiary lang={lang} />
+                            <Beneficiary lang={lang} merchant={merchant}/>
                         </div>
                     </div>
                     <div className={`w-[72%] 2xl:w-[74%]`}>

@@ -26,7 +26,7 @@ import BeneficiaryActions from '@/components/dashboard/send-money/modals/Benefic
 
 interface OperationShortcutProps {
     lang: Locale,
-    merchant?: IUser, 
+    merchant: IUser, 
 }
 
 export const RANDOM_AVATAR_COLORS_CONFIG = [
