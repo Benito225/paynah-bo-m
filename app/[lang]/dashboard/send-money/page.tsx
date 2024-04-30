@@ -53,7 +53,7 @@ export default async function SendMoneyPage({params: { lang }, searchParams}: In
                         </div>
                     </div>
                     <div className={`w-[72%] 2xl:w-[74%]`}>
-                        <AccountListAndTransactions lang={lang} searchItems={searchItems} />
+                        <AccountListAndTransactions lang={lang} searchItems={searchItems} merchant={merchant}/>
                     </div>
                 </div>
             </div>
