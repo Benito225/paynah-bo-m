@@ -22,10 +22,11 @@ import {getBankName} from "@/lib/utils";
 import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
 import {IUser} from "@/core/interfaces/user";
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
+import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
 
 interface OperationShortcutProps {
     lang: Locale,
-    merchant?: IUser, 
+    merchant: IUser, 
 }
 
 export const RANDOM_AVATAR_COLORS_CONFIG = [
@@ -200,13 +201,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                 </Avatar>
                                             ))
                                         }
-                                        <button>
-                                            <Avatar className={`cursor-pointer border border-[#cdcdcd] border-dashed`}>
-                                                <AvatarFallback className={`bg-transparent text-[#cdcdcd]`}>
-                                                    <Plus className={`h-4`} />
-                                                </AvatarFallback>
-                                            </Avatar>
-                                        </button>
+                                        <BeneficiaryActions lang={lang} merchant={merchant}/>
                                     </div>
                                 </div>
                                 <Form {...sendMoney}>

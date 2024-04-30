@@ -85,6 +85,7 @@ export default function BeneficiariesTable({ searchItems, lang, selectedAccount,
                 date={date}
                 setDate={setDate}
                 lang={lang}
+                nbItems={data.length}
             />
         </div>
     );
