@@ -29,8 +29,8 @@ export function getStatusBadge(transactionStatus: string): string {
     }
 }
 
-export function formatDate(dateString: string, lang: string): string {
-    const date = new Date(dateString);
+export function formatDate(dateString: string | undefined, lang: string): string {
+    const date = new Date(dateString ?? "");
 
     if (isNaN(date.getTime())) {
         return '-';

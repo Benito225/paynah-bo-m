@@ -130,6 +130,7 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
     }
 
     const createBeneficiary = (data: any) => {
+        // @ts-ignore
         addBeneficiary(data, String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             if (data.success) {
@@ -194,7 +195,7 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
                                                         placeholder="Entrez le nom du bénéfciaire" 
                                                         {...register("lastName", {required: "le nom est requis", minLength: { value: 2, message: 'le nom doit comporter au moins 2 caractères'}})}
                                                     />
-                                                    {errors.lastName && <p className="text-red-600 text-sm" role="alert">{errors.lastName.message}</p>}
+                                                    {errors.lastName && <p className="text-red-600 text-sm" role="alert">{errors.lastName.message as string}</p>}
                                                 </div>
                                             </div>
                                         </div>
@@ -208,7 +209,7 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
                                                         placeholder="Entrez le prénoms du bénéficiaire" 
                                                         {...register("firstName", {required: "le prénom est requis", minLength: { value: 2, message: 'le nom doit comporter au moins 2 caractères'}})}
                                                     />
-                                                    {errors.firstName && <p className="text-red-600 text-sm" role="alert">{errors.firstName.message}</p>}
+                                                    {errors.firstName && <p className="text-red-600 text-sm" role="alert">{errors.firstName.message as string}</p>}
                                                 </div>
                                             </div>
                                         </div>
@@ -224,7 +225,7 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
                                                         placeholder="Entrez l'email du bénéficiaire" 
                                                         {...register("email", {required: "l'email est requis", pattern: { value: /^[a-z0-9_\-\.]+@[a-z0-9_\-\.]+\.[a-z]{2,}$/i, message: "l'email doit être valide"}})}
                                                     />
-                                                    {errors.email && <p className="text-red-600 text-sm" role="alert">{errors.email.message}</p>}
+                                                    {errors.email && <p className="text-red-600 text-sm" role="alert">{errors.email.message as string}</p>}
                                                 </div>
                                             </div>
                                         </div>
@@ -238,7 +239,7 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
                                                         placeholder="Entrez le numéro de téléphone du bénéficiaire" 
                                                         {...register("number", {required: "le numéro de téléphone est requis", pattern: { value: /^[0-9]{7,}$/i, message: "le numéro de téléphone doit être valide"}})}
                                                     />
-                                                    {errors.number && <p className="text-red-600 text-sm" role="alert">{errors.number.message}</p>}
+                                                    {errors.number && <p className="text-red-600 text-sm" role="alert">{errors.number.message as string}</p>}
                                                 </div>
                                             </div>
                                         </div>
@@ -254,7 +255,7 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
                                                         placeholder="Entrez le numéro" 
                                                         {...register("paynahAccountNumber", {required: "le numéro de compte Paynah est requis", })}
                                                     />
-                                                    {errors.paynahAccountNumber && <p className="text-red-600 text-sm" role="alert">{errors.paynahAccountNumber.message}</p>}       
+                                                    {errors.paynahAccountNumber && <p className="text-red-600 text-sm" role="alert">{errors.paynahAccountNumber.message as string}</p>}
                                                 </div>
                                             </div>
                                         </div>

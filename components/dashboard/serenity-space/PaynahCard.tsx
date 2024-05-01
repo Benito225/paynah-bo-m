@@ -13,6 +13,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {formatCFA, hiddeBalance} from "@/lib/utils";
 import {IUser} from "@/core/interfaces/user";
 import {getMerchantBankAccounts} from "@/core/apis/bank-account";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface PaynahCardProps {
     lang: Locale,
@@ -49,9 +50,7 @@ export default function PaynahCard({ lang, className, onClick, merchant }: Payna
 
     const showLoader = () => {
         return (
-            <div className="space-y-2 mt-1">
-                <div className="animate-pulse bg-gray-200 h-4 w-40 rounded-2xl"></div>
-            </div>
+            <Skeleton className={`h-[20px] mt-[4px] w-[13rem] bg-[#afafaf] rounded-full`} />
         );
     }
 
@@ -86,12 +85,12 @@ export default function PaynahCard({ lang, className, onClick, merchant }: Payna
                 <div className={`bg-black w-full h-full rounded-3xl absolute z-[-1] top-0 right-0`}>
                 </div>
                 <Image className={`object-cover rounded-3xl z-[-1]`} src={`/${lang}/images/cover-test.png`} fill
-                       alt={`cover-card`}/>
+                       alt={`cover-card`} priority={true} sizes={`100w`}/>
                 <div className={`flex justify-between ${className ? 'mb-[2.4rem]' : 'mb-[3rem]'} `}>
                     <div className={`inline-flex`}>
                         <div>
                             <h2 className={`text-[#dbdbdb] text-sm uppercase mr-2`}>Compte Agregés</h2>
-                            <h3 className={`text-xs text-[#afafaf] font-light`}>PA4839CI</h3>
+                            <h3 className={`text-xs text-[#afafaf] font-light`}>Tous les comptes</h3>
                         </div>
                         <div>
                             <Form {...changeCurrency}>

@@ -1,17 +1,6 @@
 import {Locale} from "@/i18n.config";
 import Link from "next/link";
 import TopMenuSoldInfos from "@/components/dashboard/top-menu/TopMenuBalanceInfos";
-import {
-    DropdownMenu, DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import Image from "next/image";
-import {ChevronDown, Download, X} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {formatCFA} from "@/lib/utils";
 import TopMenuAccountInfos from "@/components/dashboard/top-menu/TopMenuAccountInfos";
 import Routes from "@/components/Routes";
 import {IUser} from "@/core/interfaces/user";

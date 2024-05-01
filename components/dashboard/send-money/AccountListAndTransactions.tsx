@@ -179,7 +179,7 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
                                 </div>
                                 <div className={`inline-flex flex-col`}>
                                     <h3 className={`text-[10px] font-light text-[#afafaf] -mb-0.5`}>Solde disponible</h3>
-                                    <span className={`text-base font-semibold`}>{formatCFA(account.skaleetBalance)}</span>
+                                    <span className={`text-base font-semibold`}>{formatCFA(account.skaleet_balance)}</span>
                                 </div>
                             </div>
                         </div>
