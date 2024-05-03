@@ -48,72 +48,6 @@ export enum TransactionsType {
 }
 
 export default function LastTransactions({lang, merchant}: LastTransactionsProps) {
-    // const transactions = [
-    //     {
-    //         tId: "24553FS3AS",
-    //         date: "2024-04-20T11:00:00",
-    //         description: "Envoi d'argent",
-    //         type: "debit",
-    //         amount: 50000,
-    //         status: 'approved',
-    //     },
-    //     {
-    //         tId: "24557FS3AS",
-    //         date: "2023-03-24T14:00:00",
-    //         description: "Envoi d'argent",
-    //         type: "credit",
-    //         amount: 50000,
-    //         status: 'approved',
-    //     },
-    //     {
-    //         tId: "24556FS3AS",
-    //         date: "2024-03-24T08:00:00",
-    //         description: "Lien de paiement",
-    //         type: "credit",
-    //         amount: 20000,
-    //         status: 'pending',
-    //     },
-    //     {
-    //         tId: "24555FS3AS",
-    //         date: "2024-04-20T20:00:00",
-    //         description: "Envoi d'argent",
-    //         type: "debit",
-    //         amount: 50000,
-    //         status: 'approved',
-    //     },
-    //     {
-    //         tId: "24554FS3AS",
-    //         date: "2024-03-24T12:00:00",
-    //         description: "Lien de paiement",
-    //         type: "debit",
-    //         amount: 50000,
-    //         status: 'approved',
-    //     },
-    //     {
-    //         tId: "24558FS3AS",
-    //         date: "2024-12-20T13:00:00",
-    //         description: "Envoi d'argent",
-    //         type: "credit",
-    //         amount: 100000,
-    //         status: 'declined',
-    //     },
-    //     {
-    //         tId: "24559FS3AS",
-    //         date: "2024-09-05T06:00:00",
-    //         description: "Envoi d'argent",
-    //         type: "debit",
-    //         amount: 500000,
-    //         status: 'approved',
-    //     },
-    //     {
-    //         tId: "24513FS3AS",
-    //         date: "2024-03-09T10:00:00",
-    //         description: "Lien de paiement",
-    //         type: "credit",
-    //         amount: 50000,
-    //         status: 'expired',
-    //     }
-    // ];
 
     const [isLoading, setLoading] = useState(false);
     const [showConError, setShowConError] = useState(false);
@@ -122,6 +56,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
     const [currentAccount, setCurrentAccount] = useState('');
 
     const handleChangeAccount = async (value: any) => {
+        console.log(value);
         const selectedCoreBankId = value == "all" ? "" : value;
         fecthTransactions(selectedCoreBankId);
         setCurrentAccount(selectedCoreBankId);
@@ -198,16 +133,16 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                                                         <SelectValue  placeholder="Choisir un compte"/>
                                                     </SelectTrigger>
                                                     <SelectContent className={`bg-[#f0f0f0]`}>
-                                                        {accounts.map((account: IAccount) => (
-                                                                <SelectItem key={account.id}
-                                                                            className={`font-normal text-xs px-7 focus:bg-gray-100`}
-                                                                            value={account.coreBankId}>
-                                                                    {account.name ? account.name : (account.isMain ? 'Compte Principal' : 'Compte')}
-                                                                </SelectItem>
-                                                            ))}
-                                                        <SelectItem
-                                                            className={`font-normal text-xs px-7 focus:bg-gray-100`}
-                                                            value="all">
+                                                        {accounts.map((account: IAccount, index) => (
+                                                            <SelectItem key={account.id}
+                                                                        className={`font-normal text-xs px-7 focus:bg-gray-100`}
+                                                                        value={account.bankAccountId}>
+                                                                {account.name ? account.name : (account.isMain ? 'Compte Principal' : 'Compte')}
+                                                            </SelectItem>
+                                                        ))}
+                                                        <SelectItem key={`all`}
+                                                                    className={`font-normal text-xs px-7 focus:bg-gray-100`}
+                                                                    value="all">
                                                             Tous
                                                         </SelectItem>
                                                     </SelectContent>
