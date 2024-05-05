@@ -61,7 +61,7 @@ export default function FilterableTransactions({lang, searchItems, merchant}: Fi
             </div>
             <div className={`h-full`}>
                 <div className={`flex-grow rounded-3xl h-full`}>
-                    <TransactionsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount}  />
+                    <TransactionsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount} merchant={merchant}  />
                 </div>
             </div>
         </div>
