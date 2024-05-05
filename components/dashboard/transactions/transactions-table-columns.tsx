@@ -133,7 +133,7 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
             ),
             cell: ({ row }) => {
                 return (
-                    <div className={`${row.original.transaction_type.name == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>{row.original.transaction_type.name == TransactionsType.DEBIT ? '-' : ''}{formatCFA(row.original.amount)}</div>
+                    <div className={`font-medium ${row.original.transaction_type.name == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>{row.original.transaction_type.name == TransactionsType.DEBIT ? '-' : ''}{formatCFA(row.original.amount)}</div>
                 )
             },
             enableSorting: false,
