@@ -14,6 +14,7 @@ import { DateRange } from "react-day-picker"
 import { addDays, startOfYear, endOfDay, format } from "date-fns"
 import {IUser} from "@/core/interfaces/user";
 import {getFilterableTransactions, getTransactions} from "@/core/apis/transaction";
+import {TransactionsStatus} from "@/components/dashboard/serenity-space/LastTransactions";
 
 interface TransactionsProps {
     searchItems: {
@@ -38,7 +39,16 @@ export type TransactionsDataType = {
     amount: number
     beneficiary: string
     account: string
-    status: "Pending" | "Approved" | "Declined"
+    status: TransactionsStatus,
+    transaction_type: any,
+    tId: string,
+    pos: string,
+    customer_firstname: string,
+    customer_lastname: string,
+    reference: string,
+    operator: string,
+    number: string,
+    description: string,
 }
 
 export default function TransactionsTable({ searchItems, lang, selectedAccount, merchant }: TransactionsProps) {

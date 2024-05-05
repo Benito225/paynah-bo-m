@@ -217,3 +217,8 @@ export const getPeriod = (type: string) => {
         return periodNumber+' jour(s)'
     }
 }
+
+export const getTransactionMode = (type: string) => {
+    const stringArray = type.split('_');
+    return stringArray[stringArray.length - 1];
+}
