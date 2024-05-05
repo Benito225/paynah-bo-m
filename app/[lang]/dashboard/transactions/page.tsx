@@ -8,6 +8,7 @@ import SupportShortcut from "@/components/dashboard/serenity-space/SupportShortc
 import AccountListAndOperations from "@/components/dashboard/accounts/AccountListAndOperations";
 import {auth} from "@/auth";
 import {IUser} from "@/core/interfaces/user";
+import FilterableTransactions from "@/components/dashboard/transactions/FilterableTransactions";
 
 export interface AccountsProps {
     searchParams: SearchParams,
@@ -41,6 +42,7 @@ export default async function AccountsPage({params: { lang }, searchParams}: Acc
                     </div>
                 </div>
                 <div className={`gap-3 mt-2.5 flex-grow`}>
+                    <FilterableTransactions lang={lang} searchItems={searchItems} merchant={merchant} />
                     {/*<AccountListAndOperations lang={lang} searchItems={searchItems} merchant={merchant} />*/}
                 </div>
             </div>
