@@ -9,33 +9,15 @@ import {Skeleton} from "@/components/ui/skeleton";
 
 interface TopMenuBalanceInfosProps {
     lang: Locale,
-    merchant: IUser
+    merchant: IUser,
+    balance: any,
+    availableBalance: any,
+    isLoading: boolean,
 }
 
-export default function TopMenuBalanceInfos({lang, merchant}: TopMenuBalanceInfosProps) {
-
-    const [isLoading, setLoading] = useState(true);
+export default function TopMenuBalanceInfos({lang, merchant, balance, availableBalance, isLoading}: TopMenuBalanceInfosProps) {
     const [displayBalance, setDisplayBalance] = useState(true);
     const [displayAvailableBalance, setDisplayAvailableBalance] = useState(false);
-    const [balance, setBalance] = useState(0);
-    const [availableBalance, setAvailableBalance] = useState(0);
-
-    function fetchMerchantBankAccounts() {
-        // @ts-ignore
-        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-        .then(data => {
-            setBalance(data.total_balance);
-            setAvailableBalance(data.total_skaleet_balance);
-            setLoading(false);
-        })
-        .catch(err => {
-            // setAccounts([]);
-        });
-    }
-
-    useEffect(() => {
-        fetchMerchantBankAccounts()
-    }, []);
 
     const showLoader = () => {
         return (
