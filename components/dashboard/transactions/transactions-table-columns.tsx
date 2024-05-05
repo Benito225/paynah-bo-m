@@ -115,7 +115,7 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
                 return (
                     <div className="max-w-[12rem]">
                         <div className={`inline-flex flex-col space-y-0`}>
-                            <h3 className={`leading-4`}>Compte Principal dgdk d;bkde</h3>
+                            <h3 className={`leading-4`}>Compte Principal</h3>
                             <div>
                                 <span className={`block -mt-0.5 text-[11px] text-[#6F7070]`}>12342323223</span>
                             </div>
