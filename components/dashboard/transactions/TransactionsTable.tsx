@@ -53,13 +53,16 @@ export type TransactionsDataType = {
 
 export default function TransactionsTable({ searchItems, lang, selectedAccount, merchant }: TransactionsProps) {
 
+    let currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 1);
+
     const [pSearch, setPSearch] = useState(searchItems.search ?? '');
     const [pStatus, setPStatus] = useState(searchItems.status ?? '');
     const [transactions, setTransactions] = useState<TransactionsDataType[]>([]);
     const [transactionsPagination, setTransactionsPagination] = useState<any>();
     const [date, setDate] = React.useState<DateRange | undefined>({
         from: searchItems.from ? new Date(searchItems.from) : startOfYear(new Date()),
-        to: searchItems.to ? new Date(searchItems.to) : endOfDay(new Date()),
+        to: searchItems.to ? new Date(searchItems.to) : endOfDay(currentDate),
     })
 
     const query = {
