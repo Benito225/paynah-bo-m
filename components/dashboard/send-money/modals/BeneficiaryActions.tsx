@@ -171,15 +171,15 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
             formSchema.parse(data); // Valider les données
             setBeneficiaries([...beneficiaries, data]);
             console.log('Les données du formulaire sont valides !');
-          } catch (error) {
+          } catch (error: any) {
             console.error('Erreur de validation du formulaire :', error.errors);
           }
     }
 
-    const createBeneficiary = (e: Event) => {
-        // @ts-ignore
+    const createBeneficiary = (e: any) => {
         e.preventDefault();
         console.log(beneficiaries[0]);
+        // @ts-ignore
         addBeneficiary(beneficiaries[0], String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             if (data.success) {
@@ -548,7 +548,7 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
                                 <Button onClick={() => { resetCreateBeneficiaryValues(); prevStep(); }} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
                                     Retour
                                 </Button>
-                                <Button onClick={(e: Event) => { createBeneficiary(e)}} className={`mt-5 w-36 text-sm ${step === 1 && beneficiaries.length > 0 ? 'block' : 'hidden'}`}>
+                                <Button onClick={(e) => { createBeneficiary(e)}} className={`mt-5 w-36 text-sm ${step === 1 && beneficiaries.length > 0 ? 'block' : 'hidden'}`}>
                                     Continuer
                                 </Button>
                             </div>

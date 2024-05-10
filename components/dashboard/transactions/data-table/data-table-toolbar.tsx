@@ -49,6 +49,36 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
     }
   });
 
+  const transactionsTypes = [
+    {key: 'PAYIN', value: 'Acception'},
+    {key: 'PAYOUT', value: 'Envoi'},
+    {key: 'PAYIN_TOP_UP', value: 'Rechargement'},
+    {key: 'all', value: 'Tous types'},
+  ];
+
+  const transactionsStatus = [
+    {key: 'Approved', value: 'Approuvé'},
+    {key: 'Pending', value: 'En cours'},
+    {key: 'Declined', value: 'Échoué'},
+    {key: 'all', value: 'Tous status'},
+    // {key: 'Expired', value: 'Expiré'},
+  ];
+
+  const transactionsOperators = [
+    {key: 'CI_WAVE', value: 'WAVE'},
+    {key: 'all', value: 'Tous Opérateurs'},
+  ];
+
+  const Tpe = [
+    {key: 'id', value: 'T909E88RR'},
+    {key: 'all', value: 'Tous TPE'},
+  ];
+
+  const Services = [
+    {key: 'id', value: 'Service 1'},
+    {key: 'all', value: 'Tous Points en ligne'},
+  ];
+
   return (
       <>
         {/*<div className={`bg-white rounded-3xl flex space-y-2.5 2xl:space-y-0 items-start 2xl:items-center flex-col 2xl:flex-row 2xl:justify-between px-6 pb-5 pt-4 mb-6`}>*/}
@@ -165,22 +195,12 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                           <SelectValue placeholder="Type"/>
                         </SelectTrigger>
                         <SelectContent className={`bg-[#f0f0f0]`}>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'all'}>
-                            Tous
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'pending'}>
-                            En attente
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'approved'}>
-                            Effectué
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'declined'}>
-                            Echoué
-                          </SelectItem>
+                          {transactionsTypes.map((item, index) => (
+                              <SelectItem key={index} className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
+                                          value={item.key}>
+                                {item.value}
+                              </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -191,22 +211,12 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                           <SelectValue placeholder="Statut"/>
                         </SelectTrigger>
                         <SelectContent className={`bg-[#f0f0f0]`}>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'all'}>
-                            Tous
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'pending'}>
-                            En attente
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'approved'}>
-                            Effectué
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'declined'}>
-                            Echoué
-                          </SelectItem>
+                          {transactionsStatus.map((item, index) => (
+                              <SelectItem key={index} className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
+                                          value={item.key}>
+                                {item.value}
+                              </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -217,22 +227,12 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                           <SelectValue placeholder="Opérateur"/>
                         </SelectTrigger>
                         <SelectContent className={`bg-[#f0f0f0]`}>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'all'}>
-                            Tous
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'pending'}>
-                            En attente
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'approved'}>
-                            Effectué
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'declined'}>
-                            Echoué
-                          </SelectItem>
+                          {transactionsOperators.map((item, index) => (
+                              <SelectItem key={index} className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
+                                          value={item.key}>
+                                {item.value}
+                              </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -293,22 +293,12 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                           <SelectValue placeholder="TPE"/>
                         </SelectTrigger>
                         <SelectContent className={`bg-[#f0f0f0]`}>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'all'}>
-                            Tous
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'pending'}>
-                            En attente
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'approved'}>
-                            Effectué
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'declined'}>
-                            Echoué
-                          </SelectItem>
+                          {Tpe.map((item, index) => (
+                              <SelectItem key={index} className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
+                                          value={item.key}>
+                                {item.value}
+                              </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -316,25 +306,15 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                       <Select onValueChange={(value) => setPStatus(value)} defaultValue={pStatus}>
                         <SelectTrigger
                             className={`w-full text-xs h-[2.5rem] rounded-full bg-white border border-[#e4e4e4] font-normal [&>span]:text-left`}>
-                          <SelectValue placeholder="Lien paiement"/>
+                          <SelectValue placeholder="Point en ligne"/>
                         </SelectTrigger>
                         <SelectContent className={`bg-[#f0f0f0]`}>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'all'}>
-                            Tous
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'pending'}>
-                            En attente
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'approved'}>
-                            Effectué
-                          </SelectItem>
-                          <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                      value={'declined'}>
-                            Echoué
-                          </SelectItem>
+                          {Services.map((item, index) => (
+                              <SelectItem key={index} className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
+                                          value={item.key}>
+                                {item.value}
+                              </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
