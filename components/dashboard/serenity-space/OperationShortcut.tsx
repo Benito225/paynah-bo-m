@@ -21,13 +21,16 @@ import 'react-international-phone/style.css';
 import {getBankName} from "@/lib/utils";
 import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
 import {getCountries, getCountryOperators} from "@/core/apis/country";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 import {IUser} from "@/core/interfaces/user";
 import {ICountry} from "@/core/interfaces/country";
 import {IOperator} from "@/core/interfaces/operator";
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
+import {IAccount} from "@/core/interfaces/account";
 import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
 import { FlagImage } from "react-international-phone";
 import MobileMoneyActions from '@/components/dashboard/serenity-space/modals/MobileMoneyActions'
+
 interface OperationShortcutProps {
     lang: Locale,
     merchant: IUser, 
@@ -52,6 +55,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
     const [operators, setOperators] = useState([]);
     const [pCountry, setPCountry] = useState('ci');
     const [pAccountNumber, setPAccountNumber] = useState('');
+    const [accounts, setAccounts] = useState([]);
 
     const refPhone = useRef<PhoneInputRefType>(null);
     // const refPhone =  React.forwardRef<PhoneInputRefType>(0);
@@ -209,7 +213,21 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
         });
     }
 
+    function fetchMerchantBankAccounts() {
+        // @ts-ignore
+        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setAccounts(data.accounts);
+            setLoading(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            setAccounts([]);
+        });
+    }
+
     useEffect(() => {
+        fetchMerchantBankAccounts();
         fetchMerchantBeneficiaries();
         fetchCountries();
         if (refBankAccountNumber.current) {
@@ -518,7 +536,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                         <label htmlFor="mmAmount"
                                                                                className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
                                                                         </label>
-                                                                        <MobileMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant}/>
+                                                                        <MobileMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts}/>
                                                                         {/* <Button onClick={handleSubmit((data) => addBeneficiaryItems(data))} className={`absolute rounded-lg p-3 top-0 right-0`}>
                                                                             <Send className={`h-[1.1rem] text-[#fff] `} />
                                                                         </Button> */}
