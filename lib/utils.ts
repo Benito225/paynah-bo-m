@@ -21,7 +21,7 @@ export function getStatusBadge(transactionStatus: string): string {
     if (transactionStatus == TransactionsStatus.EXPIRED) {
         return `<span class="status-expired font-medium text-[10.5px]">Expiré</span>`;
     } else if (transactionStatus == TransactionsStatus.DONE) {
-        return `<span class="status-success font-medium text-[10.5px]">Effectué</span>`;
+        return `<span class="status-success font-medium text-[10.5px]">Approuvé</span>`;
     } else if (transactionStatus == TransactionsStatus.DECLINED) {
         return `<span class="status-rejected font-medium text-[10.5px]">Échoué</span>`;
     } else {

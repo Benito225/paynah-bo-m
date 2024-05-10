@@ -23,6 +23,8 @@ import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
 import {IUser} from "@/core/interfaces/user";
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
 import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
+import {Skeleton} from "@/components/ui/skeleton";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 
 interface OperationShortcutProps {
     lang: Locale,
@@ -39,7 +41,7 @@ export const RANDOM_AVATAR_COLORS_CONFIG = [
 
 export default function OperationShortcut({lang, merchant}: OperationShortcutProps) {
 
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(true);
     const [showConError, setShowConError] = useState(false);
     const [activeSendMode, setActiveSendMode] = useState('direct');
     const [bankName, setBankName] = useState('');
@@ -191,26 +193,45 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                             <div className={`mt-5 min-h-[20rem]`}>
                                 <div className={`beneficiary-fav mb-5`}>
                                     <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires</h3>
-                                    <div className={`inline-flex space-x-1 mt-2`}>
-                                        {
-                                            beneficiaries && beneficiaries.length > 0 &&
-                                            beneficiaries.slice(0,5).map((beneficiary: IBeneficiary, index: number) => (
-                                                <Avatar key={beneficiary.id} className={`cursor-pointer`}>
-                                                    <AvatarFallback className={`bg-[${RANDOM_AVATAR_COLORS_CONFIG[index].bg}] text-[${RANDOM_AVATAR_COLORS_CONFIG[index].text}]`}>
-                                                    {transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                            ))
-                                        }
-                                        <BeneficiaryActions lang={lang} merchant={merchant}/>
-                                    </div>
+                                    {isLoading ?
+                                        <div className={`inline-flex space-x-1 mt-2`}>
+                                            <Skeleton className={`rounded-full h-10 w-10 bg-gray-300`} />
+                                            <BeneficiaryActions lang={lang} merchant={merchant}/>
+                                        </div> :
+                                        <div className={`inline-flex space-x-1 mt-2`}>
+                                            {
+                                                beneficiaries && beneficiaries.length > 0 &&
+                                                beneficiaries.slice(0, 5).map((beneficiary: IBeneficiary, index: number) => (
+                                                    <TooltipProvider  key={beneficiary.id} delayDuration={10}>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Avatar
+                                                                        className={`cursor-pointer`}>
+                                                                    <AvatarFallback
+                                                                        className={`bg-[${RANDOM_AVATAR_COLORS_CONFIG[index].bg}] text-[${RANDOM_AVATAR_COLORS_CONFIG[index].text}]`}>
+                                                                        {transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                <p className={`text-xs`}>{beneficiary.lastName} {beneficiary.firstName}</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                ))
+                                            }
+                                            <BeneficiaryActions lang={lang} merchant={merchant}/>
+                                        </div>
+                                    }
                                 </div>
                                 <Form {...sendMoney}>
                                     <form onSubmit={sendMoney.handleSubmit(onSubmit)} className="space-y-3">
                                         <div className={``}>
-                                            <div className={`border border-[#e4e4e4] flex items-center rounded-lg px-1 2xl:px-1 py-1 2xl:py-1`}>
+                                            <div
+                                                className={`border border-[#e4e4e4] flex items-center rounded-lg px-1 2xl:px-1 py-1 2xl:py-1`}>
                                                 <div className={`flex items-center w-full`}>
-                                                    <span className={`text-[10.5px] text-[#84818a] 2xl:text-[11px] font-normal whitespace-nowrap mr-1 2xl:mr-1`}>{`Mode d'envoi`}</span>
+                                                    <span
+                                                        className={`text-[10.5px] text-[#84818a] 2xl:text-[11px] font-normal whitespace-nowrap mr-1 2xl:mr-1`}>{`Mode d'envoi`}</span>
                                                     <div className={`w-full`}>
                                                         <FormField
                                                             control={sendMoney.control}

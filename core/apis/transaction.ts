@@ -33,17 +33,12 @@ export async function getTransactions(query: queryParams, token: string) {
     return resData.data;
 }
 
-export async function getFilterableTransactions(query: filterableTransactionsQueryParams, token: string) {
-    const startPeriod = new Date(query.from ?? "");
-    const endPeriod = new Date(query.to ?? "");
-
-    const formatStartPeriod = startPeriod.toLocaleDateString('en-GB');
-    const formatEndPeriod = endPeriod.toLocaleDateString('en-GB');
-
-    const url = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&search=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false`;
-    console.log(url);
-
+export async function getFilterableTransactions(url: string, query: filterableTransactionsQueryParams, token: string) {
     const resData = await fetchData(url, 'GET', null, token, false);
+    return resData;
+}
 
+export async function getFilterableTransactionsExport(url: string, token: string) {
+    const resData = await fetchData(url, 'GET', null, token, false);
     return resData;
 }
