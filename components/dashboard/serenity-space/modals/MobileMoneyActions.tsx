@@ -11,7 +11,7 @@ import {
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import {Form} from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -62,8 +62,12 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     const [accessKey, setAccessKey] = useState('');
     const [displayBeneficiaryForm, setDisplayBeneficiaryForm] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [showConError, setShowConError] = useState(false);
 
     const formSchema = z.object({
+        lastName: z.string().min(2, {message: 'veuillez saisir votre nom'}),
+        firstName: z.string().min(2, {message: 'veuillez saisir votre prénoms'}),
+        email: z.string().email({message: 'veuillez saisir votre email'}),
         beneficiary: z.string(),
     })
 
@@ -74,9 +78,14 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     const sendMoneyForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            lastName: "",
+            firstName: "",
+            email: "",
             beneficiary: "",
         }
     });
+
+    const { register, handleSubmit, formState: {errors}, setValue } = sendMoneyForm;
 
     function updateFormValue(value: any) {
         if (step == 1) {
@@ -257,8 +266,79 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                                         }
                                         {
                                             displayBeneficiaryForm &&
-                                            <div className={`grid grid-cols-3 gap-3`}>
-                                                
+                                            <div className={``}>
+                                               <form onSubmit={undefined} className={`${step == 2 && 'hidden'} space-y-5 gap-6`}>
+                                                    <div className={`flex items-center gap-5`}>
+                                                        <div className={'w-1/3'}>
+                                                                <FormField
+                                                                    control={sendMoneyForm.control}
+                                                                    name="lastName"
+                                                                    render={({field}) => (
+                                                                        <FormItem>
+                                                                            <div className={`inline-flex space-x-3`}>
+                                                                                <h3 className={`text-sm font-medium`}>Nom</h3>
+                                                                            </div>
+                                                                            <FormControl className={''}>
+                                                                                <div>
+                                                                                    <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                                        placeholder="Entrez votre nom" {...field} style={{
+                                                                                        backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                                    }} />
+                                                                                </div>
+                                                                            </FormControl>
+                                                                            <FormMessage className={`text-xs`}>{errors.lastName && errors.lastName.message as string}</FormMessage>
+                                                                        </FormItem>
+                                                                    )}
+                                                                />
+                                                        </div>
+                                                        <div className={'w-2/3'}>
+                                                                <FormField
+                                                                    control={sendMoneyForm.control}
+                                                                    name="firstName"
+                                                                    render={({field}) => (
+                                                                        <FormItem>
+                                                                            <div className={`inline-flex space-x-3`}>
+                                                                                <h3 className={`text-sm font-medium`}>Prénoms</h3>
+                                                                            </div>
+                                                                            <FormControl className={''}>
+                                                                                <div>
+                                                                                    <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                                        placeholder="Entrez votre prénoms" {...field} style={{
+                                                                                        backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                                    }} />
+                                                                                </div>
+                                                                            </FormControl>
+                                                                            <FormMessage className={`text-xs`}>{errors.firstName && errors.firstName.message as string}</FormMessage>
+                                                                        </FormItem>
+                                                                    )}
+                                                                />
+                                                        </div>
+                                                    </div>
+                                                    <div className={`gap-5`}>
+                                                        <div className={''}>
+                                                                    <FormField
+                                                                        control={sendMoneyForm.control}
+                                                                        name="email"
+                                                                        render={({field}) => (
+                                                                            <FormItem>
+                                                                                <div className={`inline-flex space-x-3`}>
+                                                                                    <h3 className={`text-sm font-medium`}>Email</h3>
+                                                                                </div>
+                                                                                <FormControl className={''}>
+                                                                                    <div>
+                                                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                                            placeholder="Entrez votre email" {...field} style={{
+                                                                                            backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                                        }} />
+                                                                                    </div>
+                                                                                </FormControl>
+                                                                                <FormMessage className={`text-xs`}>{errors.email && errors.email.message as string}</FormMessage>
+                                                                            </FormItem>
+                                                                        )}
+                                                                    />
+                                                        </div>
+                                                    </div> 
+                                                </form>
                                             </div>
                                         }
                                     </div>
@@ -463,10 +543,10 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
 
 
                                 <div className={`flex justify-center items-center mb-3`}>
-                                    {/* <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
+                                    <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
                                         Retour
-                                    </Button> */}
-                                    <Button onClick={() => nextStep()} className={`mt-5 w-36 text-sm ${step == 2  ? 'block' : 'hidden'}`}>
+                                    </Button>
+                                    <Button onClick={() => nextStep()} className={`mt-5 w-36 text-sm ${((step == 1 && displayBeneficiaryForm) || step == 2) ? 'block' : 'hidden'}`}>
                                         Continuer
                                     </Button>
                                     <Button onClick={() => {
