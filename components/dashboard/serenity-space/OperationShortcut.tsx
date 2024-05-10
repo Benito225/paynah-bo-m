@@ -536,7 +536,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                         <label htmlFor="mmAmount"
                                                                                className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
                                                                         </label>
-                                                                        <MobileMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts}/>
+                                                                        <MobileMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts} activeSendMode={activeSendMode}/>
                                                                         {/* <Button onClick={handleSubmit((data) => addBeneficiaryItems(data))} className={`absolute rounded-lg p-3 top-0 right-0`}>
                                                                             <Send className={`h-[1.1rem] text-[#fff] `} />
                                                                         </Button> */}
