@@ -212,6 +212,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
         console.log(payload);
         const isAuthenticate = await authenticateMerchant(accessKey);
         if(isAuthenticate){
+            // @ts-ignore
             initPayout(payload, String(merchant?.merchantsIds[0]?.id), String(merchant.accessToken))
             .then(data => {
                 console.log(data);
