@@ -15,7 +15,8 @@ const Routes = {
         paymentLink: '/{lang}/dashboard/payment-link',
         accounts: '/{lang}/dashboard/accounts',
         transactions: '/{lang}/dashboard/transactions',
-        beneficiaries: '/{lang}/dashboard/send-money/beneficiaries'
+        beneficiaries: '/{lang}/dashboard/send-money/beneficiaries',
+        pointsOfSale: '/{lang}/dashboard/points-of-sale',
     }
 }
 

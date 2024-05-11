@@ -50,33 +50,33 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
   });
 
   const transactionsTypes = [
+    {key: 'all', value: 'Tous types'},
     {key: 'PAYIN', value: 'Acception'},
     {key: 'PAYOUT', value: 'Envoi'},
     {key: 'PAYIN_TOP_UP', value: 'Rechargement'},
-    {key: 'all', value: 'Tous types'},
   ];
 
   const transactionsStatus = [
+    {key: 'all', value: 'Tous status'},
     {key: 'Approved', value: 'Approuvé'},
     {key: 'Pending', value: 'En cours'},
     {key: 'Declined', value: 'Échoué'},
-    {key: 'all', value: 'Tous status'},
     // {key: 'Expired', value: 'Expiré'},
   ];
 
   const transactionsOperators = [
-    {key: 'CI_WAVE', value: 'WAVE'},
     {key: 'all', value: 'Tous Opérateurs'},
+    {key: 'CI_WAVE', value: 'WAVE'},
   ];
 
   const Tpe = [
-    {key: 'id', value: 'T909E88RR'},
     {key: 'all', value: 'Tous TPE'},
+    {key: 'id', value: 'T909E88RR'},
   ];
 
   const Services = [
-    {key: 'id', value: 'Service 1'},
     {key: 'all', value: 'Tous Points en ligne'},
+    {key: 'id', value: 'Service 1'},
   ];
 
   return (

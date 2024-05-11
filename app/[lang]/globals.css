@@ -155,12 +155,20 @@
   @apply bg-[#dbfcef] text-[#19b2a6] rounded-lg py-0.5 px-1.5 w-[3.99rem] text-center block;
 }
 
+.status-point-success {
+  @apply bg-[#dbfcef] text-[#19b2a6] rounded-lg py-0.5 px-2 text-center block;
+}
+
 .status-expired {
   @apply bg-[#dbdbdb] text-black rounded-lg py-0.5 px-1.5 w-[3.99rem] text-center block;
 }
 
 .status-rejected {
   @apply bg-[#ffe8e8] text-[#ff0000] rounded-lg py-0.5 px-1.5 w-[3.99rem] text-center block;
+}
+
+.status-point-rejected {
+  @apply bg-[#ffe8e8] text-[#ff0000] rounded-lg py-0.5 px-2 text-center block;
 }
 
 .status-pending {

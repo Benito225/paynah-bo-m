@@ -322,7 +322,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                         <TooltipProvider delayDuration={10}>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Link className={`inline-flex bg-[#fafafa] hover:bg-[#EAEAEA] duration-200 p-3 rounded-xl aspect-square justify-center items-center`} href={`#`}>
+                                                    <Link className={`inline-flex ${pathname.startsWith(Routes.dashboard.pointsOfSale.replace('{lang}', lang)) ? 'bg-black' : 'bg-[#fafafa] hover:bg-[#EAEAEA] duration-200'} p-3 rounded-xl aspect-square justify-center items-center`} href={Routes.dashboard.pointsOfSale.replace('{lang}', lang)}>
                                                         {/*<svg className={`w-[.8rem] fill-[#afafaf]`} viewBox="0 0 14.565 21.229">*/}
                                                         {/*    <defs>*/}
                                                         {/*        <clipPath id="clip-path">*/}
@@ -334,7 +334,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                                         {/*        <path d="M7.282,17.109A2.6,2.6,0,0,1,5.4,16.3a36.671,36.671,0,0,1-3.27-3.937C.7,10.319,0,8.657,0,7.282A7.282,7.282,0,0,1,12.432,2.133a7.235,7.235,0,0,1,2.133,5.149c0,1.374-.7,3.037-2.135,5.082A36.668,36.668,0,0,1,9.16,16.3a2.6,2.6,0,0,1-1.878.808" transform="translate(0)" fill="#afafaf"/>*/}
                                                         {/*    </g>*/}
                                                         {/*</svg>*/}
-                                                        <svg className={`w-[1.1rem] fill-[#afafaf]`}  viewBox="0 0 18.077 21.088">
+                                                        <svg className={`w-[1.1rem] ${pathname.startsWith(Routes.dashboard.pointsOfSale.replace('{lang}', lang)) ? 'fill-white' : 'fill-[#afafaf]'}`}  viewBox="0 0 18.077 21.088">
                                                             <g transform="translate(-1878.75 -1686.466)">
                                                                 <path
                                                                     d="M19.566,24.9c2.208-1.507,7.313-5.652,7-11.1A8.288,8.288,0,0,0,10,14.277c0,5.218,4.9,9.163,7,10.618a2.279,2.279,0,0,0,2.562,0ZM14.71,13.712a3.579,3.579,0,1,1,3.579,3.579,3.579,3.579,0,0,1-3.579-3.579Z"

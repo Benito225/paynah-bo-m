@@ -1,6 +1,7 @@
 import {type ClassValue, clsx} from "clsx"
 import {twMerge} from "tailwind-merge"
 import {TransactionsStatus} from "@/components/dashboard/serenity-space/LastTransactions";
+import {PointsOfSaleStatus} from "@/components/dashboard/points-of-sale/PointOfSaleListAndOperations";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -38,6 +39,14 @@ export function getStatusName(transactionStatus: string): string {
         return `Échoué`;
     } else {
         return `En cours`;
+    }
+}
+
+export function getPointsOfSaleStatusBadge(pointsStatus: string): string {
+    if (pointsStatus == PointsOfSaleStatus.ACTIVE) {
+        return `<span class="status-point-success font-medium text-[10.5px]">Actif</span>`;
+    } else {
+        return `<span class="status-point-rejected font-medium text-[10.5px]">Inactif</span>`;
     }
 }
 
