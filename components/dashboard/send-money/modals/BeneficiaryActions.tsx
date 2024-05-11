@@ -224,10 +224,11 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
             setBeneficiaries([...beneficiaries, data]);
             resetAccountBeneficiaryValues();
             console.log('Les données du formulaire sont valides !');
-          } catch (error) {
+          } catch (error: any) {
             console.error('Erreur de validation du formulaire :', error.errors);
           }
     }
+
 
     const displayAccountTypeLabel = (accountType: string) => {
         let accountLabel = '';
@@ -241,6 +242,7 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
         // @ts-ignore
         // e.preventDefault();
         console.log(beneficiaries[0]);
+        // @ts-ignore
         addBeneficiary(beneficiaries[0], String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             if (data.success) {

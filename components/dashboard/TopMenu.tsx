@@ -1,9 +1,14 @@
+"use client"
+
 import {Locale} from "@/i18n.config";
 import Link from "next/link";
 import TopMenuSoldInfos from "@/components/dashboard/top-menu/TopMenuBalanceInfos";
 import TopMenuAccountInfos from "@/components/dashboard/top-menu/TopMenuAccountInfos";
 import Routes from "@/components/Routes";
 import {IUser} from "@/core/interfaces/user";
+import {useEffect, useState} from "react";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
+import {IAccount} from "@/core/interfaces/account";
 
 interface DashboardTopMenuProps {
     lang: Locale,
@@ -11,6 +16,46 @@ interface DashboardTopMenuProps {
 }
 
 export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps) {
+    const [isLoading, setLoading] = useState(true);
+    const [balance, setBalance] = useState(0);
+    const [availableBalance, setAvailableBalance] = useState(0);
+    const [currentAccount, setCurrentAccount] = useState<IAccount | null>(null);
+    const [accounts, setAccounts] = useState([]);
+
+    function initializeCurrentAccount(accounts: IAccount[]) {
+        if (accounts.length > 0) {
+            setCurrentAccount(accounts[0]);
+        }
+    }
+
+    const handleChangeAccount = (event: any) => {
+        const selectedCoreBankId = event.target.value;
+        const accoundFounded = accounts.filter((account: IAccount) => account.coreBankId == selectedCoreBankId);
+        if (accoundFounded.length === 0) {
+            setCurrentAccount(accoundFounded[0]);
+        }
+        // console.log(accoundFounded);
+    };
+
+    function fetchMerchantBankAccounts() {
+        // @ts-ignore
+        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+            .then(data => {
+                setBalance(data.total_balance);
+                setAvailableBalance(data.total_skaleet_balance);
+                setAccounts(data.accounts);
+                initializeCurrentAccount(data.accounts)
+                setLoading(false);
+            })
+            .catch(err => {
+                setAccounts([]);
+            });
+    }
+
+    useEffect(() => {
+        fetchMerchantBankAccounts()
+    }, []);
+
     return (
         <div className={`bg-white border-b border-[#d2d3d3] py-2`}>
             <div className={`max-w-screen-2xl 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8`}>
@@ -35,8 +80,8 @@ export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps
                         </svg>
                     </Link>
                     <div className={`inline-flex items-center space-x-[5rem]`}>
-                        <TopMenuSoldInfos lang={lang} merchant={merchant} />
-                        <TopMenuAccountInfos lang={lang} merchant={merchant} />
+                        <TopMenuSoldInfos lang={lang} merchant={merchant} balance={balance} availableBalance={availableBalance} isLoading={isLoading} />
+                        <TopMenuAccountInfos lang={lang} merchant={merchant} accounts={accounts} currentAccount={currentAccount} isDataLoading={isLoading} handleChangeAccount={handleChangeAccount} />
                     </div>
                 </div>
             </div>
