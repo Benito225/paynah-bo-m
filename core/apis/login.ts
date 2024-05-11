@@ -5,11 +5,11 @@ import {fetchData} from "@/lib/api";
 import {IUser} from "@/core/interfaces/user";
 import {decodeToken} from "react-jwt";
 
-export async function login(values: any) {
+export async function login(values: any, redirect:boolean = true) {
     return signIn("merchant", {
         username: values.username,
         password: values.password,
-        redirect: true
+        redirect: redirect
     });
 }
 

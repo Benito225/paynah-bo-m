@@ -20,11 +20,21 @@ import {PhoneInput, PhoneInputRefType, CountryData} from 'react-international-ph
 import 'react-international-phone/style.css';
 import {getBankName} from "@/lib/utils";
 import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
+import {getCountries, getCountryOperators} from "@/core/apis/country";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 import {IUser} from "@/core/interfaces/user";
+import {ICountry} from "@/core/interfaces/country";
+import {IOperator} from "@/core/interfaces/operator";
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
+import {IAccount} from "@/core/interfaces/account";
 import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
+
+import { FlagImage } from "react-international-phone";
+import MobileMoneyActions from '@/components/dashboard/serenity-space/modals/MobileMoneyActions'
+
 import {Skeleton} from "@/components/ui/skeleton";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+
 
 interface OperationShortcutProps {
     lang: Locale,
@@ -46,17 +56,32 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
     const [activeSendMode, setActiveSendMode] = useState('direct');
     const [bankName, setBankName] = useState('');
     const [beneficiaries, setBeneficiaries] = useState([]);
-    // const [pCountry, setPCountry] = useState('');
+    const [countries, setCountries] = useState([]);
+    const [operators, setOperators] = useState([]);
+    const [pCountry, setPCountry] = useState('ci');
+    const [pAccountNumber, setPAccountNumber] = useState('');
+    const [accounts, setAccounts] = useState([]);
 
     const refPhone = useRef<PhoneInputRefType>(null);
     // const refPhone =  React.forwardRef<PhoneInputRefType>(0);
     const refBankAccountNumber = useRef(null);
 
+    const mobileTransfertFormSchema = z.object({
+        mmCountry: z.string(),
+        mmAccountNumber: z.string().regex(/^[0-9]{8,}$/i, { message: "veuillez entrez un numéro valide" }),
+        mmAmount: z.number().gte(1, { message: "Le montant doit être suppérieure ou égale à 1" }),
+    })
+
+    const mobileTransfertForm = useForm<z.infer<typeof mobileTransfertFormSchema>>({
+        resolver: zodResolver(mobileTransfertFormSchema),
+        defaultValues: {
+            mmCountry: "",
+            mmAccountNumber: "",
+            mmAmount: 0,
+        }
+    });
 
     const formSchema = z.object({
-        // beneficiary: z.string().min(1, {
-        //     message: 'Le champ est requis'
-        // }),
         beneficiary: z.string(),
         accountNumber: z.string(),
         bankAccountNumber: z.string(),
@@ -104,6 +129,12 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
         }
     });
 
+    const call = () => {
+        console.log('Call Function');
+    }
+
+    const { register, handleSubmit, formState: {errors}, setValue } = sendMoney;
+
     async function triggerRadio(inputName: "direct" | "mm" | "bank") {
         sendMoney.setValue('sendMode', inputName);
         setActiveSendMode(inputName);
@@ -133,6 +164,19 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
         return beneficiaryFullNameAvatar;
     }
 
+    const addBeneficiaryItems = (data: any) => {
+        // console.log(sendMoney, register);
+        try {
+            formSchema.parse(data); // Valider les données
+            console.log(data);
+            setPAccountNumber(data.mmAccountNumber);
+            console.log('Les données du formulaire sont valides !');
+          } catch (error) {
+            console.log(errors);
+            // console.error('Erreur de validation du formulaire :', error.errors);
+          }
+    }
+
     function fetchMerchantBeneficiaries() {
         // @ts-ignore
         getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
@@ -145,9 +189,52 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
             setBeneficiaries([]);
         });
     }
+    
+    function fetchCountries() {
+        // @ts-ignore
+        getCountries(String(merchant.accessToken))
+        .then(data => {
+            setCountries(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            setCountries([]);
+        });
+    }
+
+    function fetchCountryOperators(countryCode: string) {
+        // @ts-ignore
+        const countryFilter: Icountry[] = countries.filter((country: ICountry) => country.code == countryCode);
+        const countryId = countryFilter[0].id;
+        getCountryOperators(String(countryId), String(merchant.accessToken))
+        .then(data => {
+            setOperators(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            setCountries([]);
+        });
+    }
+
+    function fetchMerchantBankAccounts() {
+        // @ts-ignore
+        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setAccounts(data.accounts);
+            setLoading(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            setAccounts([]);
+        });
+    }
 
     useEffect(() => {
+        fetchMerchantBankAccounts();
         fetchMerchantBeneficiaries();
+        fetchCountries();
         if (refBankAccountNumber.current) {
             const mask = IMask(refBankAccountNumber.current, {
                 mask: 'CCNNN NNNNN NNNNNNNNNNNN NN',
@@ -161,7 +248,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
 
             console.log(mask.value);
         }
-    }, [activeSendMode]);
+    }, [activeSendMode, sendMoney]);
 
     // console.log(sendMoney.getValues('bankAccountNumber'));
     // console.log(refBankAccountNumber.current);
@@ -225,7 +312,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                     }
                                 </div>
                                 <Form {...sendMoney}>
-                                    <form onSubmit={sendMoney.handleSubmit(onSubmit)} className="space-y-3">
+                                    <div className="space-y-3">
                                         <div className={``}>
                                             <div
                                                 className={`border border-[#e4e4e4] flex items-center rounded-lg px-1 2xl:px-1 py-1 2xl:py-1`}>
@@ -323,9 +410,10 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                         <label htmlFor="amount"
                                                                                className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
                                                                         </label>
-                                                                        <Button type={`submit`} className={`absolute rounded-lg p-3 top-0 right-0`}>
+                                                                        <MobileMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts} activeSendMode={activeSendMode}/>
+                                                                        {/* <Button type={`submit`} className={`absolute rounded-lg p-3 top-0 right-0`}>
                                                                             <Send className={`h-[1.1rem] text-[#fff] `} />
-                                                                        </Button>
+                                                                        </Button> */}
                                                                     </div>
                                                                 </div>
                                                             </FormControl>
@@ -335,7 +423,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                             </div>
                                         }
                                         {activeSendMode == "mm" &&
-                                            <div className={`mm-form-inputs space-y-3`}>
+                                            <form className={`mm-form-inputs space-y-3`}>
                                                 <FormField
                                                     control={sendMoney.control}
                                                     name="mmCountry"
@@ -343,118 +431,23 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                         <FormItem>
                                                             <FormControl>
                                                                 <div className={`relative`}>
-                                                                    <Select onValueChange={(value) => {field.onChange(value); changePhoneInputCountrySelect(value)}} defaultValue={'CI'}>
+                                                                    <Select onValueChange={(value) => {field.onChange(value); changePhoneInputCountrySelect(value); fetchCountryOperators(value);}} defaultValue={pCountry}>
                                                                         <SelectTrigger className={`w-full text-sm !pt-[.8rem] h-[2.8rem] rounded-lg border border-[#e4e4e4] pl-2.5 pr-1 font-normal`} style={{
                                                                             backgroundColor: field.value ? '#fff' : '#fff',
                                                                         }}>
                                                                             <SelectValue placeholder=" "/>
                                                                         </SelectTrigger>
                                                                         <SelectContent className={`bg-[#f0f0f0] z-[100]`}>
-                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'CI'}>
-                                                                                <div className={`inline-flex items-center space-x-2.5`}>
-                                                                                    <svg className={`w-[1.60rem] rounded-[3px]`} viewBox="0 0 38 25">
-                                                                                        <defs>
-                                                                                            <clipPath id="clip-path2">
-                                                                                                <rect width="38" height="25" rx="3" transform="translate(0 -0.061)" fill="#fff"/>
-                                                                                            </clipPath>
-                                                                                        </defs>
-                                                                                        <g transform="translate(0 0.061)" clipPath="url(#clip-path2)">
-                                                                                            <g transform="translate(0.554 0.333)">
-                                                                                                <path d="M0,4.5H36.765V29.009H0Z" transform="translate(0 -4.5)" fill="#f0f0f0"/>
-                                                                                                <path d="M17.413,4.5H30.467V29.01H17.413Z" transform="translate(6.298 -4.5)" fill="#6da544"/>
-                                                                                                <path d="M0,4.5H13.054V29.01H0Z" transform="translate(0 -4.5)" fill="#ff9811"/>
-                                                                                            </g>
-                                                                                        </g>
-                                                                                    </svg>
-                                                                                    <span className={`mt-[2px] text-sm`}>{`Côte d'Ivoire`}</span>
-                                                                                </div>
-                                                                            </SelectItem>
-                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'BJ'}>
-                                                                                <div className={`inline-flex items-center space-x-2.5`}>
-                                                                                    <svg className={`w-[1.60rem] rounded-[3px]`} viewBox="0 0 38 24">
-                                                                                        <defs>
-                                                                                            <clipPath id="clip-path2">
-                                                                                                <rect width="38" height="24" rx="3" transform="translate(0 0)" fill="#fff"/>
-                                                                                            </clipPath>
-                                                                                        </defs>
-                                                                                        <g transform="translate(0 0)" clipPath="url(#clip-path2)">
-                                                                                            <g transform="translate(0.554 -0.157)">
-                                                                                                <path d="M0,4.5H36.766V29.01H0Z" transform="translate(0 -4.5)" fill="#6da544"/>
-                                                                                                <path d="M10.37,4.5H33.015V16.755H10.37Z" transform="translate(3.751 -4.5)" fill="#ffda44"/>
-                                                                                                <path d="M10.37,13.5H33.015V25.755H10.37Z" transform="translate(3.751 -1.245)" fill="#d80027"/>
-                                                                                            </g>
-                                                                                        </g>
-                                                                                    </svg>
-                                                                                    <span className={`mt-[2px] text-sm`}>{`Bénin`}</span>
-                                                                                </div>
-                                                                            </SelectItem>
-                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'CM'}>
-                                                                                <div className={`inline-flex items-center space-x-2.5`}>
-                                                                                    <svg className={`w-[1.60rem] rounded-[3px]`} viewBox="0 0 38 24">
-                                                                                        <defs>
-                                                                                            <clipPath id="clip-path2">
-                                                                                                <rect width="38" height="24" rx="3"
-                                                                                                      transform="translate(0 -0.03)"
-                                                                                                      fill="#fff"/>
-                                                                                            </clipPath>
-                                                                                        </defs>
-                                                                                        <g transform="translate(0 0.03)"
-                                                                                           clipPath="url(#clip-path2)">
-                                                                                            <g transform="translate(0.554 0.088)">
-                                                                                                <path d="M0,4.5H36.765V29.01H0Z"
-                                                                                                      transform="translate(0 -4.5)"
-                                                                                                      fill="#d80027"/>
-                                                                                                <path d="M0,4.5H12.255V29.01H0Z"
-                                                                                                      transform="translate(0 -4.5)"
-                                                                                                      fill="#496e2d"/>
-                                                                                                <path
-                                                                                                    d="M20.58,4.5H32.835V29.01H20.58Zm-6.128,8.845.846,2.6h2.739l-2.216,1.61.846,2.605-2.216-1.61-2.216,1.61.847-2.605-2.216-1.61h2.739Z"
-                                                                                                    transform="translate(3.93 -4.5)"
-                                                                                                    fill="#ffda44"/>
-                                                                                            </g>
-                                                                                        </g>
-                                                                                    </svg>
-                                                                                    <span className={`mt-[2px] text-sm`}>{`Cameroun`}</span>
-                                                                                </div>
-                                                                            </SelectItem>
-                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'GN'}>
-                                                                                <div className={`inline-flex items-center space-x-2.5`}>
-                                                                                    <svg className={`w-[1.60rem] rounded-[3px]`} viewBox="0 0 38 24">
-                                                                                        <defs>
-                                                                                            <clipPath id="clip-path2">
-                                                                                                <rect width="38" height="24" rx="3" transform="translate(0 -0.242)" fill="#fff"/>
-                                                                                            </clipPath>
-                                                                                        </defs>
-                                                                                        <g transform="translate(0 0.242)" clipPath="url(#clip-path2)">
-                                                                                            <g transform="translate(0.554 -0.573)">
-                                                                                                <path id="Tracé_36" data-name="Tracé 36" d="M0,4.5H36.765V29.009H0Z" transform="translate(0 -4.5)" fill="#ffda44"/>
-                                                                                                <path id="Tracé_37" data-name="Tracé 37" d="M17.413,4.5H30.467V29.01H17.413Z" transform="translate(6.298 -4.5)" fill="#6da544"/>
-                                                                                                <path id="Tracé_38" data-name="Tracé 38" d="M0,4.5H13.054V29.01H0Z" transform="translate(0 -4.5)" fill="#d80027"/>
-                                                                                            </g>
-                                                                                        </g>
-                                                                                    </svg>
-                                                                                    <span className={`mt-[2px] text-sm`}>{`Guinée`}</span>
-                                                                                </div>
-                                                                            </SelectItem>
-                                                                            <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'SN'}>
-                                                                                <div className={`inline-flex items-center space-x-2.5`}>
-                                                                                    <svg className={`w-[1.60rem] rounded-[3px]`} viewBox="0 0 38 24">
-                                                                                        <defs>
-                                                                                            <clipPath id="clip-path2">
-                                                                                                <rect width="38" height="24" rx="3" transform="translate(0 -0.273)" fill="#fff"/>
-                                                                                            </clipPath>
-                                                                                        </defs>
-                                                                                        <g transform="translate(0 0.273)" clipPath="url(#clip-path2)">
-                                                                                            <g transform="translate(0.554 -0.328)">
-                                                                                                <path d="M0,4.5H36.765V29.009H0Z" transform="translate(0 -4.5)" fill="#ffda44"/>
-                                                                                                <path d="M17.413,4.5H30.467V29.01H17.413Z" transform="translate(6.298 -4.5)" fill="#d80027"/>
-                                                                                                <path d="M0,4.5H13.054V29.01H0Zm18.382,7.992,1.058,3.256h3.424l-2.77,2.013,1.058,3.256L18.382,19l-2.77,2.012,1.058-3.256L13.9,15.748h3.424Z" transform="translate(0 -4.5)" fill="#496e2d"/>
-                                                                                            </g>
-                                                                                        </g>
-                                                                                    </svg>
-                                                                                    <span className={`mt-[2px] text-sm`}> {`Sénégal`}</span>
-                                                                                </div>
-                                                                            </SelectItem>
+                                                                            {
+                                                                                countries && countries.map((country: ICountry) => (
+                                                                                    <SelectItem key={country.id} className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={country.code}>
+                                                                                        <div className={`inline-flex items-center space-x-2.5`}>
+                                                                                            <FlagImage className={`w-7`} iso2={country.code.toLowerCase()} />
+                                                                                            <span className={`mt-[2px] text-sm`}>{country.name}</span>
+                                                                                        </div>
+                                                                                    </SelectItem>
+                                                                                ))
+                                                                            }
                                                                         </SelectContent>
                                                                     </Select>
                                                                     <label htmlFor=""
@@ -486,7 +479,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                                     '--react-international-phone-border-radius': '0.5rem',
                                                                                 }  as React.CSSProperties
                                                                             }
-                                                                            defaultCountry={`ci`}
+                                                                            defaultCountry={pCountry.toLowerCase()}
                                                                             forceDialCode={true}
                                                                             ref={refPhone}
                                                                             hideDropdown={true}
@@ -510,47 +503,16 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                                                         <SelectValue  placeholder="Opérateur"/>
                                                                                                     </SelectTrigger>
                                                                                                     <SelectContent className={`bg-[#f0f0f0] !w-[10rem] z-[100]`}>
-                                                                                                        <SelectItem className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`} value={'om'}>
-                                                                                                            <div className={`inline-flex items-center space-x-2.5`}>
-                                                                                                                <Image className={`h-[1.6rem] w-[1.6rem]`} src={`/${lang}/images/ORANGE-MONEY.png`} alt={`om`} height={512} width={512} />
-                                                                                                                <span className={`mm-label`}>Orange</span>
-                                                                                                            </div>
-                                                                                                        </SelectItem>
-                                                                                                        <SelectItem className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`} value={'mtn'}>
-                                                                                                            <div className={`inline-flex items-center space-x-2`}>
-                                                                                                                <Image
-                                                                                                                    className={`h-[1.8rem] w-[1.8rem]`}
-                                                                                                                    src={`/${lang}/images/MTN MOMO.png`}
-                                                                                                                    alt={`mtn`}
-                                                                                                                    height={512}
-                                                                                                                    width={512}/>
-                                                                                                                <span className={`mm-label`}>MTN</span>
-                                                                                                            </div>
-                                                                                                        </SelectItem>
-                                                                                                        <SelectItem className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`} value={'moov'}>
-                                                                                                            <div
-                                                                                                                className={`inline-flex items-center space-x-2`}>
-                                                                                                                <Image
-                                                                                                                    className={`h-[1.8rem] w-[1.8rem]`}
-                                                                                                                    src={`/${lang}/images/MOOV MONEY.png`}
-                                                                                                                    alt={`moov`}
-                                                                                                                    height={512}
-                                                                                                                    width={512}/>
-                                                                                                                <span className={`mm-label`}>Moov</span>
-                                                                                                            </div>
-                                                                                                        </SelectItem>
-                                                                                                        <SelectItem className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`} value={'wave'}>
-                                                                                                            <div
-                                                                                                                className={`inline-flex items-center space-x-2`}>
-                                                                                                                <Image
-                                                                                                                    className={`h-[1.8rem] w-[1.8rem]`}
-                                                                                                                    src={`/${lang}/images/WAVE.png`}
-                                                                                                                    alt={`wave`}
-                                                                                                                    height={512}
-                                                                                                                    width={512}/>
-                                                                                                                <span className={`mm-label`}>Wave</span>
-                                                                                                            </div>
-                                                                                                        </SelectItem>
+                                                                                                        {
+                                                                                                            operators && operators.map((operator: IOperator) => (
+                                                                                                            <SelectItem key={operator.id} className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`} value={operator.code}>
+                                                                                                                <div className={`inline-flex items-center space-x-2.5`}>
+                                                                                                                    <Image className={`h-[1.6rem] w-[1.6rem]`} src={operator.logoUrl} alt={operator.code} height={512} width={512} />
+                                                                                                                    <span className={`mm-label`}>{operator.name}</span>
+                                                                                                                </div>
+                                                                                                            </SelectItem>
+                                                                                                            ))
+                                                                                                        }
                                                                                                     </SelectContent>
                                                                                                 </Select>
                                                                                             </div>
@@ -565,7 +527,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                         </FormItem>
                                                     )}
                                                 />
-                                                <FormField
+                                                {/* <FormField
                                                     control={sendMoney.control}
                                                     name="beneficiary"
                                                     render={({field}) => (
@@ -582,7 +544,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                             </FormControl>
                                                         </FormItem>
                                                     )}
-                                                />
+                                                /> */}
                                                 <FormField
                                                     control={sendMoney.control}
                                                     name="mmAmount"
@@ -596,20 +558,20 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                             thousandSeparator=" " prefix="FCFA " onValueChange={(e) => {
                                                                             sendMoney.setValue('mmAmount', e.value);
                                                                         }}/>
-                                                                        {/*<input type="text" id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
                                                                         <label htmlFor="mmAmount"
                                                                                className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
                                                                         </label>
-                                                                        <Button type={`submit`} className={`absolute rounded-lg p-3 top-0 right-0`}>
+                                                                        <MobileMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts} activeSendMode={activeSendMode}/>
+                                                                        {/* <Button onClick={handleSubmit((data) => addBeneficiaryItems(data))} className={`absolute rounded-lg p-3 top-0 right-0`}>
                                                                             <Send className={`h-[1.1rem] text-[#fff] `} />
-                                                                        </Button>
+                                                                        </Button> */}
                                                                     </div>
                                                                 </div>
                                                             </FormControl>
                                                         </FormItem>
                                                     )}
                                                 />
-                                            </div>
+                                            </form>
                                         }
                                         {activeSendMode == "bank" &&
                                             <div className={`bank-form-inputs space-y-3`}>
@@ -713,7 +675,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                 />
                                             </div>
                                         }
-                                    </form>
+                                    </div>
                                 </Form>
                             </div>
                         </TabsContent>
