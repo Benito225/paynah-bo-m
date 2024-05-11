@@ -1,4 +1,3 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import { type ColumnDef } from "@tanstack/react-table"
 import {DataTableColumnHeader} from "@/components/dashboard/transactions/data-table/data-table-column-header";
 import {
@@ -10,25 +9,14 @@ import {
     getTransactionType,
     TStatus
 } from "@/lib/utils";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {AlertTriangle, Banknote, ClipboardList, Eye, Goal, RotateCw, Search, SquarePen, X} from "lucide-react";
+import {Eye, X} from "lucide-react";
 import React from "react";
 import {TransactionsDataType} from "@/components/dashboard/transactions/TransactionsTable";
 import {DataTableFilterableColumn, DataTableSearchableColumn} from "@/core/interfaces";
 import {TransactionsType} from "@/components/dashboard/serenity-space/LastTransactions";
 import {Dialog, DialogClose, DialogContent, DialogTrigger} from "@/components/ui/dialog";
-import {Form} from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
-import {Avatar, AvatarFallback} from "@/components/ui/avatar";
-import {NumericFormat} from "react-number-format";
-import Link from "next/link";
 import {Button} from "@/components/ui/button";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 
 export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
     return [
@@ -306,12 +294,21 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
                                                         className={`text-sm font-medium leading-4`}>{row.original.reference ?? "-"}</span>
                                                 </div>
                                             </div>
-                                            <div>
+                                            <div className={`col-span-2`}>
                                                 <div className={`inline-flex flex-col`}>
                                                     <h3 className={`font-light text-[#626262] text-xs mb-0.5`}>ID
                                                         Transaction</h3>
-                                                    <span
-                                                        className={`text-sm font-medium leading-4`}>{row.original.transactionId}</span>
+                                                    <TooltipProvider delayDuration={10}>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <span
+                                                                    className={`text-sm cursor-pointer font-medium leading-4 line-clamp-1`}>{row.original.transactionId}</span>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                <p className={`text-xs`}>{row.original.transactionId}</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
                                                 </div>
                                             </div>
                                         </div>
