@@ -21,6 +21,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Input} from "@/components/ui/input";
 import {IUser} from "@/core/interfaces/user";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import TransactionsTable from "@/components/dashboard/points-of-sale/TransactionsTable";
 
 interface PointOfSaleListAndOperationsProps {
     lang: Locale,
@@ -155,11 +156,11 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
                                             </Select>
                                         </div>
                                         <div className={`flex justify-end items-center space-x-1 col-span-2`}>
-                                            <Button className={`h-[2.5rem] items-center text-xs`}>
+                                            <Button type={"button"} className={`h-[2.5rem] items-center text-xs`}>
                                                 <PlusCircle className={`h-4 w-4 mr-2`}/>
                                                 <span>Terminal de paiement</span>
                                             </Button>
-                                            <Button className={`h-[2.5rem] items-center text-xs`}>
+                                            <Button type={"button"}  className={`h-[2.5rem] items-center text-xs`}>
                                                 <PlusCircle className={`h-4 w-4 mr-2`}/>
                                                 <span>Point en ligne</span>
                                             </Button>
@@ -550,7 +551,7 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
             </div>
             <div className={`h-full`}>
                 <div className={`bg-white flex-grow rounded-3xl h-full`}>
-                    <OperationsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount}/>
+                    <TransactionsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount}/>
                 </div>
             </div>
         </div>
