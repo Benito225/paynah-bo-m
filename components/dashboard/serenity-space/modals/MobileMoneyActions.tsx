@@ -95,11 +95,25 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
 
     const { register, handleSubmit, formState: {errors}, setValue } = sendMoneyForm;
 
+    function initSendMoneyPayloadParams(activeSendMode: string, ) {
+        switch (activeSendMode) {
+            case 'mm':
+                setAmount(sendMoney.getValues('mmAmount'));
+                setAccount(sendMoney.getValues('mmAccountNumber'));
+                setOperator(sendMoney.getValues('mmOperator'));
+                break;
+            case 'direct':
+                setAmount(sendMoney.getValues('amount'));
+                setAccount(sendMoney.getValues('accountNumber'));
+                break;
+            default:
+                break;
+        }
+    }
+
     function updateFormValue(value: any) {
         if (step == 1) {
-            setAmount(sendMoney.getValues('mmAmount'));
-            setPhoneNumber(sendMoney.getValues('mmAccountNumber'));
-            setOperator(sendMoney.getValues('mmOperator'));
+            initSendMoneyPayloadParams(activeSendMode);
             setBeneficiary(value)
             // setAccount(value);
             setStep(2);
@@ -188,10 +202,10 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
             bankAccountId: bankAccountId,
             firstName: beneficiary.firstName,
             lastName: beneficiary.lastName,
-            operator: operator,
-            phoneNumber: phoneNumber,
-            paynahAccount: '',
-            bankAccount: '',
+            operator: (activeSendMode == 'mm') ? operator : '',
+            phoneNumber: (activeSendMode == 'mm') ? account : '',
+            paynahAccount: (activeSendMode == 'direct') ? account : '',
+            bankAccount: (activeSendMode == 'bank') ? account : '',
             amount: Number(amount),
             mode: activeSendMode,
         };
@@ -246,11 +260,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     const addNewBeneficiary = (data: any) => {
         try {
           formSchema.parse(data); // Valider les données
-          //resetAccountBeneficiaryValues();
-        //   setBeneficiary(data);
           updateFormValue(data);
-        //   console.log('Les données du formulaire sont valides !');
-        //   setStep(step+1);
         } catch (error) {
             console.error('Erreur de validation du formulaire :', error);
         }
@@ -268,6 +278,9 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
         }
 
     }, [amount, payFees, sendMoney]);
+
+    console.log(sendMoney.getValues('accountNumber'));
+    console.log(sendMoney.getValues('account'));
 
     return (
         <>
@@ -580,10 +593,10 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                                             </svg>
                                                 <p className={`text-sm text-[#707070] mt-3`}>{`Vous êtes sur le point d'envoyer`}</p>
                                                 <p className={`text-sm text-[#707070]`}>
-                                                    <span className={`text-black`}>{`XOF ${formatCFA(sendMoney.getValues('mmAmount'))}`}</span>{` à `}
+                                                    <span className={`text-black`}>{`XOF ${formatCFA(amount)}`}</span>{` à `}
                                                     <span className={`text-black`}>{`${beneficiary?.lastName} ${beneficiary?.firstName}`}</span>{` sur son compte`}
                                                 </p>
-                                                <p className={`text-sm text-[#707070]`}><span className={`text-black`}>{`${sendMoney.getValues('mmAccountNumber')}`}</span></p>
+                                                <p className={`text-sm text-[#707070]`}><span className={`text-black`}>{`${account}`}</span></p>
                                                 <div className="flex items-start space-x-2 mt-6">
                                                 <Checkbox onCheckedChange={(checked) => {checked == 'indeterminate' ? setPayFees(false) : setPayFees(checked)}} className={`bg-white border-[#dfdfdf]`} id="fees" />
                                                 <label
