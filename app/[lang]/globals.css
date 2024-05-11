@@ -170,3 +170,15 @@
 .selectedItemMM .mm-label {
   display: none;
 }
+
+.t-cls-1 {
+  fill: none;
+}
+
+.t-cls-1, .t-cls-2, .t-cls-3, .ap-cls-1 {
+  stroke-width: 0px;
+}
+
+.t-cls-3 {
+  fill: #606060;
+}

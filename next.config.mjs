@@ -5,6 +5,9 @@ const nextConfig = {
             bodySizeLimit: '10mb',
         },
     },
+    images: {
+        domains: ['ressources.bineta.net']
+    }
 };
 
 export default nextConfig;

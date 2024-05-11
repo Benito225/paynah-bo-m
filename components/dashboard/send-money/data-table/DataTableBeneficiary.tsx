@@ -73,9 +73,10 @@ interface TDataTableBeneficiaryProps<TData, TValue> {
     date: DateRange | undefined,
     setDate: (value: (((prevState: (DateRange | undefined)) => (DateRange | undefined)) | DateRange | undefined)) => void,
     lang: string
+    nbItems: number
 }
 
-export function TDataTableBeneficiary<TData, TValue>({ table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang }: TDataTableBeneficiaryProps<TData, TValue>) {
+export function TDataTableBeneficiary<TData, TValue>({ table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, nbItems }: TDataTableBeneficiaryProps<TData, TValue>) {
     return (
         <div className="w-full space-y-2.5 overflow-auto">
             <DataTableToolbarBeneficiary
@@ -89,6 +90,7 @@ export function TDataTableBeneficiary<TData, TValue>({ table, columns, searchabl
                 lang={lang}
                 newRowLink={newRowLink}
                 deleteRowsAction={deleteRowsAction}
+                nbItems={nbItems}
             />
             <div className="">
                 <Table>

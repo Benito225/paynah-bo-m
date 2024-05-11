@@ -77,7 +77,7 @@ export function getColumns(lang: string): ColumnDef<IBeneficiary>[] {
             },
         },
         {
-            accessorKey: "merchantId",
+            accessorKey: "mobileMoneyId",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Compte mobile money" />
             ),
@@ -90,7 +90,7 @@ export function getColumns(lang: string): ColumnDef<IBeneficiary>[] {
             },
         },
         {
-            accessorKey: "merchantId",
+            accessorKey: "bankAccountId",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Compte bancaire" />
             ),

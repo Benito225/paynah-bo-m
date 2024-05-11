@@ -17,6 +17,7 @@ import {IUser} from "@/core/interfaces/user";
 import {IAccount} from "@/core/interfaces/account";
 import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface TopMenuAccountInfosProps {
     lang: Locale,
@@ -24,11 +25,14 @@ interface TopMenuAccountInfosProps {
 }
 
 export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfosProps) {
+    // @ts-ignore
+    // console.log(merchant.merchantsIds[0]['bank-account'][0]);
 
     const [isLoading, setLoading] = useState(false);
+    const [isDataLoading, setDataLoading] = useState(true);
+    // @ts-ignore
     const [currentAccount, setCurrentAccount] = useState<IAccount | null>(null);
     const [accounts, setAccounts] = useState([]);
-    const [merchantAvatar, setMerchantAvatar] = useState('');
 
 
     const formSchema = z.object({
@@ -48,13 +52,12 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
         if (accoundFounded.length === 0) {
             setCurrentAccount(accoundFounded[0]);
         }
-        console.log(accoundFounded);
+        // console.log(accoundFounded);
     };
 
     const transformMerchantNameToMerchantAvatar = (merchantName: string) => {
         const merchantNameSplit = merchantName.trim().length > 0 ? merchantName.split(' ') : [];
-        const merchantNameAvatar = merchantNameSplit.length > 0 ? ( merchantNameSplit.length >= 2 ? `${merchantNameSplit[0][0]}${merchantNameSplit[1][0]}` : `${merchantNameSplit[0][0]}`) : '';
-        setMerchantAvatar(merchantNameAvatar);
+        return merchantNameSplit.length > 0 ? ( merchantNameSplit.length >= 2 ? `${merchantNameSplit[0][0]}${merchantNameSplit[1][0]}` : `${merchantNameSplit[0][0]}`) : '';
     }
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -74,6 +77,7 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
         .then(data => {
             setAccounts(data.accounts);
             initializeCurrentAccount(data.accounts)
+            setDataLoading(false);
         })
         .catch(err => {
             setAccounts([]);
@@ -82,10 +86,9 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
 
     useEffect(() => {
         fetchMerchantBankAccounts();
-        transformMerchantNameToMerchantAvatar(merchant.merchantsIds[0].name)
     }, []);
 
-    console.log(merchant);
+    // console.log(merchant);
 
     return (
         <div>
@@ -94,16 +97,15 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                     <div className={`py-[.38rem] pl-[.38rem] pr-1 bg-[#fafafa] rounded-xl border border-[#dadadb]`}>
                         <div className={`inline-flex items-center space-x-4`}>
                             <div
-                                className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center`}>
-                                    <Avatar className={`!rounded-lg h-8 w-8 md:h-10 md:w-10`}>
-                                        <AvatarFallback className={`!rounded-lg bg-[#ffc5b0] font-medium text-[#fe733c]`}>{merchantAvatar}</AvatarFallback>
-                                    </Avatar>
+                                className={`rounded-xl border border-[#dbdbdb] bg-white aspect-square font-medium flex items-center justify-center`}>
+                                {/*@ts-ignore*/}
+                                <div className={`h-8 w-8 md:h-10 md:w-10 flex items-center justify-center`}>{transformMerchantNameToMerchantAvatar(merchant.merchantsIds[0].name)}</div>
                             </div>
                             <div className={`inline-flex items-center space-x-2`}>
                                 <div className={`flex flex-col justify-start items-start text-xs`}>
                                     {/*@ts-ignore*/}
                                     <span className={`font-semibold`}>{merchant.merchantsIds[0].name}</span>
-                                    <span className={`font-light text-[#767676]`}>{currentAccount?.coreBankId}</span>
+                                    <span className={`font-light text-[#767676]`}>{isDataLoading ? <Skeleton className={`h-[16px] w-[71.8px] bg-gray-300 rounded-full`} /> : currentAccount?.coreBankId}</span>
                                 </div>
                                 <ChevronDown className={`text-[#626262] h-[1.3rem] w-auto`} />
                             </div>
@@ -176,10 +178,9 @@ export default function TopMenuAccountInfos({lang, merchant}: TopMenuAccountInfo
                         <div className={`mt-6`}>
                             <div className={`flex flex-col items-center justify-center`}>
                                 <div
-                                    className={`rounded-xl border border-[#dbdbdb] bg-white p-2 flex items-center mb-2`}>
-                                    <Avatar className={`!rounded-lg h-8 w-8 md:h-10 md:w-10`}>
-                                        <AvatarFallback className={`!rounded-lg bg-[#ffc5b0] font-medium text-[#fe733c]`}>{merchantAvatar}</AvatarFallback>
-                                    </Avatar>
+                                    className={`rounded-xl border border-[#dbdbdb] bg-white font-medium p-2 flex items-center mb-2`}>
+                                    {/*@ts-ignore*/}
+                                    <div className={`h-8 w-8 md:h-10 md:w-10 flex items-center text-xl justify-center`}>{transformMerchantNameToMerchantAvatar(merchant.merchantsIds[0].name)}</div>
                                 </div>
                                 <p className={`text-sm font-light text-center text-[#767676] mb-6`}>{currentAccount?.coreBankId}</p>
                                 <Button className={`bg-transparent font-light text-xs h-[2.2rem] text-black hover:text-white border border-[#858587] inline-flex items-center`}>

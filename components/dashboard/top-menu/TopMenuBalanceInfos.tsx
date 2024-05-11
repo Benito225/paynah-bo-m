@@ -5,6 +5,7 @@ import {formatCFA, hiddeBalance} from "@/lib/utils";
 import {useState, useEffect} from "react";
 import {IUser} from "@/core/interfaces/user";
 import {getMerchantBankAccounts} from "@/core/apis/bank-account";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface TopMenuBalanceInfosProps {
     lang: Locale,
@@ -38,9 +39,7 @@ export default function TopMenuBalanceInfos({lang, merchant}: TopMenuBalanceInfo
 
     const showLoader = () => {
         return (
-            <div className="space-y-2">
-                <div className="animate-pulse bg-gray-200 h-4 w-40 rounded-2xl"></div>
-            </div>
+            <Skeleton className={`h-3 w-36 bg-gray-300 rounded-full`} />
         );
     }
 
