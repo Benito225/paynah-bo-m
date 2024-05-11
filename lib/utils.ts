@@ -29,6 +29,18 @@ export function getStatusBadge(transactionStatus: string): string {
     }
 }
 
+export function getStatusName(transactionStatus: string): string {
+    if (transactionStatus == TransactionsStatus.EXPIRED) {
+        return `Expiré`;
+    } else if (transactionStatus == TransactionsStatus.DONE) {
+        return `Approuvé`;
+    } else if (transactionStatus == TransactionsStatus.DECLINED) {
+        return `Échoué`;
+    } else {
+        return `En cours`;
+    }
+}
+
 export function formatDate(dateString: string | undefined, lang: string): string {
     const date = new Date(dateString ?? "");
 
@@ -221,4 +233,38 @@ export const getPeriod = (type: string) => {
 export const getTransactionMode = (type: string) => {
     const stringArray = type.split('_');
     return stringArray[stringArray.length - 1];
+}
+
+export const getTransactionModeType = (type: string) => {
+    const stringArray = type.split('_');
+    const operator = stringArray[stringArray.length - 1];
+
+    const mobileMoneyArray = ['WAVE', 'MTN', 'MOOV', 'ORANGE'];
+    const paynahAccountArray = ['1'];
+    const bankAccountArray = ['3'];
+
+
+    if (mobileMoneyArray.indexOf(operator) !== -1) {
+        return "Mobile Money"
+    }
+
+    if (paynahAccountArray.indexOf(operator) !== -1) {
+        return "Mobile Money"
+    }
+
+    if (bankAccountArray.indexOf(operator) !== -1) {
+        return "Mobile Money"
+    }
+
+    return "-";
+}
+
+export function getTransactionType(type: string) {
+    // console.log(type);
+    const transactionTypes: any = {
+        "PAYIN": "Paiement",
+        "PAYOUT": "Envoi d'argent",
+    }
+
+    return transactionTypes[type] ?? "-";
 }

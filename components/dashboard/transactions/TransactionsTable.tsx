@@ -45,6 +45,7 @@ export type TransactionsDataType = {
     id: string
     transactionId: string
     date: string
+    createdAt: string
     amount: number
     beneficiary: string
     account: string

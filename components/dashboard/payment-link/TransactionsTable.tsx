@@ -35,7 +35,8 @@ export type TransactionsDataType = {
     amount: number
     beneficiary: string
     account: string
-    status: "pending" | "approved" | "declined"
+    createdAt?: string
+    status: "pending" | "approved" | "declined" | "expired"
 }
 
 export default function TransactionsTable({ searchItems, lang, selectedAccount }: TransactionsTableProps) {
