@@ -38,6 +38,7 @@ import {IAccount} from "@/core/interfaces/account";
 import {initPayout} from '@/core/apis/payment';
 import {login} from '@/core/apis/login';
 import toast from "react-hot-toast";
+import {ScaleLoader} from "react-spinners";
 
 interface MobileMoneyActionsProps {
     lang: string,
@@ -71,6 +72,8 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     const [showConError, setShowConError] = useState(false);
     const [bankAccountId, setBankAccountId] = useState('');
     const [operator, setOperator] = useState('');
+
+    const [isSendLoading, setIsSendLoading] = useState(false);
 
     const formSchema = z.object({
         lastName: z.string().min(2, {message: 'veuillez saisir votre nom'}),
@@ -199,6 +202,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     }
 
     const sendMoneyToBeneficiary = async () => {
+        setIsSendLoading(true);
         // @ts-ignore
         const payload = {
             bankAccountId: bankAccountId,
@@ -211,6 +215,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
             amount: parseInt(totalAmount),
             // amount: Number(amount),
             mode: activeSendMode,
+            feeSupport: payFees,
         };
         console.log(payload);
         const isAuthenticate = await authenticateMerchant(accessKey);
@@ -219,6 +224,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
             initPayout(payload, String(merchant?.merchantsIds[0]?.id), String(merchant.accessToken))
             .then(data => {
                 console.log(data);
+                setIsSendLoading(false);
                 if (data.success) {
                     setErrorMessage('');
                     setStep(5);
@@ -230,11 +236,13 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                 }
             })
             .catch(err => {
+                setIsSendLoading(false);
                 return toast.error('Une erreur est survénue', {
                     className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
                 });
             });
         }
+        setIsSendLoading(false);
     }
 
     const authenticateMerchant = async (password: string) => {
@@ -271,14 +279,17 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     }
 
     useEffect(() => {
+        const amountWithoutString = String(amount).match(/\d+/g)?.join('');
+        const amountNumber = parseInt(amountWithoutString ?? '0');
+
         if (payFees) {
-            const amountWithoutString = String(amount).match(/\d+/g)?.join('');
-            const amountNumber = parseInt(amountWithoutString ?? '0');
-            const finalAmountNumber =  amountNumber * (1 / 100) + amountNumber;
+            // const finalAmountNumber =  amountNumber * (1 / 100) + amountNumber;
+            // const finalAmount = finalAmountNumber.toLocaleString('fr-FR');
+            setTotalAmount(amountNumber.toLocaleString('fr-FR'));
+        } else {
+            const finalAmountNumber = amountNumber - amountNumber * (1 / 100);
             const finalAmount = finalAmountNumber.toLocaleString('fr-FR');
             setTotalAmount(finalAmount);
-        } else {
-            setTotalAmount(Number(amount).toLocaleString('fr-FR'));
         }
 
     }, [amount, payFees, sendMoney]);
@@ -678,14 +689,15 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                                                   <span
                                                       className="relative inline-flex rounded-full w-40 h-40 bg-[#41a38c]"></span>
                                                 </span>
-                                            <p className={`text-base mt-10 text-center`}>Votre envoi de <span className="text-black">{`${formatCFA(sendMoney.getValues('mmAmount'))} XOF`}</span> à {`${beneficiary?.lastName} ${beneficiary?.firstName}`} a été traité avec succès !</p>
+                                            {/*<p className={`text-base mt-10 text-center`}>Votre envoi de <span className="text-black">{`${formatCFA(sendMoney.getValues('mmAmount'))} XOF`}</span> à {`${beneficiary?.lastName} ${beneficiary?.firstName}`} a été traité avec succès !</p>*/}
+                                            <p className={`text-base mt-10 text-center`}>Votre envoi de <span className="text-black">{`${totalAmount} XOF`}</span> à {`${beneficiary?.lastName} ${beneficiary?.firstName}`} a été traité avec succès !</p>
                                         </div>
                                     </div>
                                 </div>
 
 
                                 <div className={`flex justify-center items-center mb-3`}>
-                                    <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 5 || confirmStep != 0 ? 'hidden' : 'block'}`}>
+                                    <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 5 || confirmStep != 0 ? 'hidden' : 'block'}`} disabled={isSendLoading}>
                                         Retour
                                     </Button>
                                     <Button onClick={handleSubmit((data) => addNewBeneficiary(data))} className={`mt-5 w-42 text-sm ${(step == 1 && displayBeneficiaryForm) ? 'block' : 'hidden'}`}>
@@ -698,8 +710,8 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                                         // setConfirmStep(1);
                                         // nextStep();
                                         sendMoneyToBeneficiary();
-                                    }} className={`mt-5 w-[30%] text-sm ${step == 4 ? 'block' : 'hidden'}`}>
-                                        {`Valider`}
+                                    }} className={`mt-5 w-[30%] text-sm ${step == 4 ? 'block' : 'hidden'}`} disabled={isSendLoading}>
+                                        {isSendLoading ? <ScaleLoader color="#fff" height={15} width={3} /> : `Valider`}
                                     </Button>
                                     {/* <Button onClick={() => sendMoneyAction()} className={`mt-3 w-[30%] text-sm ${confirmStep == 1 ? 'block' : 'hidden'}`}>
                                         {`Déverouiller`}

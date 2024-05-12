@@ -34,7 +34,7 @@ export async function initPayout(values: any, merchantId: string, token: string)
         'amount': values.amount,
         'description': INIT_PAYOUT_DESC,
         'mode': getPayoutModeSendToAPI(values.mode),
-        'feeSupport': false,
+        'feeSupport': values.feeSupport,
     };
     console.log(data);
     // return await fetchData(`/merchants/${merchantId}/quick-payout`, 'POST', data, token, true);
