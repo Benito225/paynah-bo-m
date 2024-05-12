@@ -40,10 +40,8 @@ import {login} from '@/core/apis/login';
 import toast from "react-hot-toast";
 import {ScaleLoader} from "react-spinners";
 
-interface MobileMoneyActionsProps {
+interface SendMoneyActionsProps {
     lang: string,
-    // call: any,
-    // onClick: any,
     sendMoney: any,
     beneficiaries: IBeneficiary[],
     merchant: IUser,
@@ -51,7 +49,7 @@ interface MobileMoneyActionsProps {
     activeSendMode: string,
 }
 
-export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merchant, accounts, activeSendMode}: MobileMoneyActionsProps) {
+export default function SendMoneyActions({sendMoney, beneficiaries, merchant, accounts, activeSendMode}: SendMoneyActionsProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{id: string, name: string}>({id: '', name: ''});
@@ -96,7 +94,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
         }
     });
 
-    const { register, handleSubmit, formState: {errors}, setValue } = sendMoneyForm;
+    const { handleSubmit, formState: {errors}, setValue } = sendMoneyForm;
 
     function initSendMoneyPayloadParams(activeSendMode: string, ) {
         switch (activeSendMode) {
@@ -168,9 +166,6 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
         }
     }
 
-    async function sendMoneyAction() {
-        setConfirmStep(2);
-    }
 
     function downloadTicket() {
         console.log('downloadTicket');
@@ -193,7 +188,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
         setAmount('')
         setTotalAmount('')
         setReason('')
-        setPercentage('w-1/4')
+        setPercentage('w-1/5')
         setErrorMessage('')
         setConfirmStep(0)
         setShowPassword(false)
@@ -296,7 +291,6 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
 
     // console.log(sendMoney.getValues('accountNumber'));
     // console.log(sendMoney.getValues('account'));
-
     return (
         <>
             <Dialog>
