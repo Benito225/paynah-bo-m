@@ -204,6 +204,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
     }
 
     function fetchCountryOperators(countryCode: string) {
+        // console.log(countryCode);
         // @ts-ignore
         const countryFilter: Icountry[] = countries.filter((country: ICountry) => country.code == countryCode);
         const countryId = countryFilter[0].id;

@@ -8,9 +8,14 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCFA(amount: number) {
-  const formattedAmount = amount.toLocaleString('fr-FR', { style: 'currency', currency: 'XOF' });
+    if (amount == undefined) {
+        return "-";
+        // return "0 F CFA";
+    }
 
-  return formattedAmount;
+    const formattedAmount = amount.toLocaleString('fr-FR', {style: 'currency', currency: 'XOF'});
+
+    return formattedAmount;
 }
 
 export function hiddeBalance(amount: string) {

@@ -177,12 +177,12 @@ export const searchableColumns: DataTableSearchableColumn[] = [
 ]
 
 export const filterableColumns: DataTableFilterableColumn<OperationsDataType>[] = [
-    {
-        id: "status",
-        title: "Statut de transaction",
-        options: TStatus.map((status) => ({
-            label: status[0]?.toUpperCase() + status.slice(1),
-            value: status,
-        })),
-    },
+    // {
+    //     id: "status",
+    //     title: "Statut de transaction",
+    //     options: TStatus.map((status) => ({
+    //         label: status[0]?.toUpperCase() + status.slice(1),
+    //         value: status,
+    //     })),
+    // },
 ]

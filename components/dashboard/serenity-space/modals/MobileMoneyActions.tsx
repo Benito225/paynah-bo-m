@@ -57,7 +57,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     const [beneficiary, setBeneficiary] = useState<IBeneficiary>({ });
     const [existBenef, setExistBenef] = useState(true);
     const [payFees, setPayFees] = useState(false);
-    const [amount, setAmount] = useState(0);
+    const [amount, setAmount] = useState("");
     const [phoneNumber, setPhoneNumber] = useState('');
     const [totalAmount, setTotalAmount] = useState('');
     const [reason, setReason] = useState('');
@@ -98,12 +98,14 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     function initSendMoneyPayloadParams(activeSendMode: string, ) {
         switch (activeSendMode) {
             case 'mm':
-                setAmount(sendMoney.getValues('mmAmount'));
+                setAmount(Number(sendMoney.getValues('mmAmount')).toLocaleString("fr-FR"));
+                setTotalAmount(Number(sendMoney.getValues('mmAmount')).toLocaleString('fr-FR'));
                 setAccount(sendMoney.getValues('mmAccountNumber'));
-                setOperator(sendMoney.getValues('mmOperator'));
+                setOperator(sendMoney.getValues('mmCountry')+'_'+sendMoney.getValues('mmOperator'));
                 break;
             case 'direct':
-                setAmount(sendMoney.getValues('amount'));
+                setAmount(Number(sendMoney.getValues('amount')).toLocaleString("fr-FR"));
+                setTotalAmount(Number(sendMoney.getValues('amount')).toLocaleString('fr-FR'));
                 setAccount(sendMoney.getValues('accountNumber'));
                 break;
             default:
@@ -185,7 +187,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
         // setBeneficiary({id: '', name: ''})
         setExistBenef(true)
         setPayFees(false)
-        setAmount(0)
+        setAmount('')
         setTotalAmount('')
         setReason('')
         setPercentage('w-1/4')
@@ -206,7 +208,8 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
             phoneNumber: (activeSendMode == 'mm') ? account : '',
             paynahAccount: (activeSendMode == 'direct') ? account : '',
             bankAccount: (activeSendMode == 'bank') ? account : '',
-            amount: Number(amount),
+            amount: parseInt(totalAmount),
+            // amount: Number(amount),
             mode: activeSendMode,
         };
         console.log(payload);
@@ -272,16 +275,16 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
             const amountWithoutString = String(amount).match(/\d+/g)?.join('');
             const amountNumber = parseInt(amountWithoutString ?? '0');
             const finalAmountNumber =  amountNumber * (1 / 100) + amountNumber;
-            const finalAmount = formatCFA(finalAmountNumber);
+            const finalAmount = finalAmountNumber.toLocaleString('fr-FR');
             setTotalAmount(finalAmount);
         } else {
-            setTotalAmount(String(amount));
+            setTotalAmount(Number(amount).toLocaleString('fr-FR'));
         }
 
     }, [amount, payFees, sendMoney]);
 
-    console.log(sendMoney.getValues('accountNumber'));
-    console.log(sendMoney.getValues('account'));
+    // console.log(sendMoney.getValues('accountNumber'));
+    // console.log(sendMoney.getValues('account'));
 
     return (
         <>
@@ -344,7 +347,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                                                     <div className={`inline-flex flex-col`}>
                                                         <h3 className={`text-xs font-medium`}>{`${beneficiary.firstName} ${beneficiary.lastName}`}</h3>
                                                         {/* <span className={`text-xs text-[#626262]`}>{beneficiary.reference}</span> */}
-                                                        <span className={`text-xs -mt-[1px] text-[#626262]`}>{beneficiary.email}</span>
+                                                        <span className={`text-xs block mt-[2px] text-[#626262] break-all leading-3`}>{beneficiary.email}</span>
                                                     </div>
                                                 </div>
                                                 ))
@@ -594,7 +597,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                                             </svg>
                                                 <p className={`text-sm text-[#707070] mt-3`}>{`Vous êtes sur le point d'envoyer`}</p>
                                                 <p className={`text-sm text-[#707070]`}>
-                                                    <span className={`text-black`}>{`XOF ${formatCFA(amount)}`}</span>{` à `}
+                                                    <span className={`text-black`}>{`XOF ${amount}`}</span>{` à `}
                                                     <span className={`text-black`}>{`${beneficiary?.lastName} ${beneficiary?.firstName}`}</span>{` sur son compte`}
                                                 </p>
                                                 <p className={`text-sm text-[#707070]`}><span className={`text-black`}>{`${account}`}</span></p>

@@ -36,8 +36,9 @@ export async function initPayout(values: any, merchantId: string, token: string)
         'mode': getPayoutModeSendToAPI(values.mode),
         'feeSupport': false,
     };
-    console.log(data)
-    return await fetchData(`/merchants/${merchantId}/quick-payout`, 'POST', data, token, true);
+    console.log(data);
+    // return await fetchData(`/merchants/${merchantId}/quick-payout`, 'POST', data, token, true);
+    return fetchData(`/merchants/${merchantId}/payout`, 'POST', data, token, true);
 }
 
 const getPayoutModeSendToAPI = (activeSendMode: string) => {
