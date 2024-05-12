@@ -35,7 +35,7 @@ import {Copy, Send} from "lucide-react";
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
 import {IUser} from "@/core/interfaces/user";
 import {IAccount} from "@/core/interfaces/account";
-import {initPayout, generatePaymentLinkToShare} from '@/core/apis/payment';
+import {generateQuickPaymentLink} from '@/core/apis/payment';
 import {login} from '@/core/apis/login';
 import toast from "react-hot-toast";
 
@@ -192,7 +192,7 @@ export default function PaymentLinkActions({paymentLink, beneficiaries, merchant
         console.log(payload);
         const isAuthenticate = await authenticateMerchant(accessKey);
         if(isAuthenticate){
-            generatePaymentLinkToShare(payload, String(merchant?.merchantsIds[0]?.id), String(merchant.accessToken))
+            generateQuickPaymentLink(payload, String(merchant?.merchantsIds[0]?.id), String(merchant.accessToken))
             .then(data => {
                 console.log(data);
                 if (data.success) {
