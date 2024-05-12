@@ -29,7 +29,8 @@ import {IBeneficiary} from "@/core/interfaces/beneficiary";
 import {IAccount} from "@/core/interfaces/account";
 import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
 import { FlagImage } from "react-international-phone";
-import MobileMoneyActions from '@/components/dashboard/serenity-space/modals/MobileMoneyActions'
+import SendMoneyActions from '@/components/dashboard/serenity-space/modals/SendMoneyActions'
+import PaymentLinkActions from '@/components/dashboard/serenity-space/modals/PaymentLinkActions'
 
 interface OperationShortcutProps {
     lang: Locale,
@@ -95,6 +96,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
 
     const formSchemaPaymentLink = z.object({
         accountNumber: z.string(),
+        accountCoreBankId: z.string(),
         amount: z.string(),
     });
 
@@ -119,7 +121,8 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
     const paymentLink = useForm<z.infer<typeof formSchemaPaymentLink>>({
         resolver: zodResolver(formSchemaPaymentLink),
         defaultValues: {
-            accountNumber: "om",
+            accountNumber: "",
+            accountCoreBankId: "",
             amount: "",
         }
     });
@@ -157,6 +160,14 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
         const beneficiaryFullNameSplit = beneficiaryFullName.trim().length > 0 ? beneficiaryFullName.split(' ') : [];
         const beneficiaryFullNameAvatar = beneficiaryFullNameSplit.length > 0 ? ( beneficiaryFullNameSplit.length >= 2 ? `${beneficiaryFullNameSplit[0][0]}${beneficiaryFullNameSplit[1][0]}` : `${beneficiaryFullNameSplit[0][0]}`) : '';
         return beneficiaryFullNameAvatar;
+    }
+
+    const getAccountNummberReference = (accountNumber: string) => {
+        const accountFilter: IAccount[] = accounts.filter((account: IAccount) => account.reference == accountNumber);
+        console.log(accountFilter);
+        if (accountFilter.length > 0) {
+            paymentLink.setValue('accountCoreBankId', accountFilter[0].coreBankId);
+        }
     }
 
     const addBeneficiaryItems = (data: any) => {
@@ -386,7 +397,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                         <label htmlFor="amount"
                                                                                className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
                                                                         </label>
-                                                                        <MobileMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts} activeSendMode={activeSendMode}/>
+                                                                        <SendMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts} activeSendMode={activeSendMode}/>
                                                                         {/* <Button type={`submit`} className={`absolute rounded-lg p-3 top-0 right-0`}>
                                                                             <Send className={`h-[1.1rem] text-[#fff] `} />
                                                                         </Button> */}
@@ -537,7 +548,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                         <label htmlFor="mmAmount"
                                                                                className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
                                                                         </label>
-                                                                        <MobileMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts} activeSendMode={activeSendMode}/>
+                                                                        <SendMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts} activeSendMode={activeSendMode}/>
                                                                         {/* <Button onClick={handleSubmit((data) => addBeneficiaryItems(data))} className={`absolute rounded-lg p-3 top-0 right-0`}>
                                                                             <Send className={`h-[1.1rem] text-[#fff] `} />
                                                                         </Button> */}
@@ -666,19 +677,20 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                 <FormItem>
                                                     <FormControl>
                                                         <div className={`relative`}>
-                                                            <Select onValueChange={field.onChange} defaultValue={'om'}>
+                                                            <Select onValueChange={(value) => { field.onChange(value); getAccountNummberReference(value); }} defaultValue={paymentLink.getValues('accountNumber')}>
                                                                 <SelectTrigger className={`w-full text-sm !pt-[.8rem] h-[2.8rem] rounded-lg border border-[#e4e4e4] pl-2.5 pr-1 font-normal`} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#fff',
                                                                 }}>
                                                                     <SelectValue placeholder=" "/>
                                                                 </SelectTrigger>
                                                                 <SelectContent className={`bg-[#f0f0f0]`}>
-                                                                    <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'om'}>
-                                                                        Compte principal
-                                                                    </SelectItem>
-                                                                    <SelectItem className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={'mtn'}>
-                                                                         Salariale
-                                                                    </SelectItem>
+                                                                    {
+                                                                        accounts.map((account: IAccount) => (
+                                                                            <SelectItem key={account.id} className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={account.id}>
+                                                                                {account.coreBankId}
+                                                                            </SelectItem>
+                                                                        ))
+                                                                    }
                                                                 </SelectContent>
                                                             </Select>
                                                             <label htmlFor=""
@@ -706,9 +718,10 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                 <label htmlFor="amount"
                                                                        className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
                                                                 </label>
-                                                                <Button type={`submit`} className={`absolute rounded-lg p-3 top-0 right-0`}>
+                                                                <PaymentLinkActions lang={lang} paymentLink={paymentLink} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts} activeSendMode={activeSendMode}/>
+                                                                {/* <Button type={`submit`} className={`absolute rounded-lg p-3 top-0 right-0`}>
                                                                     <Send className={`h-[1.1rem] text-[#fff] `} />
-                                                                </Button>
+                                                                </Button> */}
                                                             </div>
                                                         </div>
                                                     </FormControl>
