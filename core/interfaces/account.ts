@@ -1,10 +1,10 @@
 export interface IAccount {
     id: string;
-    reference?: string;
+    reference: string;
     coreBankId: string;
     balance: number;
     name: string;
-    balanceDayMinus1?: number;
+    balanceDayMinus1: number;
     isMain: boolean;
     skaleet_balance: number;
 }
