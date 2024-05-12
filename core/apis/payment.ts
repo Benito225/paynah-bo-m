@@ -6,6 +6,7 @@ import {fetchData} from "@/lib/api";
 import { format, formatISO } from "date-fns";
 
 const INIT_PAYOUT_DESC = "Envoi d'argent";
+const GET_PAY_LINK_DESC = "Collecte de fonds";
 
 export async function generatePaymentLinkToShare(values: any, merchantId: string, token: string) {
     const data = {
@@ -28,11 +29,10 @@ export async function generateQuickPaymentLink(values: any, merchantId: string, 
         'bankAccountId': values.bankAccountId,
         'firstName': values.firstName,
         'lastName': values.lastName,
-        'phoneNumber': values.phoneNumber,
         'email': values.email,
         'amount': values.amount,
-        'motif': "Transfert d'argent",
-        'expirationDate': format(new Date(), "yyyy-MM-dd"),
+        'motif': GET_PAY_LINK_DESC,
+        'expirationDate': formatISO(new Date()),
     };
 
     return await fetchData(`/merchants/${merchantId}/quick-payment-link`, 'POST', data, token, true);
