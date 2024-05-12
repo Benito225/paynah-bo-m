@@ -12,6 +12,7 @@ import SalesPoint from "@/components/dashboard/serenity-space/SalesPoint";
 import PendingOperation from "@/components/dashboard/serenity-space/PendingOperation";
 import AccountList from "@/components/dashboard/serenity-space/AccountList";
 import LastTransactions from "@/components/dashboard/serenity-space/LastTransactions";
+import LoadingAnimation from "@/components/dashboard/lottie/LoadingAnimation";
 
 export default async function Home({params: { lang }}: {
     params: { lang: Locale }

@@ -6,12 +6,12 @@ import {
     filterableColumns,
     getColumns,
     searchableColumns
-} from "@/components/dashboard/payment-link/transactions-table-columns";
+} from "@/components/dashboard/points-of-sale/transactions-table-columns";
 import {useDataTable} from "@/hooks/use-data-table";
-import {TDataTable} from "@/components/dashboard/payment-link/data-table/DataTable";
+import {TDataTable} from "@/components/dashboard/points-of-sale/data-table/DataTable";
 
 import { DateRange } from "react-day-picker"
-import { startOfYear, endOfDay } from "date-fns"
+import { addDays, startOfYear, endOfDay, format } from "date-fns"
 
 interface TransactionsTableProps {
     searchItems: {
@@ -35,8 +35,8 @@ export type TransactionsDataType = {
     amount: number
     beneficiary: string
     account: string
-    createdAt?: string
-    status: "pending" | "approved" | "declined" | "expired"
+    reference: string
+    status: "pending" | "approved" | "declined"
 }
 
 export default function TransactionsTable({ searchItems, lang, selectedAccount }: TransactionsTableProps) {
@@ -51,19 +51,21 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount }
     const data: TransactionsDataType[] = [
         {
             id: "1",
-            transactionId: "135653FS34S",
+            transactionId: "245653FS34S",
             date: "2024-04-20T11:00:00",
-            amount: 349774,
-            beneficiary: "Kouamé Franck",
+            amount: 3493774,
+            beneficiary: "Didier Aney",
             account: "+225 07 77 40 41 36",
+            reference: "cos-3Y2783874",
             status: "approved"
         },
         {
             id: "2",
-            transactionId: "295893FS34S",
+            transactionId: "245653FS34S",
             date: "2023-04-20T11:00:00",
-            amount: 2493774,
-            beneficiary: "Ben Ismël DIOMANDE",
+            amount: 1493774,
+            beneficiary: "Didier Aney",
+            reference: "cos-3Y2783874",
             account: "CI059093873683764849837",
             status: "approved"
         },
@@ -72,6 +74,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount }
             transactionId: "245653FS34S",
             date: "2024-02-20T08:00:00",
             amount: 3493774,
+            reference: "cos-3Y2783874",
             beneficiary: "Didier Aney",
             account: "CI059093873683764849837",
             status: "pending"
@@ -81,6 +84,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount }
             transactionId: "245653FS34S",
             date: "2024-04-20T11:00:00",
             amount: 3493774,
+            reference: "cos-3Y2783874",
             beneficiary: "Koffi Olivier",
             account: "+225 07 73 44 11 00",
             status: "declined"
@@ -91,8 +95,9 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount }
             date: "2024-01-20T11:00:00",
             amount: 3493774,
             beneficiary: "Didier Aney",
+            reference: "des-3Y2783874",
             account: "+225 07 77 40 41 36",
-            status: "declined"
+            status: "approved"
         },
         {
             id: "6",
@@ -101,6 +106,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount }
             amount: 3493774,
             beneficiary: "Didier Aney",
             account: "+225 07 77 40 41 36",
+            reference: "cos-3Y2783874",
             status: "approved"
         },
         {
@@ -108,6 +114,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount }
             transactionId: "245653FS34S",
             date: "2024-04-20T11:00:00",
             amount: 3493774,
+            reference: "cos-3Y2783874",
             beneficiary: "Didier Aney",
             account: "+225 07 77 40 41 36",
             status: "approved"

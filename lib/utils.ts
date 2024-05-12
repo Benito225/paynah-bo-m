@@ -1,6 +1,7 @@
 import {type ClassValue, clsx} from "clsx"
 import {twMerge} from "tailwind-merge"
 import {TransactionsStatus} from "@/components/dashboard/serenity-space/LastTransactions";
+import {PointsOfSaleStatus} from "@/components/dashboard/points-of-sale/PointOfSaleListAndOperations";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -21,11 +22,31 @@ export function getStatusBadge(transactionStatus: string): string {
     if (transactionStatus == TransactionsStatus.EXPIRED) {
         return `<span class="status-expired font-medium text-[10.5px]">Expiré</span>`;
     } else if (transactionStatus == TransactionsStatus.DONE) {
-        return `<span class="status-success font-medium text-[10.5px]">Effectué</span>`;
+        return `<span class="status-success font-medium text-[10.5px]">Approuvé</span>`;
     } else if (transactionStatus == TransactionsStatus.DECLINED) {
         return `<span class="status-rejected font-medium text-[10.5px]">Échoué</span>`;
     } else {
         return `<span class="status-pending font-medium text-[10.5px]">En cours</span>`;
+    }
+}
+
+export function getStatusName(transactionStatus: string): string {
+    if (transactionStatus == TransactionsStatus.EXPIRED) {
+        return `Expiré`;
+    } else if (transactionStatus == TransactionsStatus.DONE) {
+        return `Approuvé`;
+    } else if (transactionStatus == TransactionsStatus.DECLINED) {
+        return `Échoué`;
+    } else {
+        return `En cours`;
+    }
+}
+
+export function getPointsOfSaleStatusBadge(pointsStatus: string): string {
+    if (pointsStatus == PointsOfSaleStatus.ACTIVE) {
+        return `<span class="status-point-success font-medium text-[10.5px]">Actif</span>`;
+    } else {
+        return `<span class="status-point-rejected font-medium text-[10.5px]">Inactif</span>`;
     }
 }
 
@@ -216,4 +237,43 @@ export const getPeriod = (type: string) => {
     } else {
         return periodNumber+' jour(s)'
     }
+}
+
+export const getTransactionMode = (type: string) => {
+    const stringArray = type.split('_');
+    return stringArray[stringArray.length - 1];
+}
+
+export const getTransactionModeType = (type: string) => {
+    const stringArray = type.split('_');
+    const operator = stringArray[stringArray.length - 1];
+
+    const mobileMoneyArray = ['WAVE', 'MTN', 'MOOV', 'ORANGE'];
+    const paynahAccountArray = ['1'];
+    const bankAccountArray = ['3'];
+
+
+    if (mobileMoneyArray.indexOf(operator) !== -1) {
+        return "Mobile Money"
+    }
+
+    if (paynahAccountArray.indexOf(operator) !== -1) {
+        return "Mobile Money"
+    }
+
+    if (bankAccountArray.indexOf(operator) !== -1) {
+        return "Mobile Money"
+    }
+
+    return "-";
+}
+
+export function getTransactionType(type: string) {
+    // console.log(type);
+    const transactionTypes: any = {
+        "PAYIN": "Paiement",
+        "PAYOUT": "Envoi d'argent",
+    }
+
+    return transactionTypes[type] ?? "-";
 }

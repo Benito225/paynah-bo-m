@@ -288,7 +288,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                         <TooltipProvider delayDuration={10}>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Link className={`inline-flex bg-[#fafafa] hover:bg-[#EAEAEA] duration-200 p-3 rounded-xl aspect-square justify-center items-center`} href={`#`}>
+                                                    <Link className={`inline-flex ${pathname.startsWith(Routes.dashboard.transactions.replace('{lang}', lang)) ? 'bg-black' : 'bg-[#fafafa] hover:bg-[#EAEAEA] duration-200'} p-3 rounded-xl aspect-square justify-center items-center`} href={Routes.dashboard.transactions.replace('{lang}', lang)}>
                                                         {/*<svg className={`w-[1.5rem] fill-[#afafaf]`} viewBox="0 0 31.815 20.873">*/}
                                                         {/*    <defs>*/}
                                                         {/*        <clipPath id="clip-path">*/}
@@ -300,7 +300,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                                         {/*        <path d="M15.725,13.346H12.117v0H6.9a3.636,3.636,0,0,1-2.463-.875,2.791,2.791,0,0,1-.992-2.225,2.72,2.72,0,0,1,.99-2.191A3.686,3.686,0,0,1,6.9,7.2H7.925v3.367a1.132,1.132,0,0,0,1.859.867l5.024-4.219a1.783,1.783,0,0,0,0-2.731L9.785.267a1.132,1.132,0,0,0-1.859.867V4.072H6.768A7,7,0,0,0,1.933,5.8,5.793,5.793,0,0,0,0,10.3a5.831,5.831,0,0,0,1.906,4.5,6.847,6.847,0,0,0,4.77,1.727h9.049a2.109,2.109,0,0,1-.081-3.105Z" transform="translate(0 0)"/>*/}
                                                         {/*    </g>*/}
                                                         {/*</svg>*/}
-                                                        <svg className={`w-[1.2rem] fill-[#afafaf]`} viewBox="0 0 17.501 18.799">
+                                                        <svg className={`w-[1.2rem] ${pathname.startsWith(Routes.dashboard.transactions.replace('{lang}', lang)) ? 'fill-white' : 'fill-[#afafaf]'}`} viewBox="0 0 17.501 18.799">
                                                             <g transform="translate(-1879.75 -1715.167)">
                                                                 <path
                                                                     d="M2.495,6.082H14.816L12.34,8.558a.836.836,0,1,0,1.183,1.183l3.9-3.9a.882.882,0,0,0,.181-.912,1.735,1.735,0,0,0-.181-.271l-3.9-3.9A.837.837,0,0,0,12.34,1.933l2.476,2.476H2.495A.837.837,0,0,0,2.495,6.082Zm14.341,6.135H4.514L6.99,9.741A.837.837,0,0,0,5.807,8.558l-3.9,3.9a.859.859,0,0,0-.161.946,1.465,1.465,0,0,0,.161.237l3.9,3.9A.837.837,0,0,0,6.99,16.366L4.514,13.89H16.835A.837.837,0,0,0,16.835,12.217Z"
@@ -322,7 +322,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                         <TooltipProvider delayDuration={10}>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Link className={`inline-flex bg-[#fafafa] hover:bg-[#EAEAEA] duration-200 p-3 rounded-xl aspect-square justify-center items-center`} href={`#`}>
+                                                    <Link className={`inline-flex ${pathname.startsWith(Routes.dashboard.pointsOfSale.replace('{lang}', lang)) ? 'bg-black' : 'bg-[#fafafa] hover:bg-[#EAEAEA] duration-200'} p-3 rounded-xl aspect-square justify-center items-center`} href={Routes.dashboard.pointsOfSale.replace('{lang}', lang)}>
                                                         {/*<svg className={`w-[.8rem] fill-[#afafaf]`} viewBox="0 0 14.565 21.229">*/}
                                                         {/*    <defs>*/}
                                                         {/*        <clipPath id="clip-path">*/}
@@ -334,7 +334,7 @@ export default function DashboardMainMenuFooter({lang}: AuthFooterProps) {
                                                         {/*        <path d="M7.282,17.109A2.6,2.6,0,0,1,5.4,16.3a36.671,36.671,0,0,1-3.27-3.937C.7,10.319,0,8.657,0,7.282A7.282,7.282,0,0,1,12.432,2.133a7.235,7.235,0,0,1,2.133,5.149c0,1.374-.7,3.037-2.135,5.082A36.668,36.668,0,0,1,9.16,16.3a2.6,2.6,0,0,1-1.878.808" transform="translate(0)" fill="#afafaf"/>*/}
                                                         {/*    </g>*/}
                                                         {/*</svg>*/}
-                                                        <svg className={`w-[1.1rem] fill-[#afafaf]`}  viewBox="0 0 18.077 21.088">
+                                                        <svg className={`w-[1.1rem] ${pathname.startsWith(Routes.dashboard.pointsOfSale.replace('{lang}', lang)) ? 'fill-white' : 'fill-[#afafaf]'}`}  viewBox="0 0 18.077 21.088">
                                                             <g transform="translate(-1878.75 -1686.466)">
                                                                 <path
                                                                     d="M19.566,24.9c2.208-1.507,7.313-5.652,7-11.1A8.288,8.288,0,0,0,10,14.277c0,5.218,4.9,9.163,7,10.618a2.279,2.279,0,0,0,2.562,0ZM14.71,13.712a3.579,3.579,0,1,1,3.579,3.579,3.579,3.579,0,0,1-3.579-3.579Z"
