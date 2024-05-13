@@ -98,13 +98,13 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
     function exportTransactionsData() {
         setExportDataLoading(true);
 
-        downloadFile(urlDownload, String(merchant.accessToken), false)
+        downloadFile(urlDownload, 'GET', null, String(merchant.accessToken), false)
             .then(response => response.blob())
             .then(blob => {
                 const downloadUrl = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;
-                // a.download = 'data.csv';
+                a.download = 'transactions.csv';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);

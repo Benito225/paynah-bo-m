@@ -145,20 +145,6 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
 
     const errorsArray = Object.values(beneficiaryForm.formState.errors);
 
-    // function nextStep() {
-    //     if (step < 4) {
-    //         setStep(step + 1);
-
-    //         if (step + 1 == 4) {
-    //             setPercentage('w-full');
-    //         } else if (step + 1 == 3) {
-    //             setPercentage('w-3/4');
-    //         } else {
-    //             setPercentage('w-2/4');
-    //         }
-    //     }
-    // }
-
     function prevStep() {
         if (step > 1) {
             setStep(step - 1);
