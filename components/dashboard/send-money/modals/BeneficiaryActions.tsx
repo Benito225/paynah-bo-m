@@ -292,13 +292,6 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
             <Dialog>
                 <DialogTrigger asChild>
                     {children}
-                {/* <button>
-                    <Avatar className={`cursor-pointer border border-[#cdcdcd] border-dashed`}>
-                        <AvatarFallback className={`bg-transparent text-[#cdcdcd]`}>
-                            <Plus className={`h-4`} />
-                        </AvatarFallback>
-                    </Avatar>
-                </button> */}
                 </DialogTrigger>
                 <DialogContent className={`sm:max-w-[42rem] xl:max-w-[46rem] 2xl:max-w-[49rem] overflow-y-hidden overflow-x-hidden duration-200 !rounded-3xl bg-[#f4f4f7] px-3 py-3`}>
                     <div>
