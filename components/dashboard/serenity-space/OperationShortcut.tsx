@@ -294,8 +294,15 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                     <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires</h3>
                                     {isLoading ?
                                         <div className={`inline-flex space-x-1 mt-2`}>
-                                            <Skeleton className={`rounded-full h-10 w-10 bg-gray-300`} />
-                                            <BeneficiaryActions lang={lang} merchant={merchant}/>
+                                            <BeneficiaryActions lang={lang} merchant={merchant}>
+                                                <button>
+                                                    <Avatar className={`cursor-pointer border border-[#cdcdcd] border-dashed`}>
+                                                        <AvatarFallback className={`bg-transparent text-[#cdcdcd]`}>
+                                                            <Plus className={`h-4`} />
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                </button>
+                                            </BeneficiaryActions>
                                         </div> :
                                         <div className={`inline-flex space-x-1 mt-2`}>
                                             {
@@ -319,7 +326,15 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                     </TooltipProvider>
                                                 ))
                                             }
-                                            <BeneficiaryActions lang={lang} merchant={merchant}/>
+                                            <BeneficiaryActions lang={lang} merchant={merchant}>
+                                                <button>
+                                                    <Avatar className={`cursor-pointer border border-[#cdcdcd] border-dashed`}>
+                                                        <AvatarFallback className={`bg-transparent text-[#cdcdcd]`}>
+                                                            <Plus className={`h-4`} />
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                </button>
+                                            </BeneficiaryActions>
                                         </div>
                                     }
                                 </div>
