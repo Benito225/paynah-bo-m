@@ -78,6 +78,8 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
     const [operators, setOperators] = useState([]);
     const [displayBeneficiaryForm, setDisplayBeneficiaryForm] = useState(false);
     const [activeSendModeSelected, setActiveSendModeSelected] = useState('direct');
+    const [operator, setOperator] = useState('');
+    const [accountNumber, setAccountNumber] = useState('');
 
 
     const [isSendLoading, setIsSendLoading] = useState(false);
@@ -175,6 +177,15 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
         const extractedNumber = amount.substring(startIndex, endIndex);
         const amountConverted = parseInt(extractedNumber.split(" ").join(''));
         sendMoneyForm.setValue('amount', amountConverted);
+
+        if (activeSendModeSelected == 'mm') {
+            setOperator(sendMoneyForm.getValues('country') + '_' + sendMoneyForm.getValues('mmOperator'))
+            setAccountNumber(sendMoneyForm.getValues('mmAccountNumber'));
+        }
+        if (activeSendModeSelected == 'direct') {
+            setAccountNumber(sendMoneyForm.getValues('accountNumber'));
+        }
+
         setConfirmStep(1);
         setStep(0);
         setPercentage('w-full')
@@ -264,13 +275,13 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
     async function sendMoneyAction() {
         setIsSendLoading(true);
         // @ts-ignore
-        const operator = 'OCI';
-        const accountNumber = sendMoneyForm.getValues('accountNumber');
+        // const operator = 'OCI';
+        // const accountNumber = sendMoneyForm.getValues('accountNumber');
         const payload = {
             bankAccountId: account.id,
             firstName: beneficiary.firstName,
             lastName: beneficiary.lastName,
-            operator: (activeSendModeSelected == 'mm') ? sendMoneyForm.getValues('mmOperator') : '',
+            operator: (activeSendModeSelected == 'mm') ? operator : '',
             phoneNumber: (activeSendModeSelected == 'mm') ? accountNumber : '',
             paynahAccount: (activeSendModeSelected == 'direct') ? accountNumber : '',
             bankAccount: (activeSendModeSelected == 'bank') ? accountNumber : '',
