@@ -7,7 +7,14 @@ export interface IUser {
     country?: string;
     isFirstConnection?: boolean;
     codeOTP?: string;
-    merchantsIds: [];
+    merchantsIds: MerchantId[];
     accessToken: string | undefined;
     refreshToken: string | undefined;
+}
+
+interface MerchantId {
+    id: string;
+    name: string;
+    status: [];
+    "bank-account": [];
 }

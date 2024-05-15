@@ -38,11 +38,10 @@ import {IAccount} from "@/core/interfaces/account";
 import {initPayout} from '@/core/apis/payment';
 import {login} from '@/core/apis/login';
 import toast from "react-hot-toast";
+import {ScaleLoader} from "react-spinners";
 
-interface MobileMoneyActionsProps {
+interface SendMoneyActionsProps {
     lang: string,
-    // call: any,
-    // onClick: any,
     sendMoney: any,
     beneficiaries: IBeneficiary[],
     merchant: IUser,
@@ -50,14 +49,14 @@ interface MobileMoneyActionsProps {
     activeSendMode: string,
 }
 
-export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merchant, accounts, activeSendMode}: MobileMoneyActionsProps) {
+export default function SendMoneyActions({sendMoney, beneficiaries, merchant, accounts, activeSendMode}: SendMoneyActionsProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{id: string, name: string}>({id: '', name: ''});
     const [beneficiary, setBeneficiary] = useState<IBeneficiary>({ });
     const [existBenef, setExistBenef] = useState(true);
     const [payFees, setPayFees] = useState(false);
-    const [amount, setAmount] = useState(0);
+    const [amount, setAmount] = useState("");
     const [phoneNumber, setPhoneNumber] = useState('');
     const [totalAmount, setTotalAmount] = useState('');
     const [reason, setReason] = useState('');
@@ -71,6 +70,8 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     const [showConError, setShowConError] = useState(false);
     const [bankAccountId, setBankAccountId] = useState('');
     const [operator, setOperator] = useState('');
+
+    const [isSendLoading, setIsSendLoading] = useState(false);
 
     const formSchema = z.object({
         lastName: z.string().min(2, {message: 'veuillez saisir votre nom'}),
@@ -93,17 +94,19 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
         }
     });
 
-    const { register, handleSubmit, formState: {errors}, setValue } = sendMoneyForm;
+    const { handleSubmit, formState: {errors}, setValue } = sendMoneyForm;
 
     function initSendMoneyPayloadParams(activeSendMode: string, ) {
         switch (activeSendMode) {
             case 'mm':
-                setAmount(sendMoney.getValues('mmAmount'));
+                setAmount(Number(sendMoney.getValues('mmAmount')).toLocaleString("fr-FR"));
+                setTotalAmount(Number(sendMoney.getValues('mmAmount')).toLocaleString('fr-FR'));
                 setAccount(sendMoney.getValues('mmAccountNumber'));
-                setOperator(sendMoney.getValues('mmOperator'));
+                setOperator(sendMoney.getValues('mmCountry')+'_'+sendMoney.getValues('mmOperator'));
                 break;
             case 'direct':
-                setAmount(sendMoney.getValues('amount'));
+                setAmount(Number(sendMoney.getValues('amount')).toLocaleString("fr-FR"));
+                setTotalAmount(Number(sendMoney.getValues('amount')).toLocaleString('fr-FR'));
                 setAccount(sendMoney.getValues('accountNumber'));
                 break;
             default:
@@ -163,9 +166,6 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
         }
     }
 
-    async function sendMoneyAction() {
-        setConfirmStep(2);
-    }
 
     function downloadTicket() {
         console.log('downloadTicket');
@@ -185,10 +185,10 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
         // setBeneficiary({id: '', name: ''})
         setExistBenef(true)
         setPayFees(false)
-        setAmount(0)
+        setAmount('')
         setTotalAmount('')
         setReason('')
-        setPercentage('w-1/4')
+        setPercentage('w-1/5')
         setErrorMessage('')
         setConfirmStep(0)
         setShowPassword(false)
@@ -197,6 +197,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     }
 
     const sendMoneyToBeneficiary = async () => {
+        setIsSendLoading(true);
         // @ts-ignore
         const payload = {
             bankAccountId: bankAccountId,
@@ -206,8 +207,10 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
             phoneNumber: (activeSendMode == 'mm') ? account : '',
             paynahAccount: (activeSendMode == 'direct') ? account : '',
             bankAccount: (activeSendMode == 'bank') ? account : '',
-            amount: Number(amount),
+            amount: parseInt(totalAmount),
+            // amount: Number(amount),
             mode: activeSendMode,
+            feeSupport: payFees,
         };
         console.log(payload);
         const isAuthenticate = await authenticateMerchant(accessKey);
@@ -216,6 +219,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
             initPayout(payload, String(merchant?.merchantsIds[0]?.id), String(merchant.accessToken))
             .then(data => {
                 console.log(data);
+                setIsSendLoading(false);
                 if (data.success) {
                     setErrorMessage('');
                     setStep(5);
@@ -227,11 +231,13 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                 }
             })
             .catch(err => {
+                setIsSendLoading(false);
                 return toast.error('Une erreur est survénue', {
                     className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
                 });
             });
         }
+        setIsSendLoading(false);
     }
 
     const authenticateMerchant = async (password: string) => {
@@ -268,21 +274,23 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
     }
 
     useEffect(() => {
+        const amountWithoutString = String(amount).match(/\d+/g)?.join('');
+        const amountNumber = parseInt(amountWithoutString ?? '0');
+
         if (payFees) {
-            const amountWithoutString = String(amount).match(/\d+/g)?.join('');
-            const amountNumber = parseInt(amountWithoutString ?? '0');
-            const finalAmountNumber =  amountNumber * (1 / 100) + amountNumber;
-            const finalAmount = formatCFA(finalAmountNumber);
-            setTotalAmount(finalAmount);
+            // const finalAmountNumber =  amountNumber * (1 / 100) + amountNumber;
+            // const finalAmount = finalAmountNumber.toLocaleString('fr-FR');
+            setTotalAmount(amountNumber.toLocaleString('fr-FR'));
         } else {
-            setTotalAmount(String(amount));
+            const finalAmountNumber = amountNumber - amountNumber * (1 / 100);
+            const finalAmount = finalAmountNumber.toLocaleString('fr-FR');
+            setTotalAmount(finalAmount);
         }
 
     }, [amount, payFees, sendMoney]);
 
-    console.log(sendMoney.getValues('accountNumber'));
-    console.log(sendMoney.getValues('account'));
-
+    // console.log(sendMoney.getValues('accountNumber'));
+    // console.log(sendMoney.getValues('account'));
     return (
         <>
             <Dialog>
@@ -344,7 +352,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                                                     <div className={`inline-flex flex-col`}>
                                                         <h3 className={`text-xs font-medium`}>{`${beneficiary.firstName} ${beneficiary.lastName}`}</h3>
                                                         {/* <span className={`text-xs text-[#626262]`}>{beneficiary.reference}</span> */}
-                                                        <span className={`text-xs -mt-[1px] text-[#626262]`}>{beneficiary.email}</span>
+                                                        <span className={`text-xs block mt-[2px] text-[#626262] break-all leading-3`}>{beneficiary.email}</span>
                                                     </div>
                                                 </div>
                                                 ))
@@ -594,7 +602,7 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                                             </svg>
                                                 <p className={`text-sm text-[#707070] mt-3`}>{`Vous êtes sur le point d'envoyer`}</p>
                                                 <p className={`text-sm text-[#707070]`}>
-                                                    <span className={`text-black`}>{`XOF ${formatCFA(amount)}`}</span>{` à `}
+                                                    <span className={`text-black`}>{`XOF ${amount}`}</span>{` à `}
                                                     <span className={`text-black`}>{`${beneficiary?.lastName} ${beneficiary?.firstName}`}</span>{` sur son compte`}
                                                 </p>
                                                 <p className={`text-sm text-[#707070]`}><span className={`text-black`}>{`${account}`}</span></p>
@@ -675,14 +683,15 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                                                   <span
                                                       className="relative inline-flex rounded-full w-40 h-40 bg-[#41a38c]"></span>
                                                 </span>
-                                            <p className={`text-base mt-10 text-center`}>Votre envoi de <span className="text-black">{`${formatCFA(sendMoney.getValues('mmAmount'))} XOF`}</span> à {`${beneficiary?.lastName} ${beneficiary?.firstName}`} a été traité avec succès !</p>
+                                            {/*<p className={`text-base mt-10 text-center`}>Votre envoi de <span className="text-black">{`${formatCFA(sendMoney.getValues('mmAmount'))} XOF`}</span> à {`${beneficiary?.lastName} ${beneficiary?.firstName}`} a été traité avec succès !</p>*/}
+                                            <p className={`text-base mt-10 text-center`}>Votre envoi de <span className="text-black">{`${totalAmount} XOF`}</span> à {`${beneficiary?.lastName} ${beneficiary?.firstName}`} a été traité avec succès !</p>
                                         </div>
                                     </div>
                                 </div>
 
 
                                 <div className={`flex justify-center items-center mb-3`}>
-                                    <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 5 || confirmStep != 0 ? 'hidden' : 'block'}`}>
+                                    <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 5 || confirmStep != 0 ? 'hidden' : 'block'}`} disabled={isSendLoading}>
                                         Retour
                                     </Button>
                                     <Button onClick={handleSubmit((data) => addNewBeneficiary(data))} className={`mt-5 w-42 text-sm ${(step == 1 && displayBeneficiaryForm) ? 'block' : 'hidden'}`}>
@@ -695,8 +704,8 @@ export default function MobileMoneyActions({lang, sendMoney, beneficiaries, merc
                                         // setConfirmStep(1);
                                         // nextStep();
                                         sendMoneyToBeneficiary();
-                                    }} className={`mt-5 w-[30%] text-sm ${step == 4 ? 'block' : 'hidden'}`}>
-                                        {`Valider`}
+                                    }} className={`mt-5 w-[30%] text-sm ${step == 4 ? 'block' : 'hidden'}`} disabled={isSendLoading}>
+                                        {isSendLoading ? <ScaleLoader color="#fff" height={15} width={3} /> : `Valider`}
                                     </Button>
                                     {/* <Button onClick={() => sendMoneyAction()} className={`mt-3 w-[30%] text-sm ${confirmStep == 1 ? 'block' : 'hidden'}`}>
                                         {`Déverouiller`}

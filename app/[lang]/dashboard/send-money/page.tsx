@@ -47,7 +47,7 @@ export default async function SendMoneyPage({params: { lang }, searchParams}: In
                     <div className={`w-[28%] 2xl:w-[26%]`}>
                         <div className={`h-full bg-white px-6 py-8 rounded-2xl`}>
                             <div className={`flex flex-col space-y-2.5`}>
-                               <MainActions lang={lang} />
+                               <MainActions lang={lang} merchant={merchant}/>
                             </div>
                             <Beneficiary lang={lang} merchant={merchant}/>
                         </div>
