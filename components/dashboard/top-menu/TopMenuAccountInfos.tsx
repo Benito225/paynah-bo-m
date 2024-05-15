@@ -38,7 +38,7 @@ export default function TopMenuAccountInfos({lang, merchant, isDataLoading, acco
     });
 
     const transformMerchantNameToMerchantAvatar = (merchantName: string) => {
-        const merchantNameSplit = merchantName.trim().length > 0 ? merchantName.split(' ') : [];
+        const merchantNameSplit = merchantName.length > 0 ? merchantName.split(' ') : [];
         return merchantNameSplit.length > 0 ? (merchantNameSplit.length >= 2 ? `${merchantNameSplit[0][0]}${merchantNameSplit[1][0]}` : `${merchantNameSplit[0][0]}`) : '';
     }
 

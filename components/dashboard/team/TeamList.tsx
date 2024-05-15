@@ -37,7 +37,7 @@ export default function TeamList({lang, searchItems, merchant}: TeamListProps) {
         <div className={`flex flex-col h-full space-y-3`}>
             <div className={`account-list`}>
                 <div className={`mb-4 mt-3`}>
-                    <div className={`flex flex-col 2xl:flex-row 2xl:justify-between items-start 2xl:items-center space-y-2 2xl:space-y-0`}>
+                    <div className={`flex flex-col md:flex-row md:justify-between items-start md:items-center space-y-2 md:space-y-0`}>
                         <div className={`inline-flex items-center`}>
                             <h1 className={`text-lg font-medium mr-4`}>Gestion des utilisateurs</h1>
                         </div>
