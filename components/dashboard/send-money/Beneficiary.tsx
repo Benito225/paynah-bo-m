@@ -87,9 +87,9 @@ export default function Beneficiary({lang, merchant}: BeneficiaryProps) {
                     </BeneficiaryActions>
                 </div>
             </div>
-            <div className={`mt-6`}>
+            {/* <div className={`mt-6`}>
                 <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires groupés</h3>
-            </div>
+            </div> */}
         </div>
     );
 }
