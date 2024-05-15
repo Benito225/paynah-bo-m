@@ -10,14 +10,16 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
-import {Input} from "@/components/ui/input";
-import {Form} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {PhoneInput, PhoneInputRefType, CountryData} from 'react-international-phone';
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Banknote, ClipboardList, Goal, Pencil, Search, SquarePen, Trash2, X} from "lucide-react";
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 import {formatCFA} from "@/lib/utils";
 import {
     DropdownMenu,
@@ -27,11 +29,25 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
+import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {NumericFormat} from "react-number-format";
 import {Checkbox} from "@/components/ui/checkbox";
 import Link from "next/link";
 import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
 import { IUser } from "@/core/interfaces/user";
+import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
+import {getCountries, getCountryOperators} from "@/core/apis/country";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
+import {ICountry} from "@/core/interfaces/country";
+import {IOperator} from "@/core/interfaces/operator";
+import {IBeneficiary} from "@/core/interfaces/beneficiary";
+import { IAccount } from "@/core/interfaces/account";
+import { login } from '@/core/apis/login';
+import {initPayout} from '@/core/apis/payment';
+import toast from "react-hot-toast";
+import { ScaleLoader } from "react-spinners";
+import { FlagImage } from "react-international-phone";
+import Image from "next/image";
 interface MainActionsProps {
     lang: string,
     merchant: IUser,
@@ -40,21 +56,45 @@ interface MainActionsProps {
 export default function MainActions({lang, merchant}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
-    const [account, setAccount] = useState<{id: string, name: string}>({id: '', name: ''});
-    const [beneficiary, setBeneficiary] = useState<{id: string, name: string}>({id: '', name: ''});
+    const [account, setAccount] = useState<IAccount>({});
+    const [beneficiary, setBeneficiary] = useState<IBeneficiary>({});
     const [existBenef, setExistBenef] = useState(true);
     const [payFees, setPayFees] = useState(false);
     const [amount, setAmount] = useState('0');
     const [totalAmount, setTotalAmount] = useState('');
     const [reason, setReason] = useState('');
-    const [percentage, setPercentage] = useState('w-1/4');
+    const [percentage, setPercentage] = useState('w-1/6');
 
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showConError, setShowConError] = useState(false);
     const [confirmStep, setConfirmStep] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
     const [accessKey, setAccessKey] = useState('');
+    const [country, setCountry] = useState('ci');
+    const [isLoading, setLoading] = useState(false);
+    const [beneficiaries, setBeneficiaries] = useState([]);
+    const [accounts, setAccounts] = useState([]);
+    const [countries, setCountries] = useState([]);
+    const [operators, setOperators] = useState([]);
+    const [displayBeneficiaryForm, setDisplayBeneficiaryForm] = useState(false);
+    const [activeSendModeSelected, setActiveSendModeSelected] = useState('direct');
+
+
+    const [isSendLoading, setIsSendLoading] = useState(false);
+
+    const refPhone = useRef<PhoneInputRefType>(null);
 
     const formSchema = z.object({
+        lastName: z.string().min(2, {message: 'veuillez saisir votre nom'}),
+        firstName: z.string().min(2, {message: 'veuillez saisir votre prénoms'}),
+        email: z.string().email({message: 'veuillez saisir votre email'}),
         beneficiary: z.string(),
+        amount: z.number(),
+        sendMode: z.string(),
+        accountNumber: z.string(),
+        country: z.string(),
+        mmAccountNumber: z.string(),
+        mmOperator: z.string(),
     })
 
     const handleTogglePassword = () => {
@@ -64,54 +104,207 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
     const sendMoneyForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            lastName: "",
+            firstName: "",
+            email: "",
             beneficiary: "",
+            amount: 0,
+            sendMode: 'direct',
+            accountNumber: '',
+            country: '',
+            mmAccountNumber: '',
+            mmOperator: '',
         }
     });
+
+    const { handleSubmit, formState: {errors}, setValue } = sendMoneyForm;
 
     function updateFormValue(value: any) {
         if (step == 1) {
             setAccount(value);
             setStep(2);
-            setPercentage('w-2/4');
+            setPercentage('w-2/6');
         } else if (step == 2) {
             setBeneficiary(value)
             setStep(3);
-            setPercentage('w-3/4');
+            setPercentage('w-3/6');
         }
     }
 
-    // console.log(account);
+    function changePhoneInputCountrySelect(value: string) {
+        refPhone.current?.setCountry(value.toLowerCase());
+    }
+
+    async function triggerRadio(inputName: "direct" | "mm" | "bank") {
+        sendMoneyForm.setValue('sendMode', inputName);
+        setActiveSendModeSelected(inputName);
+    }
+
+    function updateBeneficiaryData(beneficiary: IBeneficiary) { 
+        setBeneficiary(beneficiary);
+        setStep(4);
+        setPercentage('w-4/6');
+    }
+
+    function updateAccountData(account: IAccount) { 
+        setAccount(account);
+        setStep(3);
+        setPercentage('w-3/6');
+    }
+
+    function showBeneficiaryForm() {
+        if(displayBeneficiaryForm){
+            // resetCreateBeneficiaryValues();
+        }
+        setDisplayBeneficiaryForm(!displayBeneficiaryForm);
+    }
+
+    const addNewBeneficiary = (data: any) => {
+        try {
+          formSchema.parse(data); // Valider les données
+          updateBeneficiaryData(data);
+        } catch (error) {
+            console.error('Erreur de validation du formulaire :', error);
+        }
+    }
+
+    const initSendMoneyPayload = () => {
+        // const amount = 'XXXX  100 000 000';
+        const startIndex = amount.indexOf(' ') + 1; // Get index after first space
+        const endIndex = amount.length;
+        const extractedNumber = amount.substring(startIndex, endIndex);
+        const amountConverted = parseInt(extractedNumber.split(" ").join(''));
+        sendMoneyForm.setValue('amount', amountConverted);
+        setConfirmStep(1);
+        setStep(0);
+        setPercentage('w-full')
+    }
+
+    const authenticateMerchant = async (password: string) => {
+        // @ts-ignore
+        let isAuthenticate = false;
+        if(password.trim().length > 0){
+            const payload = {
+                username: merchant.login,
+                password: password,
+            }
+            try {
+                await login(payload, false);
+                setShowConError(false);
+                setErrorMessage("");
+                isAuthenticate = true;
+            } catch (error) {
+                setShowConError(true);
+                setErrorMessage("Identifiants invalides");
+            }
+        } else {
+            setShowConError(true);
+            setErrorMessage("veuillez saisir votre clé d'accès");
+        }
+        return isAuthenticate;
+    }
 
     function nextStep() {
-        if (step < 4) {
-            setStep(step + 1);
-
-            if (step + 1 == 4) {
+        const finalStep = 6;
+        if (step < finalStep) { 
+            const nextStep = step + 1;
+            setStep(nextStep);
+            if (confirmStep == 1) { 
                 setPercentage('w-full');
-            } else if (step + 1 == 3) {
-                setPercentage('w-3/4');
             } else {
-                setPercentage('w-2/4');
+                setPercentage(`w-${nextStep}/${finalStep}`);
             }
         }
+
+        // if (step < 5) {
+        //     setStep(step + 1);
+
+        //     if (step + 1 == 5) {
+        //         setPercentage('w-full');
+        //     } else if (step + 1 == 4) {
+        //         setPercentage('w-4/6');
+        //     } else if (step + 1 == 3) {
+        //         setPercentage('w-3/6');
+        //     } else {
+        //         setPercentage('w-2/6');
+        //     }
+        // }
     }
 
     function prevStep() {
-        if (step > 1) {
-            setStep(step - 1);
-
-            if (step - 1 == 1) {
-                setPercentage('w-1/4');
-            } else if (step - 1 == 2) {
-                setPercentage('w-2/4');
-            } else {
-                setPercentage('w-3/4');
+        const finalStep = 6;
+        if (confirmStep == 1) {
+            setStep(5);
+            setConfirmStep(0);
+            setPercentage(`w-5/6`);
+        } else {
+            if (step > 1) { 
+                const nextStep = step - 1;
+                setStep(nextStep);
+                setPercentage(`w-${nextStep}/${finalStep}`);
             }
         }
+        console.log(step, confirmStep, percentage)
+
+        // if (step > 1) {
+        //     setStep(step - 1);
+
+        //     if (step - 1 == 1) {
+        //         setPercentage('w-1/6');
+        //     } else if (step - 1 == 2) {
+        //         setPercentage('w-2/6');
+        //     } else if (step - 1 == 3) {
+        //         setPercentage('w-3/6');
+        //     } else {
+        //         setPercentage('w-4/6');
+        //     }
+        // }
     }
 
     async function sendMoneyAction() {
-        setConfirmStep(2);
+        setIsSendLoading(true);
+        // @ts-ignore
+        const operator = 'OCI';
+        const accountNumber = sendMoneyForm.getValues('accountNumber');
+        const payload = {
+            bankAccountId: account.id,
+            firstName: beneficiary.firstName,
+            lastName: beneficiary.lastName,
+            operator: (activeSendModeSelected == 'mm') ? sendMoneyForm.getValues('mmOperator') : '',
+            phoneNumber: (activeSendModeSelected == 'mm') ? accountNumber : '',
+            paynahAccount: (activeSendModeSelected == 'direct') ? accountNumber : '',
+            bankAccount: (activeSendModeSelected == 'bank') ? accountNumber : '',
+            amount: sendMoneyForm.getValues('amount'),
+            mode: activeSendModeSelected,
+            feeSupport: payFees,
+        };
+        console.log(payload);
+        const isAuthenticate = await authenticateMerchant(accessKey);
+        if(isAuthenticate){
+            // @ts-ignore
+            initPayout(payload, String(merchant?.merchantsIds[0]?.id), String(merchant.accessToken))
+            .then(data => {
+                console.log(data);
+                setIsSendLoading(false);
+                if (data.success) {
+                    setErrorMessage('');
+                    // setStep(5);
+                    setConfirmStep(2);
+                    // setPercentage('w-full');
+                } else {
+                    return toast.error(data.message, {
+                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                    });
+                }
+            })
+            .catch(err => {
+                setIsSendLoading(false);
+                return toast.error('Une erreur est survénue', {
+                    className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                });
+            });
+        }
+        setIsSendLoading(false);
     }
 
     function downloadTicket() {
@@ -120,21 +313,84 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
 
     function resetSendMoneyValues() {
         setStep(1)
-        setAccount({id: '', name: ''})
-        setBeneficiary({id: '', name: ''})
+        setAccount({})
+        setBeneficiary({})
         setExistBenef(true)
         setPayFees(false)
         setAmount('0')
         setTotalAmount('')
         setReason('')
-        setPercentage('w-1/4')
+        setPercentage('w-1/6')
 
         setConfirmStep(0)
         setShowPassword(false)
         setAccessKey('')
+        setErrorMessage('')
+        setIsSendLoading(false)
+        setShowConError(false)
+    }
+
+    function fetchMerchantBeneficiaries() {
+        // @ts-ignore
+        getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setBeneficiaries(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            setBeneficiaries([]);
+        });
+    }
+
+    function fetchMerchantBankAccounts() {
+        // @ts-ignore
+        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        .then(data => {
+            setAccounts(data.accounts);
+            setLoading(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            setAccounts([]);
+        });
+    }
+
+    function fetchCountries() {
+        // @ts-ignore
+        getCountries(String(merchant.accessToken))
+        .then(data => {
+            setCountries(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            setCountries([]);
+        });
+    }
+
+    function fetchCountryOperators(countryCode: string) {
+        // console.log(countryCode);
+        // @ts-ignore
+        const countryFilter: Icountry[] = countries.filter((country: ICountry) => country.code == countryCode);
+        const countryId = countryFilter[0].id;
+        console.log(countryId);
+        getCountryOperators(String(countryId), String(merchant.accessToken))
+            .then(data => {
+            console.log(1, data);
+            setOperators(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            setCountries([]);
+        });
     }
 
     useEffect(() => {
+        fetchCountries();
+        fetchMerchantBankAccounts();
+        fetchMerchantBeneficiaries();
         if (payFees) {
             const amountWithoutString = amount.match(/\d+/g)?.join('');
             const amountNumber = parseInt(amountWithoutString ?? '0');
@@ -147,6 +403,9 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
 
     }, [amount, payFees]);
 
+    // console.log(accounts);
+    // console.log(sendMoneyForm.getValues('amount'));
+
     return (
         <>
             <Dialog>
@@ -155,12 +414,12 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                         {`Envoyez de l'argent`}
                     </Button>
                 </DialogTrigger>
-                <DialogContent className={`${confirmStep == 0 ? "sm:max-w-[52rem] xl:max-w-[56rem] 2xl:max-w-[59rem]" : "sm:max-w-[40rem]"}  overflow-x-hidden duration-200 !rounded-3xl bg-[#f4f4f7] px-3 py-3`}>
+                <DialogContent className={`${confirmStep == 0 && step != 1 ? "sm:max-w-[52rem] xl:max-w-[56rem] 2xl:max-w-[59rem]" : "sm:max-w-[40rem]"}  overflow-x-hidden duration-200 !rounded-3xl bg-[#f4f4f7] px-3 py-3`}>
                     <div>
                         <div className={`rounded-t-2xl bg-white px-8 pb-4 pt-5`}>
                             <div className={`flex justify-between items-center space-x-3`}>
                                 <h2 className={`text-base text-[#626262] font-medium`}>{`Envoi d'argent`}</h2>
-                                <DialogClose onClick={() => {setStep(1); setPercentage('w-1/4'); setConfirmStep(0); resetSendMoneyValues();}}>
+                                <DialogClose onClick={() => {setStep(1); setPercentage('w-1/6'); setConfirmStep(0); resetSendMoneyValues();}}>
                                     <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`} />
                                 </DialogClose>
                             </div>
@@ -174,7 +433,17 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                         <Form {...sendMoneyForm}>
                             {/*Step 1*/}
                             <div className={`${step == 1 ? 'flex' : 'hidden'} items-center justify-between space-x-3`}>
-                                <h3 className={`text-sm font-medium`}>1- Choisissez le compte à débiter</h3>
+                                <h3 className={`text-sm font-medium`}>{`1- Choisissez le mode d'envoi`}</h3>
+                                {/* <div className={`relative`}>
+                                    <Input type={`text`} className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-[15rem]`}
+                                           placeholder="Recherchez un compte" onChange={(e) => console.log(e.target.value) }/>
+                                    <Search className={`absolute h-4 w-4 top-3.5 left-3`} />
+                                </div> */}
+                            </div>
+
+                            {/*Step 2*/}
+                            <div className={`${step == 2 ? 'flex' : 'hidden'} items-center justify-between space-x-3`}>
+                                <h3 className={`text-sm font-medium`}>2- Choisissez le compte à débiter</h3>
                                 <div className={`relative`}>
                                     <Input type={`text`} className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-[15rem]`}
                                            placeholder="Recherchez un compte" onChange={(e) => console.log(e.target.value) }/>
@@ -182,258 +451,407 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                 </div>
                             </div>
 
-                            {/*Step 2*/}
-                            <div className={`${step == 2 ? 'flex' : 'hidden'} items-center justify-between space-x-3`}>
-                                <h3 className={`text-sm font-medium`}>2- Choisissez le bénéficiaire</h3>
+                            {/*Step 3*/}
+                            <div className={`${step == 3 ? 'flex' : 'hidden'} items-center justify-between space-x-3`}>
+                                <h3 className={`text-sm font-medium`}>3- Choisissez le bénéficiaire</h3>
                                 <div className={`relative`}>
                                     <Input type={`text`} className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-[15rem]`}
                                            placeholder="Recherchez un bénéficiaire" onChange={(e) => console.log(e.target.value) }/>
                                     <Search className={`absolute h-4 w-4 top-3.5 left-3`} />
                                 </div>
                             </div>
+
                             <div className={`mt-4`}>
                                 {/*Step 1*/}
-                                <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto ${step == 1 ? 'flex' : 'hidden'}`}>
-                                    <div onClick={() => updateFormValue({
-                                        id: "1",
-                                        name: "good",
-                                    })}
-                                         className={`snap-end shrink-0 w-[40%] 2xl:w-[35%] bg-white flex flex-col justify-between cursor-pointer ${account.id == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
-                                        <div className={`flex justify-between items-start`}>
-                                            <div>
-                                                <div className={`inline-flex flex-col`}>
-                                                    <div
-                                                        className={`mb-1 rounded-xl p-2 bg-[#f0f0f0] w-[2.7rem] h-[2.7rem] inline-flex justify-center items-center`}>
-                                                        <svg className={`h-[1.1rem] fill-[#767676] w-auto`}
-                                                             viewBox="0 0 19.474 17.751">
-                                                            <defs>
-                                                                <clipPath id="clipPath1">
-                                                                    <rect width="19.474" height="17.751"/>
-                                                                </clipPath>
-                                                            </defs>
-                                                            <g transform="translate(0)">
-                                                                <g transform="translate(0)" clipPath="url(#clipPath1)">
-                                                                    <path
-                                                                        d="M18.422,131.245v.295c0,.477,0,.954,0,1.431a2.758,2.758,0,0,1-2.792,2.786q-6.191,0-12.381,0a4.087,4.087,0,0,1-1.4-.157A2.762,2.762,0,0,1,0,132.973c0-2.774,0-5.548,0-8.323a3.5,3.5,0,0,1,.2-1.361,2.764,2.764,0,0,1,2.566-1.728q6.432,0,12.863,0a2.743,2.743,0,0,1,2.7,2.075,2.966,2.966,0,0,1,.085.663c.012.555,0,1.109,0,1.664,0,.028,0,.057-.009.1H15.7a2.586,2.586,0,0,0-.235,5.165c.924.031,1.849.01,2.774.012h.184"
-                                                                        transform="translate(0 -118.007)"/>
-                                                                    <path
-                                                                        d="M466.573,292.279c.486,0,.973,0,1.459,0a.906.906,0,0,1,.96.96q0,1.145,0,2.291a.9.9,0,0,1-.949.958c-.978,0-1.955.008-2.933,0a2.1,2.1,0,0,1-.055-4.2c.505-.018,1.012,0,1.517,0v0m-1.438,2.844v-.01c.078,0,.156,0,.233,0a.729.729,0,0,0-.034-1.458c-.141,0-.282,0-.422,0a.726.726,0,0,0-.124,1.435,3.1,3.1,0,0,0,.347.032"
-                                                                        transform="translate(-449.52 -283.733)"/>
-                                                                    <path
-                                                                        d="M232.826,2.991q2.429-1.4,4.859-2.805a1.238,1.238,0,0,1,1.748.471c.1.163.189.328.295.512l-6.9,1.848,0-.027"
-                                                                        transform="translate(-226.02 0)"/>
-                                                                    <path
-                                                                        d="M301.2,56.416h-6.9l-.006-.017c.036-.013.072-.029.109-.039q2.519-.675,5.039-1.349a1.292,1.292,0,0,1,1.639.937c.041.149.079.3.123.468"
-                                                                        transform="translate(-285.691 -53.352)"/>
-                                                                </g>
-                                                            </g>
-                                                        </svg>
-                                                    </div>
-                                                    <span className={`text-[12px] font-normal text-[#626262] -mb-0.5`}>Compte principal</span>
-                                                    <span
-                                                        className={`text-[11px] font-light text-[#afafaf]`}>PA48939CI</span>
+                                <div className={`${step == 1 ? 'flex' : 'hidden'} flex-col`}>
+                                    <div className={``}>
+                                        <div
+                                            className={`flex items-center rounded-lg px-1 2xl:px-1 py-1 2xl:py-1`}>
+                                            <div className={`flex items-center w-full`}>
+                                                {/* <span
+                                                    className={`text-[10.5px] text-[#84818a] 2xl:text-[11px] font-normal whitespace-nowrap mr-1 2xl:mr-1`}>{`Mode d'envoi`}</span> */}
+                                                <div className={`w-full`}>
+                                                    <FormField
+                                                        control={sendMoneyForm.control}
+                                                        name="sendMode"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormControl>
+                                                                    <RadioGroup
+                                                                        onValueChange={field.onChange}
+                                                                        defaultValue={field.value}
+                                                                        className="flex items-center justify-between gap-0 rounded-lg !bg-[#f0f0f0] p-1 2xl:p-1 flex-row"
+                                                                    >
+                                                                        <FormItem onClick={() => triggerRadio('direct')} className="flex-1 items-center justify-center space-y-0">
+                                                                            <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'direct' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10px] 2xl:text-[11px] font-medium px-1 2xl:px-2 py-1.5`}>
+                                                                                <svg className={`w-[.7rem] mr-1`} viewBox="0 0 44.203 44.203">
+                                                                                    <defs>
+                                                                                        <clipPath id="clip-path2">
+                                                                                            <rect width="44.203" height="44.203"/>
+                                                                                        </clipPath>
+                                                                                    </defs>
+                                                                                    <g transform="translate(0 -2)">
+                                                                                        <g transform="translate(0 2)" clipPath="url(#clip-path2)">
+                                                                                            <path
+                                                                                                d="M22.1,0C5.319,0,0,5.319,0,22.1S5.319,44.2,22.1,44.2s22.1-5.319,22.1-22.1S38.884,0,22.1,0m0,40.746C7.944,40.746,3.458,36.259,3.458,22.1S7.944,3.457,22.1,3.457,40.745,7.944,40.745,22.1,36.259,40.746,22.1,40.746"
+                                                                                                transform="translate(0 0)"/>
+                                                                                            <path
+                                                                                                d="M39.814,20.3a8.227,8.227,0,0,0-5.73-2.075h-10.6v22.5h4.06v-7.31a4.455,4.455,0,0,1,0-4.28V22.046h6.268a4.366,4.366,0,0,1,2.959,1.05,3.351,3.351,0,0,1,1.191,2.673A3.267,3.267,0,0,1,36.775,28.4a4.428,4.428,0,0,1-2.961,1.029H30.36a2.15,2.15,0,0,0,.111,3.759h3.5a8.4,8.4,0,0,0,5.808-2.074A6.958,6.958,0,0,0,42.1,25.706a7.006,7.006,0,0,0-2.29-5.408"
+                                                                                                transform="translate(-8.464 -6.567)"/>
+                                                                                        </g>
+                                                                                    </g>
+                                                                                </svg>
+                                                                                <span>Direct</span>
+                                                                            </button>
+                                                                        </FormItem>
+                                                                        <FormItem onClick={() => triggerRadio('mm')} className="flex-1 items-center justify-center space-y-0">
+                                                                            <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'mm' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10px] 2xl:text-[11px] font-medium px-1 2xl:px-2 py-1.5`}>
+                                                                                <span>Mobile Money</span>
+                                                                            </button>
+                                                                        </FormItem>
+                                                                        {/* <FormItem onClick={() => triggerRadio('bank')} className="flex-1 items-center justify-center space-y-0">
+                                                                            <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'bank' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10px] 2xl:text-[11px] font-medium pl-1 pr-[2px] 2xl:px-2 py-1.5`}>
+                                                                                <span>Virement</span>
+                                                                            </button>
+                                                                        </FormItem> */}
+                                                                    </RadioGroup>
+                                                                </FormControl>
+                                                            </FormItem>
+                                                        )}
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
-                                        <div
-                                            className={`flex justify-between items-center space-x-3 border-t border-[#d0d0d0] pt-1`}>
-                                            <div className={`inline-flex flex-col`}>
-                                                <h3 className={`text-[10px] font-light text-[#afafaf] -mb-0.5`}>Solde
-                                                    actuel</h3>
-                                                <span className={`text-sm font-semibold`}>{formatCFA(30000)}</span>
-                                            </div>
-                                            <div className={`inline-flex flex-col`}>
-                                                <h3 className={`text-[10px] font-light text-[#afafaf] -mb-0.5`}>Solde
-                                                    disponible</h3>
-                                                <span className={`text-sm font-semibold`}>{formatCFA(3245544)}</span>
-                                            </div>
-                                        </div>
                                     </div>
-                                    <div onClick={() => updateFormValue({
-                                        id: "2",
-                                        name: "good 2",
-                                    })}
-                                         className={`snap-end shrink-0 w-[40%] 2xl:w-[35%] bg-white flex flex-col justify-between cursor-pointer ${account.id == '2' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
-                                        <div className={`flex justify-between items-start`}>
-                                            <div>
-                                                <div className={`inline-flex flex-col`}>
-                                                    <div
-                                                        className={`mb-1 rounded-xl p-2 bg-[#f0f0f0] w-[2.7rem] h-[2.7rem] inline-flex justify-center items-center`}>
-                                                        <svg className={`h-[1.1rem] fill-[#767676] w-auto`}
-                                                             viewBox="0 0 19.474 17.751">
-                                                            <defs>
-                                                                <clipPath id="clipPath1">
-                                                                    <rect width="19.474" height="17.751"/>
-                                                                </clipPath>
-                                                            </defs>
-                                                            <g transform="translate(0)">
-                                                                <g transform="translate(0)" clipPath="url(#clipPath1)">
-                                                                    <path
-                                                                        d="M18.422,131.245v.295c0,.477,0,.954,0,1.431a2.758,2.758,0,0,1-2.792,2.786q-6.191,0-12.381,0a4.087,4.087,0,0,1-1.4-.157A2.762,2.762,0,0,1,0,132.973c0-2.774,0-5.548,0-8.323a3.5,3.5,0,0,1,.2-1.361,2.764,2.764,0,0,1,2.566-1.728q6.432,0,12.863,0a2.743,2.743,0,0,1,2.7,2.075,2.966,2.966,0,0,1,.085.663c.012.555,0,1.109,0,1.664,0,.028,0,.057-.009.1H15.7a2.586,2.586,0,0,0-.235,5.165c.924.031,1.849.01,2.774.012h.184"
-                                                                        transform="translate(0 -118.007)"/>
-                                                                    <path
-                                                                        d="M466.573,292.279c.486,0,.973,0,1.459,0a.906.906,0,0,1,.96.96q0,1.145,0,2.291a.9.9,0,0,1-.949.958c-.978,0-1.955.008-2.933,0a2.1,2.1,0,0,1-.055-4.2c.505-.018,1.012,0,1.517,0v0m-1.438,2.844v-.01c.078,0,.156,0,.233,0a.729.729,0,0,0-.034-1.458c-.141,0-.282,0-.422,0a.726.726,0,0,0-.124,1.435,3.1,3.1,0,0,0,.347.032"
-                                                                        transform="translate(-449.52 -283.733)"/>
-                                                                    <path
-                                                                        d="M232.826,2.991q2.429-1.4,4.859-2.805a1.238,1.238,0,0,1,1.748.471c.1.163.189.328.295.512l-6.9,1.848,0-.027"
-                                                                        transform="translate(-226.02 0)"/>
-                                                                    <path
-                                                                        d="M301.2,56.416h-6.9l-.006-.017c.036-.013.072-.029.109-.039q2.519-.675,5.039-1.349a1.292,1.292,0,0,1,1.639.937c.041.149.079.3.123.468"
-                                                                        transform="translate(-285.691 -53.352)"/>
-                                                                </g>
-                                                            </g>
-                                                        </svg>
+                                    {/*Step select send mode */}
+                                    <div className={`mt-3`}>
+                                        {
+                                            activeSendModeSelected == 'direct' &&
+                                            <form onSubmit={undefined} className={`${step == 2 && 'hidden'} space-y-5 gap-6`}>
+                                                <div className={`flex items-center gap-5`}>
+                                                    <div className={'w-full'}>
+                                                            <FormField
+                                                                control={sendMoneyForm.control}
+                                                                name="accountNumber"
+                                                                render={({field}) => (
+                                                                    <FormItem>
+                                                                        <div className={`inline-flex space-x-3`}>
+                                                                            <h3 className={`text-sm font-medium`}>Numéro de compte</h3>
+                                                                        </div>
+                                                                        <FormControl className={''}>
+                                                                            <div>
+                                                                                <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                                    placeholder="Entrez le numéro de compte" {...field} style={{
+                                                                                    backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                                }} />
+                                                                            </div>
+                                                                        </FormControl>
+                                                                        <FormMessage className={`text-xs`}>{errors.accountNumber && errors.accountNumber.message as string}</FormMessage>
+                                                                    </FormItem>
+                                                                )}
+                                                            />
                                                     </div>
-                                                    <span className={`text-[12px] font-normal text-[#626262] -mb-0.5`}>Compte principal</span>
-                                                    <span
-                                                        className={`text-[11px] font-light text-[#afafaf]`}>PA48939CI</span>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div
-                                            className={`flex justify-between items-center space-x-3 border-t border-[#d0d0d0] pt-1`}>
-                                            <div className={`inline-flex flex-col`}>
-                                                <h3 className={`text-[10px] font-light text-[#afafaf] -mb-0.5`}>Solde
-                                                    actuel</h3>
-                                                <span className={`text-sm font-semibold`}>{formatCFA(30000)}</span>
-                                            </div>
-                                            <div className={`inline-flex flex-col`}>
-                                                <h3 className={`text-[10px] font-light text-[#afafaf] -mb-0.5`}>Solde
-                                                    disponible</h3>
-                                                <span className={`text-sm font-semibold`}>{formatCFA(3245544)}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div onClick={() => updateFormValue({
-                                        id: "3",
-                                        name: "good 3",
-                                    })}
-                                         className={`snap-end shrink-0 w-[40%] 2xl:w-[35%] bg-white flex flex-col justify-between cursor-pointer ${account.id == '3' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
-                                        <div className={`flex justify-between items-start`}>
-                                            <div>
-                                                <div className={`inline-flex flex-col`}>
-                                                    <div
-                                                        className={`mb-1 rounded-xl p-2 bg-[#f0f0f0] w-[2.7rem] h-[2.7rem] inline-flex justify-center items-center`}>
-                                                        <svg className={`h-[1.1rem] fill-[#767676] w-auto`}
-                                                             viewBox="0 0 19.474 17.751">
-                                                            <defs>
-                                                                <clipPath id="clipPath1">
-                                                                    <rect width="19.474" height="17.751"/>
-                                                                </clipPath>
-                                                            </defs>
-                                                            <g transform="translate(0)">
-                                                                <g transform="translate(0)" clipPath="url(#clipPath1)">
-                                                                    <path
-                                                                        d="M18.422,131.245v.295c0,.477,0,.954,0,1.431a2.758,2.758,0,0,1-2.792,2.786q-6.191,0-12.381,0a4.087,4.087,0,0,1-1.4-.157A2.762,2.762,0,0,1,0,132.973c0-2.774,0-5.548,0-8.323a3.5,3.5,0,0,1,.2-1.361,2.764,2.764,0,0,1,2.566-1.728q6.432,0,12.863,0a2.743,2.743,0,0,1,2.7,2.075,2.966,2.966,0,0,1,.085.663c.012.555,0,1.109,0,1.664,0,.028,0,.057-.009.1H15.7a2.586,2.586,0,0,0-.235,5.165c.924.031,1.849.01,2.774.012h.184"
-                                                                        transform="translate(0 -118.007)"/>
-                                                                    <path
-                                                                        d="M466.573,292.279c.486,0,.973,0,1.459,0a.906.906,0,0,1,.96.96q0,1.145,0,2.291a.9.9,0,0,1-.949.958c-.978,0-1.955.008-2.933,0a2.1,2.1,0,0,1-.055-4.2c.505-.018,1.012,0,1.517,0v0m-1.438,2.844v-.01c.078,0,.156,0,.233,0a.729.729,0,0,0-.034-1.458c-.141,0-.282,0-.422,0a.726.726,0,0,0-.124,1.435,3.1,3.1,0,0,0,.347.032"
-                                                                        transform="translate(-449.52 -283.733)"/>
-                                                                    <path
-                                                                        d="M232.826,2.991q2.429-1.4,4.859-2.805a1.238,1.238,0,0,1,1.748.471c.1.163.189.328.295.512l-6.9,1.848,0-.027"
-                                                                        transform="translate(-226.02 0)"/>
-                                                                    <path
-                                                                        d="M301.2,56.416h-6.9l-.006-.017c.036-.013.072-.029.109-.039q2.519-.675,5.039-1.349a1.292,1.292,0,0,1,1.639.937c.041.149.079.3.123.468"
-                                                                        transform="translate(-285.691 -53.352)"/>
-                                                                </g>
-                                                            </g>
-                                                        </svg>
+                                            </form>
+                                        }
+                                        {
+                                            // changePhoneInputCountrySelect(value); fetchCountryOperators(value);
+                                            activeSendModeSelected == 'mm' &&
+                                            <form onSubmit={undefined} className={`${step == 2 && 'hidden'} space-y-5 gap-6`}>
+                                                <div className={`flex items-center gap-5`}>
+                                                    <div className={'w-full'}>
+                                                        <FormField
+                                                        control={sendMoneyForm.control}
+                                                            name="country"
+                                                            render={({field}) => (
+                                                                <FormItem>
+                                                                        <div className={`inline-flex space-x-3`}>
+                                                                            <h3 className={`text-sm font-medium`}>Pays Opérateur</h3>
+                                                                        </div>
+                                                                        <FormControl>
+                                                                            <div>
+                                                                                <Select onValueChange={(value) => { field.onChange(value); changePhoneInputCountrySelect(value); setCountry(value); fetchCountryOperators(value); }} defaultValue={field.value}>
+                                                                                    <SelectTrigger className={`w-full ${showConError && "!border-[#e95d5d]"} px-4 font-light text-sm ${showConError && "border-[#e95d5d]"}`} style={{
+                                                                                        backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                                    }}>
+                                                                                        <SelectValue  placeholder="Choisir un type de compte" />
+                                                                                    </SelectTrigger>
+                                                                                    <SelectContent className={`z-[999] bg-[#f0f0f0]`}>
+                                                                                        {
+                                                                                            countries && countries.map((country: ICountry) => (
+                                                                                                <SelectItem key={country.id} className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`} value={country.code}>
+                                                                                                    <div className={`inline-flex items-center space-x-2.5`}>
+                                                                                                        <FlagImage className={`w-7`} iso2={country.code.toLowerCase()} />
+                                                                                                        <span className={`mt-[2px] text-sm`}>{country.name}</span>
+                                                                                                    </div>
+                                                                                                </SelectItem>
+                                                                                            ))
+                                                                                        }
+                                                                                    </SelectContent>
+                                                                                </Select>
+                                                                            </div>
+                                                                        </FormControl>
+                                                                        <FormMessage className={`text-xs`}>{errors.country && errors.country.message as string}</FormMessage>
+                                                                </FormItem>
+                                                        )}
+                                                        />
                                                     </div>
-                                                    <span className={`text-[12px] font-normal text-[#626262] -mb-0.5`}>Compte principal</span>
-                                                    <span
-                                                        className={`text-[11px] font-light text-[#afafaf]`}>PA48939CI</span>
+                                                    <div className={'w-full'}>
+                                                        <FormField
+                                                        control={sendMoneyForm.control}
+                                                            name="mmAccountNumber"
+                                                            render={({field}) => (
+                                                                <FormItem>
+                                                                    <div className={`inline-flex space-x-3`}>
+                                                                        <h3 className={`text-sm font-medium`}>Numéro de compte</h3>
+                                                                    </div>
+                                                                    <FormControl>
+                                                                        <div>
+                                                                            <div className="relative">
+                                                                                {/*<input type="text" id="mmAccountNumber" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
+                                                                                <PhoneInput
+                                                                                    {...field}
+                                                                                    className={`mt-[.5rem] op-tel`}
+                                                                                    style={
+                                                                                        {
+                                                                                            '--react-international-phone-text-color': '#000',
+                                                                                            '--react-international-phone-border-color': '#f0f0f0',
+                                                                                            '--react-international-phone-height': '2.8rem',
+                                                                                            '--react-international-phone-font-size': '14px',
+                                                                                            '--react-international-phone-border-radius': '0.5rem',
+                                                                                        }  as React.CSSProperties
+                                                                                    }
+                                                                                    defaultCountry={country}
+                                                                                    forceDialCode={true}
+                                                                                    ref={refPhone}
+                                                                                    hideDropdown={true}
+                                                                                    placeholder=" "
+                                                                                />
+                                                                                {/* <label htmlFor="mmAccountNumber"
+                                                                                       className={`primary-form-label !-translate-y-3.5 !bg-white peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-4`}>Numéro de compte
+                                                                                </label> */}
+                                                                                <div className={`absolute top-0 left-0`}>
+                                                                                    <FormField
+                                                                                        control={sendMoneyForm.control}
+                                                                                        name="mmOperator"
+                                                                                        render={({field}) => (
+                                                                                            <FormItem>
+                                                                                                <FormControl>
+                                                                                                    <div>
+                                                                                                        <Select onValueChange={field.onChange} defaultValue={'om'}>
+                                                                                                            <SelectTrigger className={`w-[4rem] selectedItemMM h-[2.8rem] rounded-l-lg !pb-[0px] rounded-r-none border border-[#e4e4e4] pl-2.5 pr-1 font-light`} style={{
+                                                                                                                backgroundColor: field.value ? '#fff' : '#fff',
+                                                                                                            }}>
+                                                                                                                <SelectValue  placeholder="Opérateur"/>
+                                                                                                            </SelectTrigger>
+                                                                                                            <SelectContent className={`bg-[#f0f0f0] !w-[10rem] z-[999]`}>
+                                                                                                                {
+                                                                                                                    operators && operators.map((operator: IOperator) => (
+                                                                                                                    <SelectItem key={operator.id} className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`} value={operator.code}>
+                                                                                                                        <div className={`inline-flex items-center space-x-2.5`}>
+                                                                                                                            <Image className={`h-[1.6rem] w-[1.6rem]`} src={operator.logoUrl} alt={operator.code} height={512} width={512} />
+                                                                                                                            <span className={`mm-label`}>{operator.name}</span>
+                                                                                                                        </div>
+                                                                                                                    </SelectItem>
+                                                                                                                    ))
+                                                                                                                }
+                                                                                                            </SelectContent>
+                                                                                                        </Select>
+                                                                                                    </div>
+                                                                                                </FormControl>
+                                                                                            </FormItem>
+                                                                                        )}
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </FormControl>
+                                                                </FormItem>
+                                                        )}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div
-                                            className={`flex justify-between items-center space-x-3 border-t border-[#d0d0d0] pt-1`}>
-                                            <div className={`inline-flex flex-col`}>
-                                                <h3 className={`text-[10px] font-light text-[#afafaf] -mb-0.5`}>Solde
-                                                    actuel</h3>
-                                                <span className={`text-sm font-semibold`}>{formatCFA(30000)}</span>
-                                            </div>
-                                            <div className={`inline-flex flex-col`}>
-                                                <h3 className={`text-[10px] font-light text-[#afafaf] -mb-0.5`}>Solde
-                                                    disponible</h3>
-                                                <span className={`text-sm font-semibold`}>{formatCFA(3245544)}</span>
-                                            </div>
-                                        </div>
+                                            </form>
+                                        }
                                     </div>
-                                    <div className={`w-0.5 snap-end`}></div>
                                 </div>
 
                                 {/*Step 2*/}
-                                <div className={`${step == 2 ? 'flex' : 'hidden'} flex-col`}>
+                                <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto ${step == 2 ? 'flex' : 'hidden'}`}>
+                                    {
+                                        accounts && accounts.map((account: IAccount) => (
+                                            <div key={account.id} onClick={() => updateAccountData(account)}
+                                                className={`snap-end shrink-0 w-[40%] 2xl:w-[35%] bg-white flex flex-col justify-between cursor-pointer ${account.id == '3' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
+                                                <div className={`flex justify-between items-start`}>
+                                                    <div>
+                                                        <div className={`inline-flex flex-col`}>
+                                                            <div
+                                                                className={`mb-1 rounded-xl p-2 bg-[#f0f0f0] w-[2.7rem] h-[2.7rem] inline-flex justify-center items-center`}>
+                                                                <svg className={`h-[1.1rem] fill-[#767676] w-auto`}
+                                                                    viewBox="0 0 19.474 17.751">
+                                                                    <defs>
+                                                                        <clipPath id="clipPath1">
+                                                                            <rect width="19.474" height="17.751"/>
+                                                                        </clipPath>
+                                                                    </defs>
+                                                                    <g transform="translate(0)">
+                                                                        <g transform="translate(0)" clipPath="url(#clipPath1)">
+                                                                            <path
+                                                                                d="M18.422,131.245v.295c0,.477,0,.954,0,1.431a2.758,2.758,0,0,1-2.792,2.786q-6.191,0-12.381,0a4.087,4.087,0,0,1-1.4-.157A2.762,2.762,0,0,1,0,132.973c0-2.774,0-5.548,0-8.323a3.5,3.5,0,0,1,.2-1.361,2.764,2.764,0,0,1,2.566-1.728q6.432,0,12.863,0a2.743,2.743,0,0,1,2.7,2.075,2.966,2.966,0,0,1,.085.663c.012.555,0,1.109,0,1.664,0,.028,0,.057-.009.1H15.7a2.586,2.586,0,0,0-.235,5.165c.924.031,1.849.01,2.774.012h.184"
+                                                                                transform="translate(0 -118.007)"/>
+                                                                            <path
+                                                                                d="M466.573,292.279c.486,0,.973,0,1.459,0a.906.906,0,0,1,.96.96q0,1.145,0,2.291a.9.9,0,0,1-.949.958c-.978,0-1.955.008-2.933,0a2.1,2.1,0,0,1-.055-4.2c.505-.018,1.012,0,1.517,0v0m-1.438,2.844v-.01c.078,0,.156,0,.233,0a.729.729,0,0,0-.034-1.458c-.141,0-.282,0-.422,0a.726.726,0,0,0-.124,1.435,3.1,3.1,0,0,0,.347.032"
+                                                                                transform="translate(-449.52 -283.733)"/>
+                                                                            <path
+                                                                                d="M232.826,2.991q2.429-1.4,4.859-2.805a1.238,1.238,0,0,1,1.748.471c.1.163.189.328.295.512l-6.9,1.848,0-.027"
+                                                                                transform="translate(-226.02 0)"/>
+                                                                            <path
+                                                                                d="M301.2,56.416h-6.9l-.006-.017c.036-.013.072-.029.109-.039q2.519-.675,5.039-1.349a1.292,1.292,0,0,1,1.639.937c.041.149.079.3.123.468"
+                                                                                transform="translate(-285.691 -53.352)"/>
+                                                                        </g>
+                                                                    </g>
+                                                                </svg>
+                                                            </div>
+                                                            <span className={`text-[12px] font-normal text-[#626262] -mb-0.5`}>{account.name ? account.name : (account.isMain ? 'Compte Principal' : 'Compte')}</span>
+                                                            <span
+                                                                className={`text-[11px] font-light text-[#afafaf]`}>{account.coreBankId}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    className={`flex justify-between items-center space-x-3 border-t border-[#d0d0d0] pt-1`}>
+                                                    <div className={`inline-flex flex-col`}>
+                                                        <h3 className={`text-[10px] font-light text-[#afafaf] -mb-0.5`}>Solde
+                                                            actuel</h3>
+                                                        <span className={`text-sm font-semibold`}>{formatCFA(account.balance)}</span>
+                                                    </div>
+                                                    <div className={`inline-flex flex-col`}>
+                                                        <h3 className={`text-[10px] font-light text-[#afafaf] -mb-0.5`}>Solde
+                                                            disponible</h3>
+                                                        <span className={`text-sm font-semibold`}>{formatCFA(account.skaleet_balance)}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                    <div className={`w-0.5 snap-end`}></div>
+                                </div>
+
+                                {/*Step 3*/}
+                                <div className={`${step == 3 ? 'flex' : 'hidden'} flex-col`}>
                                     <div className={`mb-3`}>
                                         <div className={`inline-flex text-sm font-normal space-x-1 rounded-lg py-1 px-1 bg-[#f0f0f0]`}>
-                                            <button type={"button"} className={`bg-white px-3 py-1.5 rounded-lg`}>
+                                            <button onClick={() => showBeneficiaryForm()} type={"button"} className={`${!displayBeneficiaryForm ? "bg-white px-3 py-1.5 rounded-lg" : "px-3 py-1.5"}`}>
                                                 Bénéficiaires enregistrés
                                             </button>
-                                            <button type={"button"}  className={`px-3 py-1.5`}>
+                                            <button onClick={() => showBeneficiaryForm()} type={"button"}  className={`${displayBeneficiaryForm ? "bg-white px-3 py-1.5 rounded-lg" : "px-3 py-1.5"}`}>
                                                 Nouveau bénéficiaire
                                             </button>
                                         </div>
                                     </div>
                                     <div className={`mt-1`}>
-                                        <div className={`grid grid-cols-3 gap-3`}>
-                                            <div onClick={() => updateFormValue({
-                                                id: "1",
-                                                name: "good",
-                                            })} className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
-                                                <Avatar className={`cursor-pointer`}>
-                                                    <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
-                                                </Avatar>
-                                                <div className={`inline-flex flex-col`}>
-                                                    <h3 className={`text-xs font-medium`}>Didier Aney</h3>
-                                                    <span className={`text-xs text-[#626262]`}>+225 07 09 87 35 23</span>
-                                                    <span className={`text-xs -mt-[1px] text-[#626262]`}>didier.any@abba.com</span>
+                                        {
+                                            !displayBeneficiaryForm &&
+                                            <div className={`grid grid-cols-3 gap-3`}>
+                                            {
+                                                beneficiaries && beneficiaries.map((beneficiary: IBeneficiary) => (
+                                                <div key={beneficiary.id} onClick={() => updateBeneficiaryData(beneficiary)} 
+                                                    className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
+                                                    <Avatar className={`cursor-pointer`}>
+                                                        <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
+                                                    </Avatar>
+                                                    <div className={`inline-flex flex-col`}>
+                                                        <h3 className={`text-xs font-medium`}>{`${beneficiary.firstName} ${beneficiary.lastName}`}</h3>
+                                                        {/* <span className={`text-xs text-[#626262]`}>{beneficiary.reference}</span> */}
+                                                        <span className={`text-xs block mt-[2px] text-[#626262] break-all leading-3`}>{beneficiary.email}</span>
+                                                    </div>
                                                 </div>
+                                                ))
+                                            }
                                             </div>
-                                            <div onClick={() => updateFormValue({
-                                                id: "2",
-                                                name: "good 2",
-                                            })} className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '2' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
-                                                <Avatar className={`cursor-pointer`}>
-                                                    <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
-                                                </Avatar>
-                                                <div className={`inline-flex flex-col`}>
-                                                    <h3 className={`text-xs font-medium`}>Didier Aney</h3>
-                                                    <span className={`text-xs text-[#626262]`}>+225 07 09 87 35 23</span>
-                                                    <span className={`text-xs -mt-[1px] text-[#626262]`}>didier.any@abba.com</span>
-                                                </div>
+                                        }
+                                        {
+                                            displayBeneficiaryForm &&
+                                            <div className={``}>
+                                               <form onSubmit={undefined} className={`${step == 2 && 'hidden'} space-y-5 gap-6`}>
+                                                    <div className={`flex items-center gap-5`}>
+                                                        <div className={'w-1/3'}>
+                                                                <FormField
+                                                                    control={sendMoneyForm.control}
+                                                                    name="lastName"
+                                                                    render={({field}) => (
+                                                                        <FormItem>
+                                                                            <div className={`inline-flex space-x-3`}>
+                                                                                <h3 className={`text-sm font-medium`}>Nom</h3>
+                                                                            </div>
+                                                                            <FormControl className={''}>
+                                                                                <div>
+                                                                                    <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                                        placeholder="Entrez votre nom" {...field} style={{
+                                                                                        backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                                    }} />
+                                                                                </div>
+                                                                            </FormControl>
+                                                                            <FormMessage className={`text-xs`}>{errors.lastName && errors.lastName.message as string}</FormMessage>
+                                                                        </FormItem>
+                                                                    )}
+                                                                />
+                                                        </div>
+                                                        <div className={'w-2/3'}>
+                                                                <FormField
+                                                                    control={sendMoneyForm.control}
+                                                                    name="firstName"
+                                                                    render={({field}) => (
+                                                                        <FormItem>
+                                                                            <div className={`inline-flex space-x-3`}>
+                                                                                <h3 className={`text-sm font-medium`}>Prénoms</h3>
+                                                                            </div>
+                                                                            <FormControl className={''}>
+                                                                                <div>
+                                                                                    <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                                        placeholder="Entrez votre prénoms" {...field} style={{
+                                                                                        backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                                    }} />
+                                                                                </div>
+                                                                            </FormControl>
+                                                                            <FormMessage className={`text-xs`}>{errors.firstName && errors.firstName.message as string}</FormMessage>
+                                                                        </FormItem>
+                                                                    )}
+                                                                />
+                                                        </div>
+                                                    </div>
+                                                    <div className={`gap-5`}>
+                                                        <div className={''}>
+                                                                    <FormField
+                                                                        control={sendMoneyForm.control}
+                                                                        name="email"
+                                                                        render={({field}) => (
+                                                                            <FormItem>
+                                                                                <div className={`inline-flex space-x-3`}>
+                                                                                    <h3 className={`text-sm font-medium`}>Email</h3>
+                                                                                </div>
+                                                                                <FormControl className={''}>
+                                                                                    <div>
+                                                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                                            placeholder="Entrez votre email" {...field} style={{
+                                                                                            backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                                        }} />
+                                                                                    </div>
+                                                                                </FormControl>
+                                                                                <FormMessage className={`text-xs`}>{errors.email && errors.email.message as string}</FormMessage>
+                                                                            </FormItem>
+                                                                        )}
+                                                                    />
+                                                        </div>
+                                                    </div> 
+                                                </form>
                                             </div>
-                                            <div onClick={() => updateFormValue({
-                                                id: "3",
-                                                name: "good",
-                                            })} className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '3' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
-                                                <Avatar className={`cursor-pointer`}>
-                                                    <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
-                                                </Avatar>
-                                                <div className={`inline-flex flex-col`}>
-                                                    <h3 className={`text-xs font-medium`}>Didier Aney</h3>
-                                                    <span className={`text-xs text-[#626262]`}>+225 07 09 87 35 23</span>
-                                                    <span className={`text-xs -mt-[1px] text-[#626262]`}>didier.any@abba.com</span>
-                                                </div>
-                                            </div>
-                                            <div onClick={() => updateFormValue({
-                                                id: "4",
-                                                name: "good",
-                                            })} className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '4' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
-                                                <Avatar className={`cursor-pointer`}>
-                                                    <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
-                                                </Avatar>
-                                                <div className={`inline-flex flex-col`}>
-                                                    <h3 className={`text-xs font-medium`}>Didier Aney</h3>
-                                                    <span className={`text-xs text-[#626262]`}>+225 07 09 87 35 23</span>
-                                                    <span className={`text-xs -mt-[1px] text-[#626262]`}>didier.any@abba.com</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        }
                                     </div>
                                 </div>
 
-                                {/*Step 3*/}
-                                <div className={`${step == 3 ? 'flex' : 'hidden'} flex-col mb-4 -mt-3`}>
+                                {/*Step 4*/}
+                                <div className={`${step == 4 ? 'flex' : 'hidden'} flex-col mb-4 -mt-3`}>
                                     <div className={`grid grid-cols-2 gap-x-6 gap-y-4`}>
                                         <div>
                                             <div className={`inline-flex space-x-3`}>
@@ -475,9 +893,9 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                                                     </svg>
                                                                 </div>
                                                                 <div>
-                                                                    <span className={`block text-[12px] font-normal leading-3 text-[#626262] -mb-0.5`}>Compte principal</span>
+                                                                    <span className={`block text-[12px] font-normal leading-3 text-[#626262] -mb-0.5`}>{account?.name ? account?.name : (account?.isMain ? 'Compte Principal' : 'Compte')}</span>
                                                                     <span
-                                                                        className={`block text-[10px] mt-1 font-light text-[#afafaf]`}>PA48939CI</span>
+                                                                        className={`block text-[10px] mt-1 font-light text-[#afafaf]`}>{account?.coreBankId}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -487,11 +905,11 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                                         <div className={`inline-flex flex-col`}>
                                                             <h3 className={`text-[9px] font-light text-[#afafaf] -mb-0.5`}>Solde
                                                                 actuel</h3>
-                                                            <span className={`text-[11px] font-semibold`}>{formatCFA(330000)}</span>
+                                                            <span className={`text-[11px] font-semibold`}>{formatCFA(account?.balance)}</span>
                                                         </div>
                                                         <div className={`inline-flex flex-col`}>
                                                             <h3 className={`text-[9px] font-light text-[#afafaf] -mb-0.5`}>Solde disponible</h3>
-                                                            <span className={`text-[11px] font-semibold`}>{formatCFA(3245544)}</span>
+                                                            <span className={`text-[11px] font-semibold`}>{formatCFA(account?.skaleet_balance)}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -510,9 +928,9 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                                         <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
                                                     </Avatar>
                                                     <div className={`inline-flex flex-col`}>
-                                                        <h3 className={`text-xs font-medium`}>Didier Aney</h3>
-                                                        <span className={`text-xs text-[#626262]`}>+225 07 09 87 35 23</span>
-                                                        <span className={`text-xs -mt-[1px] text-[#626262]`}>didier.any@abba.com</span>
+                                                        <h3 className={`text-xs font-medium`}>{`${beneficiary?.firstName} ${beneficiary?.lastName}`}</h3>
+                                                        {/* <span className={`text-xs text-[#626262]`}>+225 07 09 87 35 23</span> */}
+                                                        <span className={`text-xs -mt-[1px] text-[#626262]`}>{`${beneficiary?.email}`}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -555,8 +973,8 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                     </div>
                                 </div>
 
-                                {/*Step 4*/}
-                                <div className={`${step == 4 ? 'flex' : 'hidden'} flex-col mb-4 -mt-3`}>
+                                {/*Step 5*/}
+                                <div className={`${step == 5 ? 'flex' : 'hidden'} flex-col mb-4 -mt-3`}>
                                     <div className={`grid grid-cols-2 gap-x-6 gap-y-4`}>
                                         <div>
                                             <div className={`inline-flex space-x-3`}>
@@ -598,9 +1016,9 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                                                     </svg>
                                                                 </div>
                                                                 <div>
-                                                                    <span className={`block text-[12px] font-normal leading-3 text-[#626262] -mb-0.5`}>Compte principal</span>
+                                                                    <span className={`block text-[12px] font-normal leading-3 text-[#626262] -mb-0.5`}>{account?.name ? account?.name : (account?.isMain ? 'Compte Principal' : 'Compte')}</span>
                                                                     <span
-                                                                        className={`block text-[10px] mt-1 font-light text-[#afafaf]`}>PA48939CI</span>
+                                                                        className={`block text-[10px] mt-1 font-light text-[#afafaf]`}>{account?.coreBankId}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -610,11 +1028,11 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                                         <div className={`inline-flex flex-col`}>
                                                             <h3 className={`text-[9px] font-light text-[#afafaf] -mb-0.5`}>Solde
                                                                 actuel</h3>
-                                                            <span className={`text-[11px] font-semibold`}>{formatCFA(330000)}</span>
+                                                            <span className={`text-[11px] font-semibold`}>{formatCFA(account?.balance)}</span>
                                                         </div>
                                                         <div className={`inline-flex flex-col`}>
                                                             <h3 className={`text-[9px] font-light text-[#afafaf] -mb-0.5`}>Solde disponible</h3>
-                                                            <span className={`text-[11px] font-semibold`}>{formatCFA(3245544)}</span>
+                                                            <span className={`text-[11px] font-semibold`}>{formatCFA(account?.skaleet_balance)}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -633,9 +1051,9 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                                         <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
                                                     </Avatar>
                                                     <div className={`inline-flex flex-col`}>
-                                                        <h3 className={`text-xs font-medium`}>Didier Aney</h3>
-                                                        <span className={`text-xs text-[#626262]`}>+225 07 09 87 35 23</span>
-                                                        <span className={`text-xs -mt-[1px] text-[#626262]`}>didier.any@abba.com</span>
+                                                        <h3 className={`text-xs font-medium`}>{`${beneficiary?.firstName} ${beneficiary?.lastName}`}</h3>
+                                                        {/* <span className={`text-xs text-[#626262]`}>+225 07 09 87 35 23</span> */}
+                                                        <span className={`text-xs -mt-[1px] text-[#626262]`}>{`${beneficiary?.email}`}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -722,7 +1140,7 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
 
                                                 <div className={`w-full mt-12`}>
                                                     <div className={`relative`}>
-                                                        <Input className={`font-normal text-sm`} type={showPassword ? 'text' : 'password'}
+                                                        <Input className={`font-normal text-sm ${showConError && "border-[#e95d5d]"}`} type={showPassword ? 'text' : 'password'}
                                                                placeholder="Clé d'accès" onChange={(e) => {setAccessKey(e.target.value)}} style={{
                                                             backgroundColor: accessKey != '' ? '#fff' : '#f0f0f0',
                                                         }} />
@@ -735,6 +1153,12 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                                                 </g>
                                                             </g>
                                                         </svg>
+                                                        {
+                                                            showConError && 
+                                                            <div>
+                                                                <span className={`text-xs text-[#e95d5d] mt-1 hover:font-medium duration-200`}>{errorMessage}</span>
+                                                            </div>
+                                                        }
                                                         <Link className={`text-xs mt-1 hover:font-medium duration-200`} href={`#`}>{`J'ai perdu ma clé`}</Link>
                                                     </div>
                                                 </div>
@@ -759,25 +1183,28 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
 
 
                                 <div className={`flex justify-center items-center mb-3`}>
-                                    <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
+                                    <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 6 || confirmStep == 2 ? 'hidden' : 'block'}`} disabled={isSendLoading}>
                                         Retour
                                     </Button>
-                                    <Button onClick={() => nextStep()} className={`mt-5 w-36 text-sm ${step < 4 && step > 2  ? 'block' : 'hidden'}`}>
+                                    <Button onClick={() => nextStep()} className={`mt-5 w-36 text-sm ${step == 1  ? 'block' : 'hidden'}`}>
+                                        Suivant
+                                    </Button>
+                                    <Button onClick={() => nextStep()} className={`mt-5 w-36 text-sm ${step < 5 && step > 3  ? 'block' : 'hidden'}`}>
                                         Continuer
                                     </Button>
-                                    <Button onClick={() => {
-                                        setConfirmStep(1);
-                                        setStep(0);
-                                    }} className={`mt-5 w-[30%] text-sm ${step == 4 ? 'block' : 'hidden'}`}>
+                                    <Button onClick={handleSubmit((data) => addNewBeneficiary(data))} className={`mt-5 w-41 text-sm ${step == 3 && displayBeneficiaryForm ? 'block' : 'hidden'}`}>
+                                        Ajouter bénéficiaire
+                                    </Button>
+                                    <Button onClick={() => {initSendMoneyPayload()}} className={`mt-5 w-[30%] text-sm ${step == 5 ? 'block' : 'hidden'}`}>
                                         {`Confirmer l'envoi`}
                                     </Button>
-                                    <Button onClick={() => sendMoneyAction()} className={`mt-3 w-[30%] text-sm ${confirmStep == 1 ? 'block' : 'hidden'}`}>
-                                        {`Déverouiller`}
+                                    <Button onClick={() => sendMoneyAction()} className={`mt-3 w-[30%] text-sm ${confirmStep == 1 ? 'block' : 'hidden'}`} disabled={isSendLoading}>
+                                        {isSendLoading ? <ScaleLoader color="#fff" height={15} width={3} /> : `Déverouiller`}
                                     </Button>
                                     <DialogClose onClick={() => {
-                                        setStep(1); setPercentage('w-1/4'); setConfirmStep(0); resetSendMoneyValues();
+                                        setStep(1); setPercentage('w-1/6'); setConfirmStep(0); resetSendMoneyValues();
                                     }}>
-                                        <Button className={`mt-5 w-36 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${confirmStep == 2 ? 'block' : 'hidden'}`}>
+                                        <Button className={`mt-3 w-36 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${confirmStep == 2 ? 'block' : 'hidden'}`}>
                                             Terminer
                                         </Button>
                                     </DialogClose>
