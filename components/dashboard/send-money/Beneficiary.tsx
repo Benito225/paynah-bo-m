@@ -8,7 +8,8 @@ import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import Routes from "@/components/Routes";
 import {IUser} from "@/core/interfaces/user";
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
-import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
+import { getMerchantBeneficiaries } from "@/core/apis/beneficiary";
+import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
 interface BeneficiaryProps {
     lang: Locale,
     merchant: IUser,
@@ -75,18 +76,20 @@ export default function Beneficiary({lang, merchant}: BeneficiaryProps) {
                         </Avatar>
                     ))
                 }
-                    <button>
-                        <Avatar className={`cursor-pointer border border-[#cdcdcd] border-dashed`}>
-                            <AvatarFallback className={`bg-transparent text-[#cdcdcd]`}>
-                                <Plus className={`h-4`} />
-                            </AvatarFallback>
-                        </Avatar>
-                    </button>
+                    <BeneficiaryActions lang={lang} merchant={merchant}>
+                        <button>
+                            <Avatar className={`cursor-pointer border border-[#cdcdcd] border-dashed`}>
+                                <AvatarFallback className={`bg-transparent text-[#cdcdcd]`}>
+                                    <Plus className={`h-4`} />
+                                </AvatarFallback>
+                            </Avatar>
+                        </button>
+                    </BeneficiaryActions>
                 </div>
             </div>
-            <div className={`mt-6`}>
+            {/* <div className={`mt-6`}>
                 <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires groupés</h3>
-            </div>
+            </div> */}
         </div>
     );
 }

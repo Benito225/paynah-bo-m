@@ -44,6 +44,7 @@ import {getBankName} from "@/lib/utils";
 interface MainActionsProps {
     lang: string,
     merchant: IUser,
+    children: React.ReactNode,
 }
 
 interface IBeneficiarySchema {
@@ -57,7 +58,7 @@ interface IBeneficiarySchema {
     bankAccount: string
 }
 
-export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
+export default function BeneficiaryActions({lang, merchant, children}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{id: string, name: string}>({id: '', name: ''});
@@ -276,13 +277,7 @@ export default function BeneficiaryActions({lang, merchant}: MainActionsProps) {
         <>
             <Dialog>
                 <DialogTrigger asChild>
-                <button>
-                    <Avatar className={`cursor-pointer border border-[#cdcdcd] border-dashed`}>
-                        <AvatarFallback className={`bg-transparent text-[#cdcdcd]`}>
-                            <Plus className={`h-4`} />
-                        </AvatarFallback>
-                    </Avatar>
-                </button>
+                    {children}
                 </DialogTrigger>
                 <DialogContent className={`sm:max-w-[42rem] xl:max-w-[46rem] 2xl:max-w-[49rem] overflow-y-hidden overflow-x-hidden duration-200 !rounded-3xl bg-[#f4f4f7] px-3 py-3`}>
                     <div>
