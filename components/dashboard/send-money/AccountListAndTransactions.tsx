@@ -13,7 +13,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import TransactionsTable from "@/components/dashboard/send-money/TransactionsTable";
 import {IUser} from '@/core/interfaces/user';
-import {getMerchantBankAccounts} from "@/core/apis/bank-account";
+import {ITransaction} from '@/core/interfaces/transaction';
+import { getMerchantBankAccounts } from "@/core/apis/bank-account";
+import {getTransactions} from "@/core/apis/transaction";
 import {IAccount} from "@/core/interfaces/account";
 
 interface AccountListAndTransactionsProps {
@@ -35,6 +37,7 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
     const [balance, setBalance] = useState(0);
     const [availableBalance, setAvailableBalance] = useState(0);
     const [accounts, setAccounts] = useState([]);
+    const [transactions, setTransactions] = useState([]);
     const [isLoading, setLoading] = useState(false);
 
     function fetchMerchantBankAccounts() {
@@ -52,10 +55,26 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
         });
     }
 
+    function fecthTransactions(coreBankId: string) {
+        // @ts-ignore
+        const query = {coreBankId: coreBankId, merchantId: merchant.merchantsIds[0].id}
+        getTransactions(query, String(merchant.accessToken))
+            .then(data => {
+                console.log(data);
+                setTransactions(data ?? []);
+                setLoading(false);
+            })
+            .catch(err => {
+                setTransactions([]);
+                setLoading(false);
+            });
+    }
+
     useEffect(() => {
         fetchMerchantBankAccounts()
+        fecthTransactions("")
     }, []);
-
+    console.log(transactions)
     return (
         <div className={`flex flex-col h-full space-y-3`}>
             <div className={`account-list`}>
@@ -439,7 +458,7 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
             </div>
             <div className={`h-full`}>
                 <div className={`bg-white flex-grow rounded-3xl h-full`}>
-                    <TransactionsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount}  />
+                    <TransactionsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount} transactions={transactions} />
                 </div>
             </div>
         </div>

@@ -10,7 +10,7 @@ import {
 } from "@/components/dashboard/send-money/transactions-table-columns";
 import {useDataTable} from "@/hooks/use-data-table";
 import {TDataTable} from "@/components/dashboard/send-money/data-table/DataTable";
-
+import {ITransaction} from "@/core/interfaces/transaction";
 import { DateRange } from "react-day-picker"
 import { addDays, startOfYear, endOfDay, format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
@@ -27,20 +27,21 @@ interface TransactionsTableProps {
         status?: string
     },
     lang: string,
-    selectedAccount: string
+    selectedAccount: string,
+    transactions: ITransaction[]
 }
 
-export type TransactionsDataType = {
-    id: string
-    transactionId: string
-    date: string
-    amount: number
-    beneficiary: string
-    account: string
-    status: "pending" | "approved" | "declined"
-}
+// export type TransactionsDataType = {
+//     id: string
+//     transactionId: string
+//     date: string
+//     amount: number
+//     beneficiary: string
+//     account: string
+//     status: "pending" | "approved" | "declined"
+// }
 
-export default function TransactionsTable({ searchItems, lang, selectedAccount }: TransactionsTableProps) {
+export default function TransactionsTable({ searchItems, lang, selectedAccount, transactions }: TransactionsTableProps) {
 
     const [pSearch, setPSearch] = useState(searchItems.search ?? '');
     const [pStatus, setPStatus] = useState(searchItems.status ?? '');
@@ -49,74 +50,75 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount }
         to: searchItems.to ? new Date(searchItems.to) : endOfDay(new Date()),
     })
 
-    const data: TransactionsDataType[] = [
-        {
-            id: "1",
-            transactionId: "245653FS34S",
-            date: "2024-04-20T11:00:00",
-            amount: 3493774,
-            beneficiary: "Didier Aney",
-            account: "+225 07 77 40 41 36",
-            status: "approved"
-        },
-        {
-            id: "2",
-            transactionId: "245653FS34S",
-            date: "2023-04-20T11:00:00",
-            amount: 1493774,
-            beneficiary: "Didier Aney",
-            account: "CI059093873683764849837",
-            status: "approved"
-        },
-        {
-            id: "3",
-            transactionId: "245653FS34S",
-            date: "2024-02-20T08:00:00",
-            amount: 3493774,
-            beneficiary: "Didier Aney",
-            account: "CI059093873683764849837",
-            status: "pending"
-        },
-        {
-            id: "4",
-            transactionId: "245653FS34S",
-            date: "2024-04-20T11:00:00",
-            amount: 3493774,
-            beneficiary: "Koffi Olivier",
-            account: "+225 07 73 44 11 00",
-            status: "declined"
-        },
-        {
-            id: "5",
-            transactionId: "245653FS34S",
-            date: "2024-01-20T11:00:00",
-            amount: 3493774,
-            beneficiary: "Didier Aney",
-            account: "+225 07 77 40 41 36",
-            status: "approved"
-        },
-        {
-            id: "6",
-            transactionId: "245653FS34S",
-            date: "2024-04-20T11:00:00",
-            amount: 3493774,
-            beneficiary: "Didier Aney",
-            account: "+225 07 77 40 41 36",
-            status: "approved"
-        },
-        {
-            id: "7",
-            transactionId: "245653FS34S",
-            date: "2024-04-20T11:00:00",
-            amount: 3493774,
-            beneficiary: "Didier Aney",
-            account: "+225 07 77 40 41 36",
-            status: "approved"
-        }
-    ];
+    const data: ITransaction[] = transactions as ITransaction[]
+    // [
+    //     {
+    //         id: "1",
+    //         transactionId: "245653FS34S",
+    //         date: "2024-04-20T11:00:00",
+    //         amount: 3493774,
+    //         beneficiary: "Didier Aney",
+    //         account: "+225 07 77 40 41 36",
+    //         status: "approved"
+    //     },
+    //     {
+    //         id: "2",
+    //         transactionId: "245653FS34S",
+    //         date: "2023-04-20T11:00:00",
+    //         amount: 1493774,
+    //         beneficiary: "Didier Aney",
+    //         account: "CI059093873683764849837",
+    //         status: "approved"
+    //     },
+    //     {
+    //         id: "3",
+    //         transactionId: "245653FS34S",
+    //         date: "2024-02-20T08:00:00",
+    //         amount: 3493774,
+    //         beneficiary: "Didier Aney",
+    //         account: "CI059093873683764849837",
+    //         status: "pending"
+    //     },
+    //     {
+    //         id: "4",
+    //         transactionId: "245653FS34S",
+    //         date: "2024-04-20T11:00:00",
+    //         amount: 3493774,
+    //         beneficiary: "Koffi Olivier",
+    //         account: "+225 07 73 44 11 00",
+    //         status: "declined"
+    //     },
+    //     {
+    //         id: "5",
+    //         transactionId: "245653FS34S",
+    //         date: "2024-01-20T11:00:00",
+    //         amount: 3493774,
+    //         beneficiary: "Didier Aney",
+    //         account: "+225 07 77 40 41 36",
+    //         status: "approved"
+    //     },
+    //     {
+    //         id: "6",
+    //         transactionId: "245653FS34S",
+    //         date: "2024-04-20T11:00:00",
+    //         amount: 3493774,
+    //         beneficiary: "Didier Aney",
+    //         account: "+225 07 77 40 41 36",
+    //         status: "approved"
+    //     },
+    //     {
+    //         id: "7",
+    //         transactionId: "245653FS34S",
+    //         date: "2024-04-20T11:00:00",
+    //         amount: 3493774,
+    //         beneficiary: "Didier Aney",
+    //         account: "+225 07 77 40 41 36",
+    //         status: "approved"
+    //     }
+    // ];
     const pageCount = 2;
 
-    const columns = React.useMemo<ColumnDef<TransactionsDataType, unknown>[]>(
+    const columns = React.useMemo<ColumnDef<ITransaction, unknown>[]>(
         () => getColumns(lang),
         []
     )

@@ -11,10 +11,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {AlertTriangle, ClipboardList, RotateCw} from "lucide-react";
 import React from "react";
-import {TransactionsDataType} from "@/components/dashboard/send-money/TransactionsTable";
-import {DataTableFilterableColumn, DataTableSearchableColumn} from "@/core/interfaces";
+// import {TransactionsDataType} from "@/components/dashboard/send-money/TransactionsTable";
+import { DataTableFilterableColumn, DataTableSearchableColumn } from "@/core/interfaces";
+import { ITransaction } from '@/core/interfaces/transaction';
 
-export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
+export enum TransactionsType {
+    DEBIT = 'PAYOUT',
+    CREDIT = 'PAYIN',
+}
+
+export function getColumns(lang: string): ColumnDef<ITransaction>[] {
     return [
         // {
         //     id: "select",
@@ -45,19 +51,19 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader className={`text-xs font-normal`} column={column} title="ID Transaction" />
             ),
-            cell: ({ row }) => <div className="min-w-[6rem]">{row.getValue("transactionId")}</div>,
+            cell: ({ row }) => <div className="font-medium min-w-[6rem]">{row.getValue("transactionId")}</div>,
             enableSorting: false,
             enableHiding: false,
         },
         {
-            accessorKey: "date",
+            accessorKey: "createdAt",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Date" />
             ),
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {formatDate(row.getValue("date"), lang)}
+                        {formatDate(row.getValue("createdAt"), lang)}
                     </div>
                 )
             },
@@ -69,34 +75,34 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
             ),
             cell: ({ row }) => {
                 return (
-                    <div className="">
-                        {formatCFA(row.getValue("amount"))}
+                    <div className={`font-medium ${row.original.transaction_type.name == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>
+                        {row.original.transaction_type.name == TransactionsType.DEBIT ? '-' : ''}{formatCFA(row.getValue("amount"))}
                     </div>
                 )
             },
         },
         {
-            accessorKey: "beneficiary",
+            accessorKey: "customer_firstname",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Bénéficiaire" />
             ),
             cell: ({ row }) => {
                 return (
-                    <div className="">
-                        {row.getValue("beneficiary")}
+                    <div className={``}>
+                        {row.getValue("customer_firstname")}
                     </div>
                 )
             },
         },
         {
-            accessorKey: "account",
+            accessorKey: "number",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Compte" />
             ),
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {row.getValue("account")}
+                        {row.getValue("number")}
                     </div>
                 )
             },
@@ -108,7 +114,7 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
             ),
             cell: ({ row }) => {
                 const status = TStatus.find(
-                    (status) => status === row.original.status
+                    (status) => status === row.original.status.toLowerCase()
                 )
 
                 if (!status) return null
@@ -176,7 +182,7 @@ export const searchableColumns: DataTableSearchableColumn[] = [
     // },
 ]
 
-export const filterableColumns: DataTableFilterableColumn<TransactionsDataType>[] = [
+export const filterableColumns: DataTableFilterableColumn<ITransaction>[] = [
     {
         id: "status",
         title: "Statut de transaction",
