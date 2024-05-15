@@ -53,10 +53,12 @@ interface MainActionsProps {
     merchant: IUser,
 }
 
+const defaultAccount = { id: '', reference: '', coreBankId: '', bankAccountId: '', balance: 0, name: "", balanceDayMinus1: 0, isMain: false, skaleet_balance: 0 };
+
 export default function MainActions({lang, merchant}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
-    const [account, setAccount] = useState<IAccount>({});
+    const [account, setAccount] = useState<IAccount>(defaultAccount);
     const [beneficiary, setBeneficiary] = useState<IBeneficiary>({});
     const [existBenef, setExistBenef] = useState(true);
     const [payFees, setPayFees] = useState(false);
@@ -70,7 +72,7 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
     const [confirmStep, setConfirmStep] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
     const [accessKey, setAccessKey] = useState('');
-    const [country, setCountry] = useState('ci');
+    const [country, setCountry] = useState('');
     const [isLoading, setLoading] = useState(false);
     const [beneficiaries, setBeneficiaries] = useState([]);
     const [accounts, setAccounts] = useState([]);
@@ -324,7 +326,7 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
 
     function resetSendMoneyValues() {
         setStep(1)
-        setAccount({})
+        setAccount(defaultAccount)
         setBeneficiary({})
         setExistBenef(true)
         setPayFees(false)
@@ -649,7 +651,7 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                                                                             <FormItem>
                                                                                                 <FormControl>
                                                                                                     <div>
-                                                                                                        <Select onValueChange={field.onChange} defaultValue={'om'}>
+                                                                                                        <Select onValueChange={field.onChange} defaultValue={operator}>
                                                                                                             <SelectTrigger className={`w-[4rem] selectedItemMM h-[2.8rem] rounded-l-lg !pb-[0px] rounded-r-none border border-[#e4e4e4] pl-2.5 pr-1 font-light`} style={{
                                                                                                                 backgroundColor: field.value ? '#fff' : '#fff',
                                                                                                             }}>
