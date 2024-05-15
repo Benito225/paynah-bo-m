@@ -72,9 +72,9 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
 
     useEffect(() => {
         fetchMerchantBankAccounts()
-        fecthTransactions("")
+        // fecthTransactions("")
     }, []);
-    console.log(transactions)
+    
     return (
         <div className={`flex flex-col h-full space-y-3`}>
             <div className={`account-list`}>
@@ -458,7 +458,7 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
             </div>
             <div className={`h-full`}>
                 <div className={`bg-white flex-grow rounded-3xl h-full`}>
-                    <TransactionsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount} transactions={transactions} />
+                    <TransactionsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount} merchant={merchant} />
                 </div>
             </div>
         </div>

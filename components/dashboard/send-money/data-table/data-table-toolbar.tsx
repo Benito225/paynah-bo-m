@@ -70,13 +70,13 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                       <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`} value={'all'}>
                         Tous
                       </SelectItem>
-                      <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`} value={'pending'}>
+                      <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`} value={'Pending'}>
                         En attente
                       </SelectItem>
-                      <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`} value={'approved'}>
+                      <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`} value={'Approved'}>
                         Effectué
                       </SelectItem>
-                      <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`} value={'declined'}>
+                      <SelectItem className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`} value={'Declined'}>
                         Echoué
                       </SelectItem>
                     </SelectContent>
