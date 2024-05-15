@@ -113,14 +113,14 @@ export function getColumns(lang: string): ColumnDef<ITransaction>[] {
                 <DataTableColumnHeader className={`text-xs font-normal`} column={column} title="Statut" />
             ),
             cell: ({ row }) => {
-                const status = TStatus.find(
-                    (status) => status === row.original.status.toLowerCase()
-                )
+                // const status = TStatus.find(
+                //     (status) => status === row.original.status.toLowerCase()
+                // )
 
-                if (!status) return null
+                // if (!status) return null
 
                 return (
-                    <div className="" dangerouslySetInnerHTML={{__html: getStatusBadge(status)}}></div>
+                    <div className="" dangerouslySetInnerHTML={{__html: getStatusBadge(row.original.status)}}></div>
                 )
             },
             filterFn: (row, id, value) => {
