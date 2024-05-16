@@ -263,7 +263,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
                         <div className={`mb-4 mt-3`}>
                             <div className={`flex justify-between items-center`}>
                                 <div className={`inline-flex items-center`}>
-                                    <h1 className={`text-2xl font-medium mr-4`}>Historique des transactions</h1>
+                                    <h1 className={`text-xl font-medium mr-4`}>Historique des transactions</h1>
                                 </div>
                                 <div>
                                     <Button onClick={() => exportTransactionsData()} className={`px-6 text-xs inline-flex space-x-2 items-center`} disabled={isExportDataLoading}>

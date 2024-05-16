@@ -22,6 +22,8 @@ import {Input} from "@/components/ui/input";
 import {IUser} from "@/core/interfaces/user";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import TransactionsTable from "@/components/dashboard/points-of-sale/TransactionsTable";
+import AddTerminal from "@/components/dashboard/points-of-sale/modals/AddTerminal";
+import AddOnlinePointOfSale from "@/components/dashboard/points-of-sale/modals/AddOnlinePointOfSale";
 
 interface PointOfSaleListAndOperationsProps {
     lang: Locale,
@@ -34,7 +36,8 @@ interface PointOfSaleListAndOperationsProps {
         to?: string,
         status?: string,
     },
-    merchant: IUser
+    merchant: IUser,
+    bankAccountsRes?: any
 }
 
 export enum PointsOfSaleStatus {
@@ -42,7 +45,7 @@ export enum PointsOfSaleStatus {
     INACTIVE = "INACTIVE",
 }
 
-export default function PointOfSaleListAndOperations({lang, searchItems, merchant}: PointOfSaleListAndOperationsProps) {
+export default function PointOfSaleListAndOperations({lang, searchItems, merchant, bankAccountsRes}: PointOfSaleListAndOperationsProps) {
     const [selectedAccount, setSelectedAccount] = useState('all');
     const [pSearch, setPSearch] = useState('');
     const [pTpe, setPTpe] = useState('all');
@@ -73,7 +76,7 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
     ];
 
     const Services = [
-        {key: 'all', value: 'Points en ligne'},
+        {key: 'all', value: 'Points de vente en ligne'},
         {key: 'id', value: 'Service 1'},
     ];
 
@@ -81,20 +84,16 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
         <div className={`flex flex-col h-full space-y-3`}>
             <div className={`account-list`}>
                 <div className={`mb-4 mt-3`}>
-                    <div className={`flex flex-col 2xl:flex-row 2xl:justify-between items-start 2xl:items-center space-y-2 2xl:space-y-0`}>
-                        <div className={`inline-flex items-center`}>
-                            <h1 className={`text-lg font-medium mr-4`}>Points de vente (7)</h1>
+                    <div
+                        className={`flex flex-col 2xl:flex-row 2xl:justify-between items-start 2xl:items-center space-y-2 2xl:space-y-0`}>
+                        <div className={`inline-flex items-center w-[20%]`}>
+                            <h1 className={`text-xl font-medium mr-4 whitespace-nowrap`}>Points de vente (7)</h1>
                         </div>
-                        <div className={`flex items-center w-full 2xl:w-auto justify-between space-x-3`}>
+                        <div className={`flex items-center w-full 2xl:w-[80%] justify-between space-x-3`}>
                             <Form {...filterableForm}>
                                 <form className={`w-full`} action="#">
-                                    {/*<div className={`relative w-[100%] 2xl:w-auto`}>*/}
-                                    {/*    <Input value={pSearch} type={`text`} className={`font-normal pl-9 bg-white text-sm rounded-full h-[2.8rem] w-[18rem] 2xl:w-[20rem]`}*/}
-                                    {/*           placeholder="Recherche" onChange={(e) => setPSearch(e.target.value)}/>*/}
-                                    {/*    <Search className={`absolute h-4 w-4 top-3.5 left-3`} />*/}
-                                    {/*</div>*/}
-                                    <div className={`grid grid-cols-7 gap-2`}>
-                                        <div className={`col-span-2`}>
+                                    <div className={`flex space-x-3 items-center`}>
+                                        <div className={`w-[38%]`}>
                                             <div className={`relative`}>
                                                 <Input value={pSearch} type={`text`}
                                                        className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.5rem] w-full`}
@@ -103,7 +102,7 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
                                                 <Search className={`absolute h-4 w-4 top-3 left-3`}/>
                                             </div>
                                         </div>
-                                        <div>
+                                        <div className={`w-[15%]`}>
                                             <Select onValueChange={(value) => setPTpe(value)} defaultValue={pTpe}>
                                                 <SelectTrigger
                                                     className={`w-full text-xs h-[2.5rem] rounded-full bg-white border border-[#e4e4e4] font-normal [&>span]:text-left`}>
@@ -120,12 +119,12 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
                                                 </SelectContent>
                                             </Select>
                                         </div>
-                                        <div>
+                                        <div className={`w-[20%]`}>
                                             <Select onValueChange={(value) => setPServices(value)}
                                                     defaultValue={pServices}>
                                                 <SelectTrigger
                                                     className={`w-full text-xs h-[2.5rem] rounded-full bg-white border border-[#e4e4e4] font-normal [&>span]:text-left`}>
-                                                    <SelectValue placeholder="Point en ligne"/>
+                                                    <SelectValue placeholder="Point de vente en ligne"/>
                                                 </SelectTrigger>
                                                 <SelectContent className={`bg-[#f0f0f0]`}>
                                                     {Services.map((item, index) => (
@@ -138,7 +137,7 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
                                                 </SelectContent>
                                             </Select>
                                         </div>
-                                        <div>
+                                        <div className={`w-[10%]`}>
                                             <Select onValueChange={(value) => setPStatus(value)} defaultValue={pStatus}>
                                                 <SelectTrigger
                                                     className={`w-full text-xs h-[2.5rem] rounded-full bg-white border border-[#e4e4e4] font-normal [&>span]:text-left`}>
@@ -155,15 +154,19 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
                                                 </SelectContent>
                                             </Select>
                                         </div>
-                                        <div className={`flex justify-end items-center space-x-1 col-span-2`}>
-                                            <Button type={"button"} className={`h-[2.5rem] items-center text-xs`}>
-                                                <PlusCircle className={`h-4 w-4 mr-2`}/>
-                                                <span>Terminal de paiement</span>
-                                            </Button>
-                                            <Button type={"button"}  className={`h-[2.5rem] items-center text-xs`}>
-                                                <PlusCircle className={`h-4 w-4 mr-2`}/>
-                                                <span>Point en ligne</span>
-                                            </Button>
+                                        <div className={`flex justify-end items-center w-auto space-x-2`}>
+                                            <AddTerminal lang={lang} merchant={merchant} bankAccountsRes={bankAccountsRes}>
+                                                <Button type={"button"} className={`h-[2.5rem] items-center text-xs`}>
+                                                    <PlusCircle className={`h-4 w-4 mr-2`}/>
+                                                    <span>Terminal de paiement</span>
+                                                </Button>
+                                            </AddTerminal>
+                                            <AddOnlinePointOfSale lang={lang} merchant={merchant} bankAccountsRes={bankAccountsRes}>
+                                                <Button type={"button"} className={`h-[2.5rem] items-center text-xs`}>
+                                                    <PlusCircle className={`h-4 w-4 mr-2`}/>
+                                                    <span>Point de vente en ligne</span>
+                                                </Button>
+                                            </AddOnlinePointOfSale>
                                         </div>
                                     </div>
                                 </form>

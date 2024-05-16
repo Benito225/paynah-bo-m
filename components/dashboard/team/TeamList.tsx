@@ -39,7 +39,7 @@ export default function TeamList({lang, searchItems, merchant}: TeamListProps) {
                 <div className={`mb-4 mt-3`}>
                     <div className={`flex flex-col md:flex-row md:justify-between items-start md:items-center space-y-2 md:space-y-0`}>
                         <div className={`inline-flex items-center`}>
-                            <h1 className={`text-lg font-medium mr-4`}>Gestion des utilisateurs</h1>
+                            <h1 className={`text-xl font-medium mr-4`}>Gestion des utilisateurs</h1>
                         </div>
                         <AddMember merchant={merchant} lang={lang}>
                             <Button type={"button"} className={`h-[2.5rem] items-center text-xs`}>

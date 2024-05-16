@@ -9,6 +9,7 @@ import Routes from "@/components/Routes";
 import {ChevronRight} from "lucide-react";
 import SupportShortcut from "@/components/dashboard/serenity-space/SupportShortcut";
 import PointOfSaleListAndOperations from "@/components/dashboard/points-of-sale/PointOfSaleListAndOperations";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 
 export interface PointsOfSaleProps {
     searchParams: SearchParams,
@@ -27,6 +28,8 @@ export default async function PointsOfSalePage({params: { lang }, searchParams}:
         merchant = {} as IUser;
     }
 
+    const bankAccountsRes = await getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken));
+
     return (
         <>
             <div className={`max-w-screen-2xl 2xl:max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 h-full flex flex-col`}>
@@ -43,7 +46,7 @@ export default async function PointsOfSalePage({params: { lang }, searchParams}:
                     </div>
                 </div>
                 <div className={`gap-3 mt-2.5 flex-grow`}>
-                    <PointOfSaleListAndOperations lang={lang} searchItems={searchItems} merchant={merchant} />
+                    <PointOfSaleListAndOperations lang={lang} searchItems={searchItems} merchant={merchant} bankAccountsRes={bankAccountsRes} />
                 </div>
             </div>
         </>
