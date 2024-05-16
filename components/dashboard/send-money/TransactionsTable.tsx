@@ -15,7 +15,9 @@ import {IUser} from "@/core/interfaces/user";
 import { DateRange } from "react-day-picker"
 import { addDays, startOfYear, endOfDay, format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
-import { getFilterableTransactions, getTransactions} from "@/core/apis/transaction";
+import { getFilterableTransactions, getTransactions } from "@/core/apis/transaction";
+import toast from "react-hot-toast";
+import {downloadFile} from "@/core/apis/download-file";
 interface TransactionsTableProps {
     searchItems: {
         per_page: number;
@@ -46,9 +48,10 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
     let currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 1);
 
+    const [isLoading, setLoading] = useState(false);
+    const [isExportDataLoading, setExportDataLoading] = useState(false);
     const [pSearch, setPSearch] = useState(searchItems.search ?? '');
     const [pStatus, setPStatus] = useState(searchItems.status ?? '');
-    const [isLoading, setLoading] = useState(false);
     const [transactions, setTransactions] = useState<ITransaction[]>([]);
     const [transactionsPagination, setTransactionsPagination] = useState<any>();
     const [date, setDate] = React.useState<DateRange | undefined>({
@@ -73,8 +76,32 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
     const formatEndPeriod = endPeriod.toLocaleDateString('en-GB');
     const url = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false`;
 
+    const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&search=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true`;
+    const exportTransactionsData = (e: any) => {
+        setExportDataLoading(true);
+        e.preventDefault();
+        downloadFile(urlDownload, String(merchant.accessToken), false)
+            .then(response => response.blob())
+            .then(blob => {
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                // a.download = 'data.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                setExportDataLoading(false);
+            }).catch(err => {
+            setExportDataLoading(false);
+
+            return toast.error(err.message, {
+                className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+            });
+        });
+    }
+
     useEffect(() => {
-        // fecthTransactions("");
         setLoading(true);
         // console.log(url);
         getFilterableTransactions(url, query, String(merchant.accessToken))
@@ -128,6 +155,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
                 date={date}
                 setDate={setDate}
                 lang={lang}
+                exportTransactionsData={exportTransactionsData}
             />
         </div>
     );
