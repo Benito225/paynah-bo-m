@@ -30,9 +30,10 @@ interface DataTableToolbarProps<TData> {
   date: DateRange | undefined,
   setDate: (value: (((prevState: (DateRange | undefined)) => (DateRange | undefined)) | DateRange | undefined)) => void,
   lang: string
+  exportTransactionsData: (e: any) => void,
 }
 
-export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, exportTransactionsData }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
   const [isDeletePending, startDeleteTransition] = React.useTransition()
 
@@ -125,7 +126,7 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                 </div>
 
                 <div className={`w-[20%] 2xl:w-auto`}>
-                  <Button className={`text-xs inline-flex w-full 2xl:w-32 items-center space-x-2`}>
+                <Button onClick={(e) => { exportTransactionsData(e);  console.log('alert')}} className={`text-xs inline-flex w-full 2xl:w-32 items-center space-x-2`}>
                     <svg className={`h-4 w-4`} viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>

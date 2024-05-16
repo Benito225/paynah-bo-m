@@ -76,9 +76,10 @@ interface TDataTableProps<TData, TValue> {
     setDate: (value: (((prevState: (DateRange | undefined)) => (DateRange | undefined)) | DateRange | undefined)) => void,
     lang: string,
     isLoading?: boolean
+    exportTransactionsData: (e: any) => void,
 }
 
-export function TDataTable<TData, TValue>({ table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, isLoading }: TDataTableProps<TData, TValue>) {
+export function TDataTable<TData, TValue>({ table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, isLoading, exportTransactionsData }: TDataTableProps<TData, TValue>) {
     
     const defaultOptions = {
         loop: true,
@@ -102,6 +103,7 @@ export function TDataTable<TData, TValue>({ table, columns, searchableColumns = 
                 lang={lang}
                 newRowLink={newRowLink}
                 deleteRowsAction={deleteRowsAction}
+                exportTransactionsData={exportTransactionsData}
             />
             <div className="">
                 {isLoading ? <div className={`flex justify-center items-center border border-[#f0f0f0] rounded h-[24rem]`}>
