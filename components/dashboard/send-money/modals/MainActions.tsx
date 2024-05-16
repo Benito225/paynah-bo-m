@@ -416,8 +416,7 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
 
     }, [amount, payFees]);
 
-    // console.log(accounts);
-    // console.log(sendMoneyForm.getValues('amount'));
+        console.log(beneficiaries, merchant.merchantsIds[0].id);
 
     return (
         <>
@@ -493,10 +492,10 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                                                     <RadioGroup
                                                                         onValueChange={field.onChange}
                                                                         defaultValue={field.value}
-                                                                        className="flex items-center justify-between gap-0 rounded-lg !bg-[#f0f0f0] p-1 2xl:p-1 flex-row"
+                                                                        className="flex items-center justify-between gap-0 rounded-lg !bg-[#f0f0f0] p-2 2xl:p-2 flex-row"
                                                                     >
                                                                         <FormItem onClick={() => triggerRadio('direct')} className="flex-1 items-center justify-center space-y-0">
-                                                                            <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'direct' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10px] 2xl:text-[11px] font-medium px-1 2xl:px-2 py-1.5`}>
+                                                                            <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'direct' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10px] 2xl:text-[11px] font-medium px-1 2xl:px-2 py-3`}>
                                                                                 <svg className={`w-[.7rem] mr-1`} viewBox="0 0 44.203 44.203">
                                                                                     <defs>
                                                                                         <clipPath id="clip-path2">
@@ -514,12 +513,12 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
                                                                                         </g>
                                                                                     </g>
                                                                                 </svg>
-                                                                                <span>Direct</span>
+                                                                                <span className="text-sm">Direct</span>
                                                                             </button>
                                                                         </FormItem>
                                                                         <FormItem onClick={() => triggerRadio('mm')} className="flex-1 items-center justify-center space-y-0">
-                                                                            <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'mm' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10px] 2xl:text-[11px] font-medium px-1 2xl:px-2 py-1.5`}>
-                                                                                <span>Mobile Money</span>
+                                                                            <button type={"button"} className={`w-full flex items-center justify-center rounded-lg ${field.value == 'mm' ? 'bg-white text-black' : 'text-[#64758b]'} whitespace-nowrap text-[10px] 2xl:text-[11px] font-medium px-1 2xl:px-2 py-3`}>
+                                                                                <span className="text-sm">Mobile Money</span>
                                                                             </button>
                                                                         </FormItem>
                                                                         {/* <FormItem onClick={() => triggerRadio('bank')} className="flex-1 items-center justify-center space-y-0">
