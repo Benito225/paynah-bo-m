@@ -12,12 +12,13 @@ import {Form} from "@/components/ui/form";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import { CalendarIcon, Search} from "lucide-react";
+import { CalendarIcon, RotateCcw, Search} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {DateRange} from "react-day-picker";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {format} from "date-fns";
 import {Calendar} from "@/components/ui/calendar";
+import Routes from "@/components/Routes";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>,
@@ -135,6 +136,11 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                     </svg>
                     <span>Exporter</span>
                   </Button>
+                </div>
+                <div className={`flex items-center justify-end`}>
+                  <a className={``} href={`${Routes.dashboard.sendMoney.replace('{lang}', lang)}`}>
+                    <RotateCcw strokeWidth={2.5} className="text-[#D3D3D3] w-6 h-6" />
+                  </a>
                 </div>
 
               </div>
