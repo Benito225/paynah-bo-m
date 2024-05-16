@@ -60,6 +60,8 @@ interface IBeneficiarySchema {
 
 export default function BeneficiaryActions({lang, merchant, children}: MainActionsProps) {
 
+    const divOptionsRef = useRef<HTMLDivElement | null>(null);
+
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{id: string, name: string}>({id: '', name: ''});
     const [beneficiary, setBeneficiary] = useState<{id: string, name: string}>({id: '', name: ''});
@@ -206,6 +208,11 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
     }
 
     const addBeneficiaryItems = (data: any) => {
+        if (divOptionsRef.current) {
+            divOptionsRef?.current.scrollIntoView({behavior: 'smooth'})
+        } else {
+            console.log(divOptionsRef.current);
+        }
         try {
             formSchema.parse(data); // Valider les données
             setBeneficiaries([...beneficiaries, data]);
@@ -294,7 +301,8 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                         </div>
                     </div>
 
-                    <div className={`min-h-[6rem] pt-2 pb-4 px-8`}>
+                    <div className={`max-h-[32rem] overflow-y-scroll pt-2 pb-4 px-8`}>
+                    {/* <div className={`min-h-[6rem] pt-2 pb-4 px-8`}> */}
 
                         <Form {...beneficiaryForm}>
                             <form onSubmit={undefined} className={`${step == 2 && 'hidden'} space-y-5 gap-6`}>
@@ -368,7 +376,7 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                                                     />
                                         </div>
                                 </div>
-                                <div className={`justify-start grid grid-cols-3 gap-5 ${beneficiaries.length > 0 && `h-[90px]`} overflow-y-auto`}>
+                                <div className={`justify-start grid grid-cols-3 gap-5 overflow-y-auto`} ref={divOptionsRef}>
                                         {
                                             beneficiaries && beneficiaries.map((beneficiary: IBeneficiarySchema, index: number) => (
                                             <div key={index}
@@ -429,7 +437,7 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                                                     </div>
                                                     <FormControl>
                                                         <div>
-                                                            <Select onValueChange={(value) => { field.onChange(value); handleChangeAccountType(value); }} defaultValue={field.value}>
+                                                            <Select onValueChange={(value) => { field.onChange(value); handleChangeAccountType(value); }} defaultValue={'field.value'}>
                                                                 <SelectTrigger className={`w-full ${showConError && "!border-[#e95d5d]"} px-4 font-light text-sm ${showConError && "border-[#e95d5d]"}`} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                                 }}>

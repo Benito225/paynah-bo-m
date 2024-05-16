@@ -71,14 +71,15 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
     const endPeriod = new Date(query.to ?? "");
     const formatStartPeriod = startPeriod.toLocaleDateString('en-GB');
     const formatEndPeriod = endPeriod.toLocaleDateString('en-GB');
-    const url = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&search=${query.search ?? ""}&status=${query.status ?? ""}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false`;
+    const url = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false`;
 
     useEffect(() => {
         // fecthTransactions("");
-        console.log(url);
+        setLoading(true);
+        // console.log(url);
         getFilterableTransactions(url, query, String(merchant.accessToken))
             .then(res => {
-                console.log(res.data);
+                // console.log(res.data);
                 setLoading(false);
                 setTransactions(res.data ?? []);
                 setTransactionsPagination(res.pagination ?? {});
@@ -88,7 +89,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
                 setTransactions([]);
                 setTransactionsPagination({});
             });
-    }, [pStatus, date, pSearch]);
+    }, [searchItems, pStatus, date, pSearch]);
 
     const data = transactions;
     const pageCount = transactionsPagination?.totalPages ?? 1;
@@ -116,6 +117,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
     return (
         <div>
             <TDataTable
+                isLoading={isLoading}
                 table={table}
                 columns={columns}
                 selectedAccount={selectedAccount}
