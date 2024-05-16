@@ -76,10 +76,10 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
     useEffect(() => {
         // fecthTransactions("");
         setLoading(true);
-        console.log(url);
+        // console.log(url);
         getFilterableTransactions(url, query, String(merchant.accessToken))
             .then(res => {
-                console.log(res.data);
+                // console.log(res.data);
                 setLoading(false);
                 setTransactions(res.data ?? []);
                 setTransactionsPagination(res.pagination ?? {});
