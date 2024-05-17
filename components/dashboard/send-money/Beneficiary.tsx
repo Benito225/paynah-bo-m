@@ -48,7 +48,7 @@ export default function Beneficiary({lang, merchant}: BeneficiaryProps) {
     }
 
     useEffect(() => {
-        //fetchMerchantBeneficiaries();
+        fetchMerchantBeneficiaries();
     }, []);
     console.log(beneficiaries, merchant.merchantsIds[0].id);
 
