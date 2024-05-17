@@ -20,12 +20,15 @@ import {NumericFormat} from "react-number-format";
 import {Checkbox} from "@/components/ui/checkbox";
 import Link from "next/link";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
+import { IUser } from "@/core/interfaces/user";
 
 interface MainActionsProps {
-    lang: string
+    lang: string,
+    merchant: IUser,
 }
 
-export default function MainActions({lang}: MainActionsProps) {
+export default function MainActions({lang, merchant}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{id: string, name: string}>({id: '', name: ''});
@@ -835,9 +838,11 @@ export default function MainActions({lang}: MainActionsProps) {
                     </div>
                 </DialogContent>
             </Dialog>
-            <Button className={`w-full text-black border border-black bg-transparent py-6 hover:text-white `}>
-                {`Ajouter un destinataire`}
-            </Button>
+            <BeneficiaryActions lang={lang} merchant={merchant}>
+                <Button className={`w-full text-black border border-black bg-transparent py-6 hover:text-white `}>
+                    {`Ajouter un destinataire`}
+                </Button>
+            </BeneficiaryActions>
         </>
     );
 }
