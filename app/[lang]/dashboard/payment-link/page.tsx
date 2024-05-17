@@ -8,6 +8,8 @@ import SupportShortcut from "@/components/dashboard/serenity-space/SupportShortc
 import MainActions from "@/components/dashboard/payment-link/modals/MainActions";
 import Recipients from "@/components/dashboard/payment-link/Recipients";
 import AccountListAndTransactions from "@/components/dashboard/payment-link/AccountListAndTransactions";
+import {auth, signOut} from "@/auth";
+import {IUser} from "@/core/interfaces/user";
 
 export interface PaymentLinkProps {
     searchParams: SearchParams,
@@ -16,6 +18,15 @@ export interface PaymentLinkProps {
 
 export default async function PaymentLinkPage({params: { lang }, searchParams}: PaymentLinkProps) {
     const searchItems = searchParamsSchema.parse(searchParams);
+
+    const session = await auth();
+    
+    let merchant;
+    if (session && session.user) {
+        merchant = session.user as IUser;
+    } else {
+        merchant = {} as IUser;
+    }
 
     return (
         <>
@@ -41,7 +52,7 @@ export default async function PaymentLinkPage({params: { lang }, searchParams}: 
                         </div>
                     </div>
                     <div className={`w-[72%] 2xl:w-[74%]`}>
-                        <AccountListAndTransactions lang={lang} searchItems={searchItems} />
+                        <AccountListAndTransactions lang={lang} searchItems={searchItems} merchant={merchant} />
                     </div>
                 </div>
             </div>
