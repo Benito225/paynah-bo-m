@@ -190,7 +190,7 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
             </div>
             <div className={`h-full`}>
                 <div className={`bg-white flex-grow rounded-3xl h-full`}>
-                    <TransactionsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount}  />
+                    <TransactionsTable searchItems={searchItems} lang={lang} selectedAccount={selectedAccount}  merchant={merchant}/>
                 </div>
             </div>
         </div>
