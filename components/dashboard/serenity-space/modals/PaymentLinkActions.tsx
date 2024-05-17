@@ -16,7 +16,8 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Banknote, ClipboardList, Goal, Pencil, Search, SquarePen, Trash2, X} from "lucide-react";
+import { Banknote, ClipboardList, Goal, Pencil, Search, SquarePen, Trash2, X } from "lucide-react";
+import { ScaleLoader } from "react-spinners";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {formatCFA} from "@/lib/utils";
@@ -69,7 +70,8 @@ export default function PaymentLinkActions({paymentLink, beneficiaries, merchant
     const [showConError, setShowConError] = useState(false);
     const [bankAccountId, setBankAccountId] = useState('');
     const [operator, setOperator] = useState('');
-    const [paymentLinkToShare, setPaymentLinkToShare] = useState('aaa');
+    const [paymentLinkToShare, setPaymentLinkToShare] = useState('');
+    const [isSendLoading, setIsSendLoading] = useState(false);
 
     const formSchema = z.object({
         lastName: z.string().min(2, {message: 'veuillez saisir votre nom'}),
@@ -181,6 +183,7 @@ export default function PaymentLinkActions({paymentLink, beneficiaries, merchant
 
     const sendPaymentLinkToRecipient = async () => {
         // @ts-ignore
+        setIsSendLoading(true);
         const payload = {
             bankAccountId: bankAccountId,
             firstName: beneficiary.firstName,
@@ -194,6 +197,7 @@ export default function PaymentLinkActions({paymentLink, beneficiaries, merchant
         if(isAuthenticate){
             generateQuickPaymentLink(payload, String(merchant?.merchantsIds[0]?.id), String(merchant.accessToken))
             .then(data => {
+                    setIsSendLoading(false);
                 console.log(data);
                 if (data.success) {
                     setErrorMessage('');
@@ -207,11 +211,13 @@ export default function PaymentLinkActions({paymentLink, beneficiaries, merchant
                 }
             })
             .catch(() => {
+                setIsSendLoading(false);
                 return toast.error('Une erreur est survénue', {
                     className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
                 });
             });
         }
+        setIsSendLoading(false);
     }
 
     const authenticateMerchant = async (password: string) => {
@@ -631,7 +637,7 @@ export default function PaymentLinkActions({paymentLink, beneficiaries, merchant
 
 
                                 <div className={`flex justify-center items-center mb-3`}>
-                                    <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
+                                    <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`} disabled={isSendLoading}>
                                         Retour
                                     </Button>
                                     <Button onClick={handleSubmit((data) => addNewBeneficiary(data))} className={`mt-5 w-42 text-sm ${(step == 1 && displayBeneficiaryForm) ? 'block' : 'hidden'}`}>
@@ -642,8 +648,8 @@ export default function PaymentLinkActions({paymentLink, beneficiaries, merchant
                                     </Button>
                                     <Button onClick={() => {
                                         sendPaymentLinkToRecipient();
-                                    }} className={`mt-5 w-[30%] text-sm ${step == 3 ? 'block' : 'hidden'}`}>
-                                        {`Valider`}
+                                    }} className={`mt-5 w-[30%] text-sm ${step == 3 ? 'block' : 'hidden'}`} disabled={isSendLoading}>
+                                        {isSendLoading ? <ScaleLoader color="#fff" height={15} width={3} /> : `Valider`}
                                     </Button>
                                     <Button onClick={() => {setStep(1); setPercentage('w-1/4'); resetSendPaymentLink();}} className={`mt-3 w-48 text-sm ${step == 4 ? 'block' : 'hidden'}`}>
                                         {`Terminer`}
