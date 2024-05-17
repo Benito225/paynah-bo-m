@@ -48,7 +48,7 @@ export default async function PaymentLinkPage({params: { lang }, searchParams}: 
                             <div className={`flex flex-col space-y-2.5`}>
                                <MainActions lang={lang} />
                             </div>
-                            <Recipients lang={lang} />
+                            <Recipients lang={lang} merchant={merchant}/>
                         </div>
                     </div>
                     <div className={`w-[72%] 2xl:w-[74%]`}>
