@@ -378,11 +378,14 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                             {/*Step 2*/}
                             <div className={`${step == 2 ? 'flex' : 'hidden'} items-center justify-between space-x-3`}>
                                 <h3 className={`text-sm font-medium`}>2- Choisissez le bénéficiaire</h3>
-                                <div className={`relative`}>
+                                {
+                                    !displayBeneficiaryForm &&
+                                    <div className={`relative`}>
                                     <Input type={`text`} className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-[15rem]`}
                                            placeholder="Recherchez un bénéficiaire" onChange={(e) => console.log(e.target.value) }/>
                                     <Search className={`absolute h-4 w-4 top-3.5 left-3`} />
                                 </div>
+                                }
                             </div>
                             <div className={`mt-4`}>
                                 {/*Step 1*/}
