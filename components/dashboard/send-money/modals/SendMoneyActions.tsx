@@ -607,7 +607,7 @@ export default function SendMoneyActions({lang, merchant, children}: MainActions
                                                         )}
                                                         />
                                                     </div>
-                                                    <div className={'w-full'}>
+                                                    <div className={'w-full relative bg-red-400 flex items-center justify-center'}>
                                                         <FormField
                                                         control={sendMoneyForm.control}
                                                             name="mmAccountNumber"
@@ -619,7 +619,6 @@ export default function SendMoneyActions({lang, merchant, children}: MainActions
                                                                     <FormControl>
                                                                         <div>
                                                                             <div className="relative">
-                                                                                {/*<input type="text" id="mmAccountNumber" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
                                                                                 <PhoneInput
                                                                                     {...field}
                                                                                     className={`mt-[.5rem] op-tel`}
@@ -638,9 +637,6 @@ export default function SendMoneyActions({lang, merchant, children}: MainActions
                                                                                     hideDropdown={true}
                                                                                     placeholder=" "
                                                                                 />
-                                                                                {/* <label htmlFor="mmAccountNumber"
-                                                                                       className={`primary-form-label !-translate-y-3.5 !bg-white peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-4`}>Numéro de compte
-                                                                                </label> */}
                                                                                 <div className={`absolute top-0 left-0`}>
                                                                                     <FormField
                                                                                         control={sendMoneyForm.control}
