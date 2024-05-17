@@ -4,7 +4,8 @@ import {Locale} from "@/i18n.config";
 import React, {useState, useEffect} from "react";
 import {AlertTriangle, ChevronRight, ClipboardList, Plus, RotateCw, Send} from "lucide-react";
 import Link from "next/link";
-import {Avatar, AvatarFallback} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Routes from "@/components/Routes";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -61,7 +62,7 @@ export default function Recipients({lang, merchant}: RecipientsProps) {
             <div className={`flex items-center justify-between pb-1.5 border-dashed`}>
                 <h2 className={`font-medium text-base 2xl:text-lg`}>Destinataires enregistrés</h2>
                 <div>
-                    <Link className={`inline-flex text-xs text-[#909090] hover:underline duration-200 mb-1`} href={`#`}>
+                    <Link className={`inline-flex text-xs text-[#909090] hover:underline duration-200 mb-1`} href={Routes.dashboard.beneficiaries.replace('{lang}', lang)}>
                         <span>Voir tout</span>
                         <ChevronRight className={`h-4 w-auto`} />
                     </Link>
