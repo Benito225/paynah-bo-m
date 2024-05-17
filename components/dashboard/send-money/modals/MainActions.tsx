@@ -62,7 +62,7 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
         <>
             
             <SendMoneyActions lang={lang} merchant={merchant}>
-                <Button className={`w-full text-black border border-black bg-transparent py-6 hover:text-white `}>
+                <Button className={`w-full py-6`}>
                     {`Envoyez de l'argent`}
                 </Button>
             </SendMoneyActions>
