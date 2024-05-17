@@ -77,7 +77,7 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
                 <div className={`mb-4 mt-3`}>
                     <div className={`flex justify-between items-center`}>
                         <div className={`inline-flex items-center`}>
-                            <h1 className={`text-xl font-medium mr-4`}>Compte (4)</h1>
+                            <h1 className={`text-xl font-medium mr-4`}>Compte ({accounts.length})</h1>
                             <Form {...filterableForm}>
                                 <form action="#">
                                     <div className={`relative w-[100%] 2xl:w-auto`}>
