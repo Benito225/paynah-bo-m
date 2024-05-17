@@ -607,7 +607,7 @@ export default function SendMoneyActions({lang, merchant, children}: MainActions
                                                         )}
                                                         />
                                                     </div>
-                                                    <div className={'w-full relative bg-red-400 flex items-center justify-center'}>
+                                                    <div className={'w-full relative flex items-center justify-center'}>
                                                         <FormField
                                                         control={sendMoneyForm.control}
                                                             name="mmAccountNumber"
