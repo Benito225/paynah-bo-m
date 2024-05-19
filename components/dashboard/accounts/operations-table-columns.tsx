@@ -12,9 +12,15 @@ import {
 import {AlertTriangle, ClipboardList, RotateCw} from "lucide-react";
 import React from "react";
 import {OperationsDataType} from "@/components/dashboard/accounts/OperationsTable";
-import {DataTableFilterableColumn, DataTableSearchableColumn} from "@/core/interfaces";
+import { DataTableFilterableColumn, DataTableSearchableColumn } from "@/core/interfaces";
+import { ITransaction } from "@/core/interfaces/transaction";
 
-export function getColumns(lang: string): ColumnDef<OperationsDataType>[] {
+export enum TransactionsType {
+    DEBIT = 'PAYOUT',
+    CREDIT = 'PAYIN',
+}
+
+export function getColumns(lang: string): ColumnDef<ITransaction>[] {
     return [
         // {
         //     id: "select",
@@ -50,14 +56,14 @@ export function getColumns(lang: string): ColumnDef<OperationsDataType>[] {
             enableHiding: false,
         },
         {
-            accessorKey: "date",
+            accessorKey: "createdAt",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Date" />
             ),
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {formatDate(row.getValue("date"), lang)}
+                        {formatDate(row.getValue("createdAt"), lang)}
                     </div>
                 )
             },
@@ -69,8 +75,8 @@ export function getColumns(lang: string): ColumnDef<OperationsDataType>[] {
             ),
             cell: ({ row }) => {
                 return (
-                    <div className="">
-                        {formatCFA(row.getValue("amount"))}
+                    <div className={`font-medium ${row.original.transaction_type.name == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>
+                        {row.original.transaction_type.name == TransactionsType.DEBIT ? '-' : ''}{formatCFA(row.getValue("amount"))}
                     </div>
                 )
             },
@@ -82,21 +88,21 @@ export function getColumns(lang: string): ColumnDef<OperationsDataType>[] {
             ),
             cell: ({ row }) => {
                 return (
-                    <div className="">
-                        {row.getValue("beneficiary")}
+                    <div className={``}>
+                        {`${row.original.customer_firstname} ${row.original.customer_lastname}`}
                     </div>
                 )
             },
         },
         {
-            accessorKey: "account",
+            accessorKey: "number",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Compte" />
             ),
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {row.getValue("account")}
+                        {row.getValue("number")}
                     </div>
                 )
             },
@@ -107,14 +113,14 @@ export function getColumns(lang: string): ColumnDef<OperationsDataType>[] {
                 <DataTableColumnHeader className={`text-xs font-normal`} column={column} title="Statut" />
             ),
             cell: ({ row }) => {
-                const status = TStatus.find(
-                    (status) => status === row.original.status
-                )
+                // const status = TStatus.find(
+                //     (status) => status === row.original.status.toLowerCase()
+                // )
 
-                if (!status) return null
+                // if (!status) return null
 
                 return (
-                    <div className="" dangerouslySetInnerHTML={{__html: getStatusBadge(status)}}></div>
+                    <div className="" dangerouslySetInnerHTML={{__html: getStatusBadge(row.original.status)}}></div>
                 )
             },
             filterFn: (row, id, value) => {
@@ -176,7 +182,7 @@ export const searchableColumns: DataTableSearchableColumn[] = [
     // },
 ]
 
-export const filterableColumns: DataTableFilterableColumn<OperationsDataType>[] = [
+export const filterableColumns: DataTableFilterableColumn<ITransaction>[] = [
     // {
     //     id: "status",
     //     title: "Statut de transaction",

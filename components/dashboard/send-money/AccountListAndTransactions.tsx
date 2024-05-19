@@ -37,7 +37,6 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
     const [balance, setBalance] = useState(0);
     const [availableBalance, setAvailableBalance] = useState(0);
     const [accounts, setAccounts] = useState([]);
-    const [transactions, setTransactions] = useState([]);
     const [isLoading, setLoading] = useState(false);
 
     function fetchMerchantBankAccounts() {
@@ -55,24 +54,8 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
         });
     }
 
-    function fecthTransactions(coreBankId: string) {
-        // @ts-ignore
-        const query = {coreBankId: coreBankId, merchantId: merchant.merchantsIds[0].id}
-        getTransactions(query, String(merchant.accessToken))
-            .then(data => {
-                console.log(data);
-                setTransactions(data ?? []);
-                setLoading(false);
-            })
-            .catch(err => {
-                setTransactions([]);
-                setLoading(false);
-            });
-    }
-
     useEffect(() => {
         fetchMerchantBankAccounts()
-        // fecthTransactions("")
     }, []);
     
     return (

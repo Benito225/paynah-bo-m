@@ -437,7 +437,7 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                                                     </div>
                                                     <FormControl>
                                                         <div>
-                                                            <Select onValueChange={(value) => { field.onChange(value); handleChangeAccountType(value); }} defaultValue={'field.value'}>
+                                                            <Select onValueChange={(value) => { field.onChange(value); handleChangeAccountType(value); }} defaultValue={''}>
                                                                 <SelectTrigger className={`w-full ${showConError && "!border-[#e95d5d]"} px-4 font-light text-sm ${showConError && "border-[#e95d5d]"}`} style={{
                                                                     backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                                 }}>
