@@ -45,20 +45,20 @@ export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps
 
     useEffect(() => {
         setLoading(true);
-            // @ts-ignore
-        clientFetchData("/merchants/"+merchant.merchantsIds[0].id+"/bank-accounts", 'GET', null, String(merchant.accessToken), true)
-                .then(res => {
-                    console.log(res);
-                    setBalance(res.data.total_balance);
-                    setAvailableBalance(res.data.total_skaleet_balance);
-                    setAccounts(res.data.accounts);
-                    initializeCurrentAccount(res.data.accounts)
-                    setLoading(false);
-                })
-                .catch(err => {
-                    setAccounts([]);
-                    setLoading(false);
-                });
+        // @ts-ignore
+        // clientFetchData("/merchants/"+merchant.merchantsIds[0].id+"/bank-accounts", 'GET', null, String(merchant.accessToken), true)
+        getMerchantBankAccounts(merchant.merchantsIds[0].id, String(merchant.accessToken))
+            .then(data => {
+                setBalance(data.total_balance);
+                setAvailableBalance(data.total_skaleet_balance);
+                setAccounts(data.accounts);
+                initializeCurrentAccount(data.accounts)
+                setLoading(false);
+            })
+            .catch(err => {
+                setAccounts([]);
+                setLoading(false);
+            });
     }, [merchant, pathname]);
 
     return (
