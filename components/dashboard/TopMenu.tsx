@@ -9,6 +9,10 @@ import {IUser} from "@/core/interfaces/user";
 import {useEffect, useState} from "react";
 import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 import {IAccount} from "@/core/interfaces/account";
+import {auth} from "@/auth";
+import {useSession} from "next-auth/react";
+import {clientFetchData} from "@/core/apis/download-file";
+import {usePathname} from "next/navigation";
 
 interface DashboardTopMenuProps {
     lang: Locale,
@@ -21,6 +25,8 @@ export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps
     const [availableBalance, setAvailableBalance] = useState(0);
     const [currentAccount, setCurrentAccount] = useState<IAccount | null>(null);
     const [accounts, setAccounts] = useState([]);
+
+    const pathname = usePathname();
 
     function initializeCurrentAccount(accounts: IAccount[]) {
         if (accounts.length > 0) {
@@ -37,24 +43,23 @@ export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps
         // console.log(accoundFounded);
     };
 
-    function fetchMerchantBankAccounts() {
-        // @ts-ignore
-        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-            .then(data => {
-                setBalance(data.total_balance);
-                setAvailableBalance(data.total_skaleet_balance);
-                setAccounts(data.accounts);
-                initializeCurrentAccount(data.accounts)
-                setLoading(false);
-            })
-            .catch(err => {
-                setAccounts([]);
-            });
-    }
-
     useEffect(() => {
-        fetchMerchantBankAccounts()
-    }, []);
+        setLoading(true);
+            // @ts-ignore
+        clientFetchData("/merchants/"+merchant.merchantsIds[0].id+"/bank-accounts", 'GET', null, String(merchant.accessToken), true)
+                .then(res => {
+                    console.log(res);
+                    setBalance(res.data.total_balance);
+                    setAvailableBalance(res.data.total_skaleet_balance);
+                    setAccounts(res.data.accounts);
+                    initializeCurrentAccount(res.data.accounts)
+                    setLoading(false);
+                })
+                .catch(err => {
+                    setAccounts([]);
+                    setLoading(false);
+                });
+    }, [merchant, pathname]);
 
     return (
         <div className={`bg-white border-b border-[#d2d3d3] py-2`}>
