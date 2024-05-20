@@ -61,7 +61,7 @@ export default function SendMoneyMainActions({ lang, merchant }: IndexPageProps)
     useEffect(() => {
         fetchCountries();
         fetchMerchantBeneficiaries();
-    }, [fetchCountries, fetchMerchantBeneficiaries]);
+    }, []);
 
     console.log(countries);
     console.log(beneficiaries);
