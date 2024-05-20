@@ -5,18 +5,17 @@ import React, {useEffect, useRef, useState} from "react";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
+import {Form, FormControl, FormField, FormItem} from "@/components/ui/form";
 import {Plus, Send} from "lucide-react";
 import Image from "next/image";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
+import {RadioGroup} from "@/components/ui/radio-group";
 import {Button} from "@/components/ui/button";
 import {NumericFormat} from "react-number-format";
 import IMask from 'imask';
-import {PhoneInput, PhoneInputRefType, CountryData} from 'react-international-phone';
+import {FlagImage, PhoneInput, PhoneInputRefType} from 'react-international-phone';
 import 'react-international-phone/style.css';
 import {getBankName} from "@/lib/utils";
 import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
@@ -28,13 +27,10 @@ import {IOperator} from "@/core/interfaces/operator";
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
 import {IAccount} from "@/core/interfaces/account";
 import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
-
-import { FlagImage } from "react-international-phone";
 import SendMoneyActions from '@/components/dashboard/serenity-space/modals/SendMoneyActions'
 import PaymentLinkActions from '@/components/dashboard/serenity-space/modals/PaymentLinkActions'
-
-import {Skeleton} from "@/components/ui/skeleton";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Skeleton} from "@/components/ui/skeleton";
 
 
 interface OperationShortcutProps {
@@ -163,8 +159,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
 
     const transformBeneficiaryFullNameToBeneficiaryAvatar = (beneficiaryFullName: string) => {
         const beneficiaryFullNameSplit = beneficiaryFullName.trim().length > 0 ? beneficiaryFullName.split(' ') : [];
-        const beneficiaryFullNameAvatar = beneficiaryFullNameSplit.length > 0 ? ( beneficiaryFullNameSplit.length >= 2 ? `${beneficiaryFullNameSplit[0][0]}${beneficiaryFullNameSplit[1][0]}` : `${beneficiaryFullNameSplit[0][0]}`) : '';
-        return beneficiaryFullNameAvatar;
+        return beneficiaryFullNameSplit.length > 0 ? (beneficiaryFullNameSplit.length >= 2 ? `${beneficiaryFullNameSplit[0][0]}${beneficiaryFullNameSplit[1][0]}` : `${beneficiaryFullNameSplit[0][0]}`) : '';
     }
 
     const getAccountNummberReference = (accountNumber: string) => {
@@ -189,6 +184,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
     }
 
     function fetchMerchantBeneficiaries() {
+        setLoading(true);
         // @ts-ignore
         getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
@@ -260,7 +256,7 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
 
             console.log(mask.value);
         }
-    }, [activeSendMode, sendMoney]);
+    }, [sendMoney]);
 
     // console.log(sendMoney.getValues('bankAccountNumber'));
     // console.log(refBankAccountNumber.current);
@@ -291,9 +287,10 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                         <TabsContent value="send">
                             <div className={`mt-5 min-h-[20rem]`}>
                                 <div className={`beneficiary-fav mb-5`}>
-                                    <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires</h3>
+                                    <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires enregistrés</h3>
                                     {isLoading ?
                                         <div className={`inline-flex space-x-1 mt-2`}>
+                                            <Skeleton className={`rounded-full h-10 w-10 bg-gray-300`} />
                                             <BeneficiaryActions lang={lang} merchant={merchant}>
                                                 <button>
                                                     <Avatar className={`cursor-pointer border border-[#cdcdcd] border-dashed`}>

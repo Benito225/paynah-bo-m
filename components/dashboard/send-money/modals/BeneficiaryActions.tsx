@@ -70,7 +70,7 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
     const [amount, setAmount] = useState('0');
     const [totalAmount, setTotalAmount] = useState('');
     const [reason, setReason] = useState('');
-    const [percentage, setPercentage] = useState('w-2/4');
+    const [percentage, setPercentage] = useState('w-1/3');
 
     const [confirmStep, setConfirmStep] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
@@ -90,47 +90,52 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
         lastName: z.string().min(2, { message: "Le nom doit contenir au moins deux lettres" }),
         firstName: z.string().min(2, { message: "Le prénoms doit contenir au moins deux lettres" }),
         email: z.string().email({message: "votre email doit avoir un format valide"}),
-        type: z.string().refine((val) => {return val.trim().length > 0}, {message: 'veuillez choisir une option'}),
+    })
+
+    const formSchemaInfo = z.object({
+        type: z.string().refine((val) => {
+            return !(val == 'default' || val == '');
+        }, {message: 'Veuillez choisir une option'}),
         paynahAccountNumber: z.string(),
         operator: z.string(),
         number: z.string(),
         bankAccount: z.string()
     }).refine((data) => {
-        if (data.type == 'BANK') {
-            return data.bankAccount.trim().length > 0
-        }
-        return true;
-    }, {
-        message: "Le numéro de compte ne doit pas être vide",
-        path: ["bankAccount"],
-    })
-    .refine((data) => {
-        if (data.type == 'PAYNAH') {
-            return data.paynahAccountNumber.trim().length > 0
-        }
-        return true;
-    }, {
-        message: "Le numéro de compte ne doit pas être vide",
-        path: ["paynahAccountNumber"],
-    })
-    .refine((data) => {
-        if (data.type == 'MOBILE') {
-            return data.number.trim().length > 0
-        }
-        return true;
-    }, {
-        message: "veuillez renseigner un numéro de téléphone",
-        path: ["number"],
-    })
-    .refine((data) => {
-        if (data.type == 'MOBILE') {
-            return data.operator.trim().length > 0
-        }
-        return true;
-    }, {
-        message: "veuillez choissir un opérateur",
-        path: ["operator"],
-    })
+            if (data.type == 'BANK') {
+                return data.bankAccount.trim().length > 0
+            }
+            return true;
+        }, {
+            message: "Le numéro de compte ne doit pas être vide",
+            path: ["bankAccount"],
+        })
+        .refine((data) => {
+            if (data.type == 'PAYNAH') {
+                return data.paynahAccountNumber.trim().length > 0
+            }
+            return true;
+        }, {
+            message: "Le numéro de compte ne doit pas être vide",
+            path: ["paynahAccountNumber"],
+        })
+        .refine((data) => {
+            if (data.type == 'MOBILE') {
+                return data.number.trim().length > 0
+            }
+            return true;
+        }, {
+            message: "veuillez renseigner un numéro de téléphone",
+            path: ["number"],
+        })
+        .refine((data) => {
+            if (data.type == 'MOBILE') {
+                return data.operator.trim().length > 0
+            }
+            return true;
+        }, {
+            message: "veuillez choissir un opérateur",
+            path: ["operator"],
+        })
 
     const beneficiaryForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -138,6 +143,12 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
             lastName: "",
             firstName: "",
             email: "",
+        }
+    });
+
+    const beneficiaryFormInfo = useForm<z.infer<typeof formSchemaInfo>>({
+        resolver: zodResolver(formSchemaInfo),
+        defaultValues: {
             type: "",
             paynahAccountNumber: "",
             operator: "",
@@ -146,39 +157,52 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
         }
     });
 
-    const errorsArray = Object.values(beneficiaryForm.formState.errors);
+    async function onSubmitBenefPersForm(values: z.infer<typeof formSchema>) {
+        console.log(values);
+        nextStep();
+    }
+
+    async function onSubmitBenefInfoForm(values: z.infer<typeof formSchemaInfo>) {
+        console.log(values);
+    }
+
+    // const errorsArray = Object.values(beneficiaryFormInfo.formState.errors);
+    // console.log('errorsArray', errorsArray);
 
     function prevStep() {
         if (step > 1) {
             setStep(step - 1);
 
             if (step - 1 == 1) {
-                setPercentage('w-2/4');
+                setPercentage('w-1/3');
+            } else if (step - 1 == 2) {
+                setPercentage('w-2/3');
             }
         }
     }
 
-    const { register, handleSubmit, formState: {errors}, setValue } = beneficiaryForm;
+    function nextStep() {
+        if (step < 3) {
+            setStep(step + 1);
+
+            if (step + 1 == 3) {
+                setPercentage('w-3/3');
+            } else if (step + 1 == 2) {
+                setPercentage('w-2/3');
+            }
+        }
+    }
+
+    // const { register, handleSubmit, formState: {errors}, setValue } = beneficiaryFormInfo;
 
     const resetCreateBeneficiaryValues = () => {
         resetAccountBeneficiaryValues();
-        // setValue('firstName', '')
-        // setValue('lastName', '')
-        // setValue('email', '')
-        // setValue('paynahAccountNumber', '')
-        // setValue('operator', '')
-        // setValue('number', '')
-        // setValue('bankAccount', '')
-        setBeneficiaries([]);
+        // setBeneficiaries([]);
     }
     
     const resetAccountBeneficiaryValues = () => {
         setAccountType('');
-        setValue('type', '')
-        setValue('paynahAccountNumber', '')
-        setValue('operator', '')
-        setValue('number', '')
-        setValue('bankAccount', '')
+        beneficiaryFormInfo.reset();
     }
 
     const getOperatorList = () => {
@@ -196,9 +220,9 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
 
     const handleChangeAccountType = (accountType: string) => {
         setAccountType(accountType);
-        if (accountType === 'BANK') { setValue('operator', ''), setValue('number', ''); }
-        if (accountType === 'MOBILE') { setValue('bankAccount', ''); setValue('paynahAccountNumber', ''); }
-        if (accountType === 'PAYNAH') { setValue('bankAccount', ''); setValue('operator', ''), setValue('number', ''); }
+        if (accountType === 'BANK') { beneficiaryFormInfo.setValue('operator', ''), beneficiaryFormInfo.setValue('number', ''); }
+        if (accountType === 'MOBILE') { beneficiaryFormInfo.setValue('bankAccount', ''); beneficiaryFormInfo.setValue('paynahAccountNumber', ''); }
+        if (accountType === 'PAYNAH') { beneficiaryFormInfo.setValue('bankAccount', ''); beneficiaryFormInfo.setValue('operator', ''), beneficiaryFormInfo.setValue('number', ''); }
     }
 
     const deleteBeneficiaryItem = (index: number) => {
@@ -302,323 +326,423 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                     </div>
 
                     <div className={`max-h-[32rem] overflow-y-scroll pt-2 pb-4 px-8`}>
-                    {/* <div className={`min-h-[6rem] pt-2 pb-4 px-8`}> */}
+                        {/* <div className={`min-h-[6rem] pt-2 pb-4 px-8`}> */}
 
-                        <Form {...beneficiaryForm}>
-                            <form onSubmit={undefined} className={`${step == 2 && 'hidden'} space-y-5 gap-6`}>
-                                <div className={`flex items-center gap-5`}>
-                                        <div className={'w-1/3'}>
-                                                    <FormField
-                                                        control={beneficiaryForm.control}
-                                                        name="lastName"
-                                                        render={({field}) => (
-                                                            <FormItem>
-                                                                <div className={`inline-flex space-x-3`}>
-                                                                    <h3 className={`text-sm font-medium`}>Nom</h3>
-                                                                </div>
-                                                                <FormControl className={''}>
-                                                                    <div>
-                                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
-                                                                            placeholder="Entrez votre nom" {...field} style={{
-                                                                            backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                        }} />
-                                                                    </div>
-                                                                </FormControl>
-                                                                <FormMessage className={`text-xs`}>{errors.lastName && errors.lastName.message as string}</FormMessage>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                        </div>
-                                        <div className={'w-2/3'}>
-                                                    <FormField
-                                                        control={beneficiaryForm.control}
-                                                        name="firstName"
-                                                        render={({field}) => (
-                                                            <FormItem>
-                                                                <div className={`inline-flex space-x-3`}>
-                                                                    <h3 className={`text-sm font-medium`}>Prénoms</h3>
-                                                                </div>
-                                                                <FormControl className={''}>
-                                                                    <div>
-                                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
-                                                                            placeholder="Entrez votre prénoms" {...field} style={{
-                                                                            backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                        }} />
-                                                                    </div>
-                                                                </FormControl>
-                                                                <FormMessage className={`text-xs`}>{errors.firstName && errors.firstName.message as string}</FormMessage>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                        </div>
-                                </div>
-                                <div className={`gap-5`}>
-                                        <div className={''}>
-                                                    <FormField
-                                                        control={beneficiaryForm.control}
-                                                        name="email"
-                                                        render={({field}) => (
-                                                            <FormItem>
-                                                                <div className={`inline-flex space-x-3`}>
-                                                                    <h3 className={`text-sm font-medium`}>Email</h3>
-                                                                </div>
-                                                                <FormControl className={''}>
-                                                                    <div>
-                                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
-                                                                            placeholder="Entrez votre email" {...field} style={{
-                                                                            backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                        }} />
-                                                                    </div>
-                                                                </FormControl>
-                                                                <FormMessage className={`text-xs`}>{errors.email && errors.email.message as string}</FormMessage>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                        </div>
-                                </div>
-                                <div className={`justify-start grid grid-cols-3 gap-5 overflow-y-auto`} ref={divOptionsRef}>
-                                        {
-                                            beneficiaries && beneficiaries.map((beneficiary: IBeneficiarySchema, index: number) => (
-                                            <div key={index}
-                                            className={`snap-end shrink-0 w-[30] 2xl:w-[24] bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}>
-                                            <div className={`flex justify-between items-start`}>
-                                                <div>
-                                                    <div className={`inline-flex flex-col`}>
-                                                        <span
-                                                            className={`text-[12px] font-light text-[#626262]`}>{ displayAccountTypeLabel(beneficiary.type)}</span>
-                                                    </div>
-                                                </div>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger className={`focus:outline-none`} asChild>
-                                                        <button className={`text-[#626262]`} onClick={()=> deleteBeneficiaryItem(index)}>
-                                                            <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`} />
-                                                        </button>
-                                                    </DropdownMenuTrigger>
-                                            </DropdownMenu>
-                                        </div>
-                                        <div className={`inline-flex flex-col`}>
-                                            {
-                                                beneficiary.type == 'BANK' &&
-                                                <>
-                                                    <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Numéro Compte bancaire</h3>
-                                                    <span className={`text-base font-semibold`}>{beneficiary.bankAccount}</span>
-                                                </>
-                                            }
-                                            {
-                                                beneficiary.type == 'PAYNAH' &&
-                                                <>
-                                                    <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Numéro Compte Paynah</h3>
-                                                    <span className={`text-base font-semibold`}>{beneficiary.paynahAccountNumber}</span>
-                                                </>
-                                            }
-                                            {
-                                                beneficiary.type == 'MOBILE' &&
-                                                <>
-                                                    <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Opérateur Mobile</h3>
-                                                    <span className={`text-base font-semibold`}>{beneficiary.operator}</span>
-                                                    <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Numéro de téléphone</h3>
-                                                    <span className={`text-base font-semibold`}>{beneficiary.number}</span>
-                                                </>
-                                            }
-                                        </div>
-                                            </div>
-                                            ))
-                                        }
-                                </div>
-                                <div className={`gap-5`}>
-                                        <div className={''} >
-                                        <FormField
-                                            control={beneficiaryForm.control}
-                                            name="type"
-                                            render={({field}) => (
-                                                <FormItem>
-                                                    <div className={`inline-flex space-x-3`}>
-                                                        <h3 className={`text-sm font-medium`}>Type de compte</h3>
-                                                    </div>
-                                                    <FormControl>
-                                                        <div>
-                                                            <Select onValueChange={(value) => { field.onChange(value); handleChangeAccountType(value); }} defaultValue={''}>
-                                                                <SelectTrigger className={`w-full ${showConError && "!border-[#e95d5d]"} px-4 font-light text-sm ${showConError && "border-[#e95d5d]"}`} style={{
-                                                                    backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                }}>
-                                                                    <SelectValue  placeholder="Choisir un type de compte" />
-                                                                </SelectTrigger>
-                                                                <SelectContent className={`z-[999] bg-[#f0f0f0]`}>
-                                                                    <SelectItem className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`} value="MOBILE">
-                                                                        <div className={`inline-flex items-center space-x-2.5`}>
-                                                                            <span className={`mt-[2px]`}>Mobile Money</span>
-                                                                        </div>
-                                                                    </SelectItem>
-                                                                    <SelectItem className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`} value="BANK">
-                                                                        <div className={`inline-flex items-center space-x-2.5`}>
-                                                                            <span className={`mt-[2px]`}>Compte Bancaire</span>
-                                                                        </div>
-                                                                    </SelectItem>
-                                                                    <SelectItem className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`} value="PAYNAH">
-                                                                        <div className={`inline-flex items-center space-x-2.5`}>
-                                                                            <span className={`mt-[2px]`}>Compte Paynah</span>
-                                                                        </div>
-                                                                    </SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
-                                                    </FormControl>
-                                                    <FormMessage className={`text-xs`}>{errors.type && errors.type.message as string}</FormMessage>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        </div>
-                                </div>
-                                {
-                                    accountType == "MOBILE" &&
+                        <div>
+                            <Form {...beneficiaryForm}>
+                                <form key={1}  onSubmit={beneficiaryForm.handleSubmit(onSubmitBenefPersForm)}
+                                      className={`${step == 1 ? 'block' : 'hidden'} space-y-6 mt-2`}>
                                     <div className={`flex items-center gap-5`}>
-                                            <div className={'w-1/2'} >
+                                        <div className={'w-1/3'}>
                                             <FormField
                                                 control={beneficiaryForm.control}
-                                                name="operator"
+                                                name="lastName"
                                                 render={({field}) => (
                                                     <FormItem>
                                                         <div className={`inline-flex space-x-3`}>
-                                                            <h3 className={`text-sm font-medium`}>Opérateur Mobile Money</h3>
+                                                            <h3 className={`text-sm font-medium`}>Nom</h3>
+                                                        </div>
+                                                        <FormControl className={''}>
+                                                            <div>
+                                                                <Input type={`text`}
+                                                                       className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                       placeholder="Entrez votre nom" {...field} style={{
+                                                                    backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                }}/>
+                                                            </div>
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                        <div className={'w-2/3'}>
+                                            <FormField
+                                                control={beneficiaryForm.control}
+                                                name="firstName"
+                                                render={({field}) => (
+                                                    <FormItem>
+                                                        <div className={`inline-flex space-x-3`}>
+                                                            <h3 className={`text-sm font-medium`}>Prénoms</h3>
+                                                        </div>
+                                                        <FormControl className={''}>
+                                                            <div>
+                                                                <Input type={`text`}
+                                                                       className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                       placeholder="Entrez votre prénoms" {...field}
+                                                                       style={{
+                                                                           backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                       }}/>
+                                                            </div>
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className={`gap-5`}>
+                                        <div className={''}>
+                                            <FormField
+                                                control={beneficiaryForm.control}
+                                                name="email"
+                                                render={({field}) => (
+                                                    <FormItem>
+                                                        <div className={`inline-flex space-x-3`}>
+                                                            <h3 className={`text-sm font-medium`}>Email</h3>
+                                                        </div>
+                                                        <FormControl className={''}>
+                                                            <div>
+                                                                <Input type={`text`}
+                                                                       className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                       placeholder="Entrez votre email" {...field} style={{
+                                                                    backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                }}/>
+                                                            </div>
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className={`flex justify-center items-center`}>
+                                        <Button type="submit"
+                                                className={`mt-3 w-40 text-sm`}>
+                                            Continuer
+                                        </Button>
+                                    </div>
+                                </form>
+                            </Form>
+                        </div>
+
+                        <div>
+                            <Form   {...beneficiaryFormInfo}>
+                                <form key={2} onSubmit={beneficiaryFormInfo.handleSubmit(onSubmitBenefInfoForm)}
+                                      className={`${step == 2 ? 'block' : 'hidden'}`}>
+                                    <div className={`grid grid-cols-3 gap-5 overflow-y-auto ${beneficiaries.length == 0 ? 'hidden' : 'block'}`}
+                                         ref={divOptionsRef}>
+                                        {
+                                            beneficiaries && beneficiaries.map((beneficiary: IBeneficiarySchema, index: number) => (
+                                                <div key={index}
+                                                     className={`snap-end shrink-0 w-[30] 2xl:w-[24] bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}>
+                                                    <div className={`flex justify-between items-start`}>
+                                                        <div>
+                                                            <div className={`inline-flex flex-col`}>
+                                                        <span
+                                                            className={`text-[12px] font-light text-[#626262]`}>{displayAccountTypeLabel(beneficiary.type)}</span>
+                                                            </div>
+                                                        </div>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger className={`focus:outline-none`} asChild>
+                                                                <button className={`text-[#626262]`}
+                                                                        onClick={() => deleteBeneficiaryItem(index)}>
+                                                                    <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`}/>
+                                                                </button>
+                                                            </DropdownMenuTrigger>
+                                                        </DropdownMenu>
+                                                    </div>
+                                                    <div className={`inline-flex flex-col`}>
+                                                        {
+                                                            beneficiary.type == 'BANK' &&
+                                                            <>
+                                                                <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Numéro
+                                                                    Compte bancaire</h3>
+                                                                <span
+                                                                    className={`text-base font-semibold`}>{beneficiary.bankAccount}</span>
+                                                            </>
+                                                        }
+                                                        {
+                                                            beneficiary.type == 'PAYNAH' &&
+                                                            <>
+                                                                <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Numéro
+                                                                    Compte Paynah</h3>
+                                                                <span
+                                                                    className={`text-base font-semibold`}>{beneficiary.paynahAccountNumber}</span>
+                                                            </>
+                                                        }
+                                                        {
+                                                            beneficiary.type == 'MOBILE' &&
+                                                            <>
+                                                                <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Opérateur
+                                                                    Mobile</h3>
+                                                                <span
+                                                                    className={`text-base font-semibold`}>{beneficiary.operator}</span>
+                                                                <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Numéro
+                                                                    de téléphone</h3>
+                                                                <span
+                                                                    className={`text-base font-semibold`}>{beneficiary.number}</span>
+                                                            </>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                    <div className={``}>
+                                        <div className={'mb-5'}>
+                                            <FormField
+                                                control={beneficiaryFormInfo.control}
+                                                name="type"
+                                                render={({field}) => (
+                                                    <FormItem>
+                                                        <div className={`inline-flex space-x-3`}>
+                                                            <h3 className={`text-sm font-medium`}>Type de compte</h3>
                                                         </div>
                                                         <FormControl>
                                                             <div>
-                                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                                    <SelectTrigger className={`w-full ${showConError && "border-[#e95d5d]"} px-4 font-light text-sm ${showConError && "border-[#e95d5d]"}`} style={{
-                                                                        backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                    }}>
-                                                                        <SelectValue  placeholder="Choisir un opérateur"/>
+                                                                <Select onValueChange={(value) => {
+                                                                    field.onChange(value);
+                                                                    handleChangeAccountType(value);
+                                                                }} value={field.value} defaultValue={field.value}>
+                                                                    <SelectTrigger
+                                                                        className={`w-full ${showConError && "!border-[#e95d5d]"} px-4 font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                        style={{
+                                                                            backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                        }}>
+                                                                        <SelectValue
+                                                                            placeholder="Choisir un type de compte"/>
                                                                     </SelectTrigger>
                                                                     <SelectContent className={`z-[999] bg-[#f0f0f0]`}>
-                                                                        {
-                                                                            operators && operators.map((operator: IOperator) => (
-                                                                                <SelectItem key={operator.id} className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`} value={String(operator.code)}>
-                                                                                    <div className={`inline-flex items-center space-x-2.5`}>
-                                                                                        <Image className={`h-[1.6rem] w-[1.6rem]`} src={operator.logoUrl} alt={operator.code} height={512} width={512} />
-                                                                                        <span className={`mm-label`}>{operator.name}</span>
-                                                                                    </div>
-                                                                                </SelectItem>
-                                                                            ))
-                                                                        }
+                                                                        {/*<SelectItem*/}
+                                                                        {/*    className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`}*/}
+                                                                        {/*    value="default">*/}
+                                                                        {/*    <div*/}
+                                                                        {/*        className={`inline-flex items-center space-x-2.5`}>*/}
+                                                                        {/*    <span*/}
+                                                                        {/*        className={`mt-[2px]`}>Choisir un type de compte</span>*/}
+                                                                        {/*    </div>*/}
+                                                                        {/*</SelectItem>*/}
+                                                                        <SelectItem
+                                                                            className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`}
+                                                                            value="MOBILE">
+                                                                            <div
+                                                                                className={`inline-flex items-center space-x-2.5`}>
+                                                                            <span
+                                                                                className={`mt-[2px]`}>Mobile Money</span>
+                                                                            </div>
+                                                                        </SelectItem>
+                                                                        <SelectItem
+                                                                            className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`}
+                                                                            value="BANK">
+                                                                            <div
+                                                                                className={`inline-flex items-center space-x-2.5`}>
+                                                                            <span
+                                                                                className={`mt-[2px]`}>Compte Bancaire</span>
+                                                                            </div>
+                                                                        </SelectItem>
+                                                                        <SelectItem
+                                                                            className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`}
+                                                                            value="PAYNAH">
+                                                                            <div
+                                                                                className={`inline-flex items-center space-x-2.5`}>
+                                                                            <span
+                                                                                className={`mt-[2px]`}>Compte Paynah</span>
+                                                                            </div>
+                                                                        </SelectItem>
                                                                     </SelectContent>
                                                                 </Select>
                                                             </div>
                                                         </FormControl>
-                                                        <FormMessage className={`text-xs`}>{errors.operator && errors.operator.message as string}</FormMessage>
+                                                        <FormMessage
+                                                            className={`text-xs`}>{beneficiaryFormInfo.formState.errors.type && beneficiaryFormInfo.formState.errors.type.message as string}</FormMessage>
                                                     </FormItem>
                                                 )}
                                             />
-                                            </div>
-                                            <div className={'w-1/2'} >
-                                            <FormField
-                                                control={beneficiaryForm.control}
-                                                        name="number"
-                                                        render={({field}) => (
-                                                            <FormItem>
-                                                                <div className={`inline-flex space-x-3`}>
-                                                                    <h3 className={`text-sm font-medium`}>Numéro de téléphone</h3>
-                                                                </div>
-                                                                <FormControl className={''}>
-                                                                    <div>
-                                                                        <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
-                                                                            placeholder="Entrez votre numéro de téléphone" {...field} style={{
-                                                                            backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                        }} />
-                                                                    </div>
-                                                                </FormControl>
-                                                                <FormMessage className={`text-xs`}>{errors.number && errors.number.message as string}</FormMessage>
-                                                            </FormItem>
-                                                )}
-                                            />
-                                            </div>
-                                    </div>
-                                }
-                                {
-                                    accountType == "BANK" &&
-                                    <div className={`gap-5`}>
-                                            <div className={''}>
-                                                        <FormField
-                                                            control={beneficiaryForm.control}
-                                                            name="bankAccount"
-                                                            render={({field}) => (
-                                                                <FormItem>
-                                                                    <div className={`inline-flex space-x-3`}>
-                                                                        <h3 className={`text-sm font-medium`}>Numéro de compte bancaire</h3>
-                                                                    </div>
-                                                                    <FormControl className={''}>
-                                                                        <div>
-                                                                            <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
-                                                                                placeholder="Entrez votre numéro de compte bancaire" {...field} style={{
-                                                                                backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                            }} />
-                                                                        </div>
-                                                                    </FormControl>
-                                                                    <FormMessage className={`text-xs`}>{errors.bankAccount && errors.bankAccount.message as string}</FormMessage>
-                                                                </FormItem>
-                                                            )}
-                                                        />
-                                            </div>
-                                    </div>
-                                }
-                                {
-                                    accountType == "PAYNAH" &&
-                                    <div className={`gap-5`}>
-                                            <div className={''}>
-                                                        <FormField
-                                                            control={beneficiaryForm.control}
-                                                            name="paynahAccountNumber"
-                                                            render={({field}) => (
-                                                                <FormItem>
-                                                                    <div className={`inline-flex space-x-3`}>
-                                                                        <h3 className={`text-sm font-medium`}>Numéro de compte Paynah</h3>
-                                                                    </div>
-                                                                    <FormControl className={''}>
-                                                                        <div>
-                                                                            <Input type={`text`} className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
-                                                                                placeholder="Entrez votre numéro de compte Paynah" {...field} style={{
-                                                                                backgroundColor: field.value ? '#fff' : '#f0f0f0',
-                                                                            }} />
-                                                                        </div>
-                                                                    </FormControl>
-                                                                    <FormMessage className={`text-xs`}>{errors.paynahAccountNumber && errors.paynahAccountNumber.message as string}</FormMessage>
-                                                                </FormItem>
-                                                            )}
-                                                        />
-                                            </div>
-                                    </div>
-                                }
-                                <div className={`flex items-center gap-6 mt-8 max-h-[90px]`}>
-                                        <Button className={`px-6 items-center text-xs`} onClick={handleSubmit((data) => addBeneficiaryItems(data))}>
-                                            <PlusCircle className={`h-4 w-4 mr-2`} />
-                                            <span>Ajouter un compte</span>
-                                        </Button>
-                                </div>
-                            </form>
-                            <div className={`${step == 2 ? 'flex' : 'hidden'} flex-col mb-4 -mt-3`}>
-                                    <div className={`w-[70%] mx-auto`}>
-                                        <div className={`flex flex-col items-center`}>
-                                                <span className="relative flex w-40 h-40">
-                                                  <span
-                                                      className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#caebe4]"></span>
-                                                  <span
-                                                      className="relative inline-flex rounded-full w-40 h-40 bg-[#41a38c]"></span>
-                                                </span>
-                                            <p className={`text-base mt-10`}>{`Votre bénéficiaire a été ajouté avec succès.`}</p>
                                         </div>
                                     </div>
+                                    {
+                                        accountType == "MOBILE" &&
+                                        <div className={`flex items-start gap-5`}>
+                                            <div className={'w-1/2'}>
+                                                <FormField
+                                                    control={beneficiaryFormInfo.control}
+                                                    name="operator"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <div className={`inline-flex space-x-3`}>
+                                                                <h3 className={`text-sm font-medium`}>Opérateur Mobile
+                                                                    Money</h3>
+                                                            </div>
+                                                            <FormControl>
+                                                                <div>
+                                                                    <Select onValueChange={field.onChange}
+                                                                            defaultValue={field.value}>
+                                                                        <SelectTrigger
+                                                                            className={`w-full ${showConError && "border-[#e95d5d]"} px-4 font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                            style={{
+                                                                                backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                            }}>
+                                                                            <SelectValue
+                                                                                placeholder="Choisir un opérateur"/>
+                                                                        </SelectTrigger>
+                                                                        <SelectContent className={`z-[999] bg-[#f0f0f0]`}>
+                                                                            {
+                                                                                operators && operators.map((operator: IOperator) => (
+                                                                                    <SelectItem key={operator.id}
+                                                                                                className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`}
+                                                                                                value={String(operator.code)}>
+                                                                                        <div
+                                                                                            className={`inline-flex items-center space-x-2.5`}>
+                                                                                            <Image
+                                                                                                className={`h-[1.6rem] w-[1.6rem]`}
+                                                                                                src={operator.logoUrl}
+                                                                                                alt={operator.code} height={512}
+                                                                                                width={512}/>
+                                                                                            <span
+                                                                                                className={`mm-label`}>{operator.name}</span>
+                                                                                        </div>
+                                                                                    </SelectItem>
+                                                                                ))
+                                                                            }
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                </div>
+                                                            </FormControl>
+                                                            <FormMessage
+                                                                className={`text-xs`}>{beneficiaryFormInfo.formState.errors.operator && beneficiaryFormInfo.formState.errors.operator.message as string}</FormMessage>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                            <div className={'w-1/2'}>
+                                                <FormField
+                                                    control={beneficiaryFormInfo.control}
+                                                    name="number"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <div className={`inline-flex space-x-3`}>
+                                                                <h3 className={`text-sm font-medium`}>Numéro de
+                                                                    téléphone</h3>
+                                                            </div>
+                                                            <FormControl className={''}>
+                                                                <div>
+                                                                    <Input type={`text`}
+                                                                           className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                           placeholder="Entrez votre numéro de téléphone" {...field}
+                                                                           style={{
+                                                                               backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                           }}/>
+                                                                </div>
+                                                            </FormControl>
+                                                            <FormMessage
+                                                                className={`text-xs`}>{beneficiaryFormInfo.formState.errors.number && beneficiaryFormInfo.formState.errors.number.message as string}</FormMessage>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+                                    }
+                                    {
+                                        accountType == "BANK" &&
+                                        <div className={`gap-5`}>
+                                            <div className={''}>
+                                                <FormField
+                                                    control={beneficiaryFormInfo.control}
+                                                    name="bankAccount"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <div className={`inline-flex space-x-3`}>
+                                                                <h3 className={`text-sm font-medium`}>Numéro de compte
+                                                                    bancaire</h3>
+                                                            </div>
+                                                            <FormControl className={''}>
+                                                                <div>
+                                                                    <Input type={`text`}
+                                                                           className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                           placeholder="Entrez votre numéro de compte bancaire" {...field}
+                                                                           style={{
+                                                                               backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                           }}/>
+                                                                </div>
+                                                            </FormControl>
+                                                            <FormMessage
+                                                                className={`text-xs`}>{beneficiaryFormInfo.formState.errors.bankAccount && beneficiaryFormInfo.formState.errors.bankAccount.message as string}</FormMessage>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+                                    }
+                                    {
+                                        accountType == "PAYNAH" &&
+                                        <div className={`gap-5`}>
+                                            <div className={''}>
+                                                <FormField
+                                                    control={beneficiaryFormInfo.control}
+                                                    name="paynahAccountNumber"
+                                                    render={({field}) => (
+                                                        <FormItem>
+                                                            <div className={`inline-flex space-x-3`}>
+                                                                <h3 className={`text-sm font-medium`}>Numéro de compte
+                                                                    Paynah</h3>
+                                                            </div>
+                                                            <FormControl className={''}>
+                                                                <div>
+                                                                    <Input type={`text`}
+                                                                           className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                           placeholder="Entrez votre numéro de compte Paynah" {...field}
+                                                                           style={{
+                                                                               backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                           }}/>
+                                                                </div>
+                                                            </FormControl>
+                                                            <FormMessage
+                                                                className={`text-xs`}>{beneficiaryFormInfo.formState.errors.paynahAccountNumber && beneficiaryFormInfo.formState.errors.paynahAccountNumber.message as string}</FormMessage>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                        </div>
+                                    }
+                                    <div className={`flex items-center gap-6 mt-6 max-h-[90px]`}>
+                                        <Button type={"submit"}  className={`px-6 items-center text-xs`}>
+                                            <PlusCircle className={`h-4 w-4 mr-2`}/>
+                                            <span>Ajouter un compte</span>
+                                        </Button>
+                                    </div>
+
+                                    <div className={`flex justify-center items-center mb-1`}>
+                                        <Button type={"button"} onClick={() => {
+                                            resetCreateBeneficiaryValues();
+                                            prevStep();
+                                        }}
+                                                className={`mt-12 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
+                                            Retour
+                                        </Button>
+                                        <Button type={"button"} onClick={() => createBeneficiary()}
+                                                className={`mt-12 w-46 text-sm`} disabled={beneficiaries.length == 0}>
+                                            Ajouter le bénéficiaire
+                                        </Button>
+                                    </div>
+                                </form>
+                            </Form>
+                        </div>
+
+
+                        <div className={`${step == 3 ? 'flex' : 'hidden'} flex-col mb-4 -mt-3`}>
+                            <div className={`w-[70%] mx-auto`}>
+                                <div className={`flex flex-col items-center`}>
+                                    <span className="relative flex w-40 h-40">
+                                        <span
+                                            className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#caebe4]"></span>
+                                        <span
+                                            className="relative inline-flex rounded-full w-40 h-40 bg-[#41a38c]"></span>
+                                    </span>
+                                    <p className={`text-base mt-10`}>{`Votre bénéficiaire a été ajouté avec succès.`}</p>
+                                </div>
                             </div>
-                            <div className={`flex justify-center items-center mb-3`}>
-                                <Button onClick={() => { resetCreateBeneficiaryValues(); prevStep(); }} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
-                                    Retour
-                                </Button>
-                                <Button onClick={() => createBeneficiary()} className={`mt-5 w-40 text-sm ${step === 1 && beneficiaries.length > 0 ? 'block' : 'hidden'}`}>
-                                    Ajouter Bénéficiaire
-                                </Button>
-                            </div>
-                        </Form>
+                        </div>
+                        <div className={`${step == 3 ? 'flex' : 'hidden'} justify-center items-center mb-3`}>
+                            <Button onClick={() => {
+                                resetCreateBeneficiaryValues();
+                                prevStep();
+                            }}
+                                    className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
+                                Terminer
+                            </Button>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
         </>
-    );
+);
 }
