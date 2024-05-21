@@ -40,6 +40,9 @@ import {addBeneficiary} from "@/core/apis/beneficiary";
 import Image from "next/image";
 import IMask from 'imask';
 import {getBankName} from "@/lib/utils";
+import toast from "react-hot-toast";
+import {ScaleLoader} from "react-spinners";
+import {useRouter} from "next/navigation";
 
 interface MainActionsProps {
     lang: string,
@@ -62,6 +65,8 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
 
     const divOptionsRef = useRef<HTMLDivElement | null>(null);
 
+    const router = useRouter();
+
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{id: string, name: string}>({id: '', name: ''});
     const [beneficiary, setBeneficiary] = useState<{id: string, name: string}>({id: '', name: ''});
@@ -77,12 +82,15 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
     const [accessKey, setAccessKey] = useState('');
     //
     const [isLoading, setLoading] = useState(false);
+    const [isAddBenefLoading, setAddBenefLoading] = useState(false);
     const [accountType, setAccountType] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [operators, setOperators] = useState([]);
     const [showConError, setShowConError] = useState(false);
     const [beneficiaries, setBeneficiaries] = useState<IBeneficiarySchema[]>([]);
     const [bankName, setBankName] = useState('');
+
+    // const [isBenefStore, setIsBenefStore] = useState(false);
 
     const refBankAccount = useRef(null);
 
@@ -164,8 +172,37 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
 
     async function onSubmitBenefInfoForm(values: z.infer<typeof formSchemaInfo>) {
         console.log(values);
+        let dataSup: any;
+
+        const persoData = {
+            firstName: beneficiaryForm.getValues('firstName'),
+            lastName: beneficiaryForm.getValues('lastName'),
+            email: beneficiaryForm.getValues('email'),
+            type: values.type
+        };
+
+        if (values.type == 'BANK') {
+            dataSup = {
+                bankAccount: values.bankAccount,
+            }
+        } else if (values.type == 'PAYNAH') {
+            dataSup = {
+                paynahAccountNumber: values.paynahAccountNumber,
+            }
+        } else if (values.type == 'MOBILE') {
+            dataSup = {
+                operator: values.operator,
+                number: values.number,
+            }
+        }
+
+        const data = {...persoData, ...dataSup} as IBeneficiarySchema;
+
+        setBeneficiaries([...beneficiaries, data]);
+        resetAccountBeneficiaryValues();
     }
 
+    // console.log(beneficiaries);
     // const errorsArray = Object.values(beneficiaryFormInfo.formState.errors);
     // console.log('errorsArray', errorsArray);
 
@@ -257,23 +294,79 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
     }
 
     const createBeneficiary = () => {
+        let isBenefStore = false;
+        setAddBenefLoading(true);
+        let index = 0;
+
+        const benefNumber = beneficiaries.length;
+
+        for (const benef of beneficiaries) {
+            addBeneficiary(benef, String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+                .then(data => {
+                    if (data.success) {
+                        console.log(data);
+                        isBenefStore = true;
+
+                        if (index === benefNumber) {
+                            setAddBenefLoading(false);
+                        }
+
+                        if (isBenefStore) {
+                            if (index == benefNumber) {
+                                // console.log(1);
+                                nextStep();
+                            }
+                        }
+                    } else {
+                        setAddBenefLoading(false);
+                        return toast.error(`Le compte ${benef.type} n'a pu être ajouté.`, {
+                            className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    setAddBenefLoading(false);
+                    return toast.error(`Le compte ${benef.type} n'a pu être ajouté. Une erreur est survénue !`, {
+                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                    });
+                });
+
+            index++;
+        }
+
+        // console.log('isBenefStore', index);
+        // if (isBenefStore && index === beneficiaries.length - 1) {
+        //     console.log('isBenefStore');
+        //     nextStep();
+        // }
+
         // @ts-ignore
-        // e.preventDefault();
-        console.log(beneficiaries[0]);
-        // @ts-ignore
-        addBeneficiary(beneficiaries[0], String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-        .then(data => {
-            if (data.success) {
-                setErrorMessage('');
-                setStep(2);
-                setPercentage('w-4/4');
-            } else {
-                setErrorMessage(data.message);
-            }
-        })
-        .catch(err => {
-            setErrorMessage('Une erreur est survénue');
-        });
+        // addBeneficiary(beneficiaries[0], String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        // .then(data => {
+        //     if (data.success) {
+        //         setErrorMessage('');
+        //         setStep(2);
+        //         setPercentage('w-4/4');
+        //     } else {
+        //         setErrorMessage(data.message);
+        //     }
+        // })
+        // .catch(err => {
+        //     setErrorMessage('Une erreur est survénue');
+        // });
+    }
+
+    function closeModal() {
+        const benefArray = beneficiaries;
+        console.log(benefArray);
+
+        setAccountType('');
+        beneficiaryFormInfo.reset();
+        beneficiaryForm.reset();
+        setStep(1);
+        setPercentage('w-1/4');
+        setBeneficiaries([]);
     }
 
     function getRibBank(rib: string) {
@@ -302,6 +395,8 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
 
             console.log(mask.value);
         }
+
+        // createBeneficiary();
     }, []);
 
     return (
@@ -315,7 +410,14 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                         <div className={`rounded-t-2xl bg-white px-8 pb-4 pt-5`}>
                             <div className={`flex justify-between items-center space-x-3`}>
                                 <h2 className={`text-base text-[#626262] font-medium`}>{`Ajouter un bénéficiaire`}</h2>
-                                <DialogClose onClick={() => {setStep(1); setPercentage('w-2/4'); setConfirmStep(0); resetCreateBeneficiaryValues();}}>
+
+                                <DialogClose className={`${step == 3 ? 'block' : 'hidden'}`} onClick={() => {
+                                    closeModal(); window.location.reload();
+                                }}>
+                                    <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`} />
+                                </DialogClose>
+
+                                <DialogClose className={`${step != 3 ? 'block' : 'hidden'}`} onClick={() => closeModal()}>
                                     <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`} />
                                 </DialogClose>
                             </div>
@@ -325,7 +427,7 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                         </div>
                     </div>
 
-                    <div className={`max-h-[32rem] overflow-y-scroll pt-2 pb-4 px-8`}>
+                    <div className={`max-h-[33.5rem] pt-2 pb-4 px-8`}>
                         {/* <div className={`min-h-[6rem] pt-2 pb-4 px-8`}> */}
 
                         <div>
@@ -418,7 +520,7 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                             <Form   {...beneficiaryFormInfo}>
                                 <form key={2} onSubmit={beneficiaryFormInfo.handleSubmit(onSubmitBenefInfoForm)}
                                       className={`${step == 2 ? 'block' : 'hidden'}`}>
-                                    <div className={`grid grid-cols-3 gap-5 overflow-y-auto ${beneficiaries.length == 0 ? 'hidden' : 'block'}`}
+                                    <div className={`grid grid-cols-3 gap-5 overflow-y-auto ${beneficiaries.length == 0 ? 'hidden' : 'block mb-3'}`}
                                          ref={divOptionsRef}>
                                         {
                                             beneficiaries && beneficiaries.map((beneficiary: IBeneficiarySchema, index: number) => (
@@ -693,8 +795,8 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                                             </div>
                                         </div>
                                     }
-                                    <div className={`flex items-center gap-6 mt-6 max-h-[90px]`}>
-                                        <Button type={"submit"}  className={`px-6 items-center text-xs`}>
+                                    <div className={`flex items-center gap-6 mt-4 max-h-[90px]`}>
+                                        <Button type={"submit"}  className={`px-6 items-center text-xs`} disabled={isAddBenefLoading}>
                                             <PlusCircle className={`h-4 w-4 mr-2`}/>
                                             <span>Ajouter un compte</span>
                                         </Button>
@@ -705,12 +807,13 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                                             resetCreateBeneficiaryValues();
                                             prevStep();
                                         }}
-                                                className={`mt-12 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
+                                                className={`mt-10 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
                                             Retour
                                         </Button>
-                                        <Button type={"button"} onClick={() => createBeneficiary()}
-                                                className={`mt-12 w-46 text-sm`} disabled={beneficiaries.length == 0}>
-                                            Ajouter le bénéficiaire
+                                        <Button type={"button"} onClick={() => {setAddBenefLoading(true); createBeneficiary();}}
+                                                className={`mt-10 w-46 text-sm`} disabled={beneficiaries.length == 0 || isAddBenefLoading}>
+                                            {isAddBenefLoading ?
+                                                <ScaleLoader color="#fff" height={15} width={3} /> : 'Ajouter le bénéficiaire'}
                                         </Button>
                                     </div>
                                 </form>
@@ -718,7 +821,7 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                         </div>
 
 
-                        <div className={`${step == 3 ? 'flex' : 'hidden'} flex-col mb-4 -mt-3`}>
+                        <div className={`${step == 3 ? 'flex' : 'hidden'} flex-col mb-4 mt-5`}>
                             <div className={`w-[70%] mx-auto`}>
                                 <div className={`flex flex-col items-center`}>
                                     <span className="relative flex w-40 h-40">
@@ -732,13 +835,12 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
                             </div>
                         </div>
                         <div className={`${step == 3 ? 'flex' : 'hidden'} justify-center items-center mb-3`}>
-                            <Button onClick={() => {
-                                resetCreateBeneficiaryValues();
-                                prevStep();
-                            }}
-                                    className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}>
-                                Terminer
-                            </Button>
+                            <DialogClose onClick={() => {closeModal(); window.location.reload()}}>
+                                <Button
+                                    className={`mt-5 w-32 text-sm`}>
+                                    Terminer
+                                </Button>
+                            </DialogClose>
                         </div>
                     </div>
                 </DialogContent>

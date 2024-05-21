@@ -12,15 +12,19 @@ export async function getMerchantBeneficiaries(merchantId: string, token: string
 }
 
 export async function addBeneficiary(values: any, merchantId: string, token: string) {
-    const data = {
-        'firstName': values.firstName,
-        'lastName': values.lastName,
-        'email': values.email,
-        'paynahAccountNumber': values.paynahAccountNumber,
-        'operator': values.operator,
-        'number': values.number,
-        'bankAccount': values.bankAccount,
-    };
+    // const data = {
+    //     'firstName': values.firstName,
+    //     'lastName': values.lastName,
+    //     'email': values.email,
+    //     'paynahAccountNumber': values.paynahAccountNumber,
+    //     'operator': values.operator,
+    //     'number': values.number,
+    //     'bankAccount': values.bankAccount,
+    // };
 
-    return await fetchData(`/merchants/${merchantId}/beneficiaries`, 'POST', data, token, true);
+    delete values.type;
+
+    // console.log(values);
+
+    return await fetchData(`/merchants/${merchantId}/beneficiaries`, 'POST', values, token, true);
 }
