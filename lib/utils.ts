@@ -282,3 +282,24 @@ export function getTransactionType(type: string) {
 
     return transactionTypes[type] ?? "-";
 }
+
+export function calculateOnePercentAmount(amount: number) {
+
+    let totalAmount = amount + amount * 0.01;
+    let totalAmountStr = totalAmount.toString();
+
+    if (totalAmountStr.includes('.')) {
+        let parts = totalAmountStr.split('.');
+        let integerPart = parseInt(parts[0]);
+        let decimalPart = parts[1];
+
+        if (parseInt(decimalPart[0]) < 5) {
+            return integerPart;
+        } else {
+            return integerPart + 1;
+        }
+    } else {
+        return totalAmount;
+    }
+}
+

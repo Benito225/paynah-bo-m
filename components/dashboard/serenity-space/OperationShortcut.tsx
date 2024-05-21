@@ -31,6 +31,7 @@ import SendMoneyActions from '@/components/dashboard/serenity-space/modals/SendM
 import PaymentLinkActions from '@/components/dashboard/serenity-space/modals/PaymentLinkActions'
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {Skeleton} from "@/components/ui/skeleton";
+import SendMoneyActionsPayDirect from "@/components/dashboard/serenity-space/modals/SendMoneyActionsPayDirect";
 
 
 interface OperationShortcutProps {
@@ -426,15 +427,15 @@ export default function OperationShortcut({lang, merchant}: OperationShortcutPro
                                                                 <div>
                                                                     <div className="relative">
                                                                         <NumericFormat
-                                                                            id="amount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" "
-                                                                            thousandSeparator=" " prefix="FCFA " onValueChange={(e) => {
+                                                                            id="amount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white disabled:opacity-60`} placeholder=" "
+                                                                            thousandSeparator=" " suffix=" FCFA" onValueChange={(e) => {
                                                                             sendMoney.setValue('amount', e.value);
-                                                                        }}/>
+                                                                        }} value={field.value} disabled={sendMoney.getValues('accountNumber') == ''}/>
                                                                         {/*<input type="text" id="bankAmount" className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`} placeholder=" " {...field} />*/}
                                                                         <label htmlFor="amount"
-                                                                               className={`primary-form-label !bg-[#f4f4f7] ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
+                                                                               className={`primary-form-label !bg-[#f4f4f7] ${sendMoney.getValues('accountNumber') == '' ? 'opacity-60' : ''} ${field.value && '!bg-white'} peer-focus:!bg-white peer-focus:px-2 peer-focus:text-[#818181] peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-90 peer-focus:-translate-y-3.5 left-5`}>Montant
                                                                         </label>
-                                                                        <SendMoneyActions lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts} activeSendMode={activeSendMode}/>
+                                                                        <SendMoneyActionsPayDirect lang={lang} sendMoney={sendMoney} beneficiaries={beneficiaries} merchant={merchant} accounts={accounts} activeSendMode={activeSendMode}/>
                                                                         {/* <Button type={`submit`} className={`absolute rounded-lg p-3 top-0 right-0`}>
                                                                             <Send className={`h-[1.1rem] text-[#fff] `} />
                                                                         </Button> */}

@@ -40,7 +40,7 @@ import {login} from '@/core/apis/login';
 import toast from "react-hot-toast";
 import {ScaleLoader} from "react-spinners";
 
-interface SendMoneyActionsProps {
+interface SendMoneyActionsOriginProps {
     lang: string,
     sendMoney: any,
     beneficiaries: IBeneficiary[],
@@ -49,7 +49,7 @@ interface SendMoneyActionsProps {
     activeSendMode: string,
 }
 
-export default function SendMoneyActions({sendMoney, beneficiaries, merchant, accounts, activeSendMode}: SendMoneyActionsProps) {
+export default function SendMoneyActionsOrigin({sendMoney, beneficiaries, merchant, accounts, activeSendMode}: SendMoneyActionsOriginProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{id: string, name: string}>({id: '', name: ''});
