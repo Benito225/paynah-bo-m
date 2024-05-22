@@ -4,6 +4,7 @@ import {signIn, signOut} from "@/auth";
 import {fetchData} from "@/lib/api";
 import {IUser} from "@/core/interfaces/user";
 import {decodeToken} from "react-jwt";
+import {data} from "autoprefixer";
 
 export async function login(values: any, redirect:boolean = true) {
     return signIn("merchant", {
@@ -64,4 +65,14 @@ export async function generateNewToken(refreshToken: string) {
     }
 
     return newTokenRes.data;
+}
+
+export async function getAccountCountryInfo(countryId: string) {
+    const resData = await fetchData(`/countries/${countryId}`, 'GET');
+
+    if (!resData.success) {
+        return {};
+    }
+
+    return resData.data;
 }

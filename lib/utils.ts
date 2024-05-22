@@ -283,23 +283,42 @@ export function getTransactionType(type: string) {
     return transactionTypes[type] ?? "-";
 }
 
-export function calculateOnePercentAmount(amount: number) {
+export function calculatePercentageOfAmount(amount: number, percent: number) {
+    let percentage = amount * percent;
+    let percentageStr = percentage.toString();
+    let roundedPercentage;
 
-    let totalAmount = amount + amount * 0.01;
-    let totalAmountStr = totalAmount.toString();
-
-    if (totalAmountStr.includes('.')) {
-        let parts = totalAmountStr.split('.');
+    if (percentageStr.includes('.')) {
+        let parts = percentageStr.split('.');
         let integerPart = parseInt(parts[0]);
         let decimalPart = parts[1];
 
         if (parseInt(decimalPart[0]) < 5) {
-            return integerPart;
+            roundedPercentage = integerPart;
         } else {
-            return integerPart + 1;
+            roundedPercentage = integerPart + 1;
         }
     } else {
-        return totalAmount;
+        roundedPercentage = percentage;
     }
+
+    return roundedPercentage;
+}
+
+export function getInitPhoneNumberByCountryCode(countryCode: string) {
+    const init: any = {
+        'ci': '+225',
+        'sn': '+221',
+        'bn': '+229',
+    };
+
+    return init[countryCode.toLocaleLowerCase()];
+}
+
+export const activePayouts = () => {
+    return [
+        'WAVE',
+        'MTN'
+    ];
 }
 

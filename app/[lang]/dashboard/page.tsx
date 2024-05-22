@@ -13,6 +13,8 @@ import PendingOperation from "@/components/dashboard/serenity-space/PendingOpera
 import AccountList from "@/components/dashboard/serenity-space/AccountList";
 import LastTransactions from "@/components/dashboard/serenity-space/LastTransactions";
 import LoadingAnimation from "@/components/dashboard/lottie/LoadingAnimation";
+import {getAccountCountryInfo} from "@/core/apis/login";
+import {getCountries, getCountryOperators} from "@/core/apis/country";
 
 export default async function Home({params: { lang }}: {
     params: { lang: Locale }
@@ -25,6 +27,10 @@ export default async function Home({params: { lang }}: {
     } else {
         merchant = {} as IUser;
     }
+
+    const countries = await getCountries(String(merchant.accessToken));
+    const accountCountryInfo = await getAccountCountryInfo(String(merchant.country));
+    const accountCountryOperators = await getCountryOperators(String(merchant.country), String(merchant.accessToken));
 
     return (
         <>
@@ -40,7 +46,7 @@ export default async function Home({params: { lang }}: {
                     <div className={`w-[25%] 2xl:w-[23%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
                             <PaynahCard lang={lang} merchant={merchant}/>
-                            <OperationShortcut lang={lang} merchant={merchant}/>
+                            <OperationShortcut lang={lang} merchant={merchant} accountCountryInfo={accountCountryInfo} accountCountryOperators={accountCountryOperators} countriesItem={countries} />
                         </div>
                     </div>
                     <div className={`w-[50%] 2xl:w-[53%]`}>

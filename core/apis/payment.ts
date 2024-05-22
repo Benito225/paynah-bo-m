@@ -55,8 +55,8 @@ export async function initPayout(values: any, merchantId: string, token: string)
     } else if (values.mode == 'mm') {
         data = {
             'bankAccountId': values.bankAccountId,
-            'firstName': values.firstName,
-            'lastName': values.lastName,
+            'firstName': values.firstName == '' ? values.phoneNumber : values.firstName,
+            'lastName': values.lastName == '' ? 'Bénéficiaire' : values.lastName,
             'operator': values.operator,
             'phoneNumber': values.phoneNumber,
             'amount': values.amount,
@@ -67,8 +67,8 @@ export async function initPayout(values: any, merchantId: string, token: string)
     } else {
         data = {
             'bankAccountId': values.bankAccountId,
-            'firstName': values.firstName,
-            'lastName': values.lastName,
+            'firstName': values.firstName == '' ? values.bankAccount : values.firstName,
+            'lastName': values.lastName == '' ? 'Bénéficiaire' : values.lastName,
             'bankAccount': values.bankAccount,
             'amount': values.amount,
             'description': INIT_PAYOUT_DESC,

@@ -102,25 +102,18 @@ export default function SendMoneyActionsPayDirect({sendMoney, beneficiaries, mer
         setAccount(sendMoney.getValues('accountNumber'));
     }
 
-    function updateFormValue(value: any) {
-        if (step == 1) {
-            initSendMoneyPayloadParams();
-            // setBeneficiary(value)
-            // setAccount(value);
-            setStep(2);
-            setPercentage('w-2/5');
-        } else if (step == 2) {
-            setStep(3);
-            setPercentage('w-3/5');
-        }
-    }
-
-    function showBeneficiaryForm() {
-        if (displayBeneficiaryForm) {
-            resetCreateBeneficiaryValues();
-        }
-        setDisplayBeneficiaryForm(!displayBeneficiaryForm);
-    }
+    // function updateFormValue(value: any) {
+    //     if (step == 1) {
+    //         initSendMoneyPayloadParams();
+    //         // setBeneficiary(value)
+    //         // setAccount(value);
+    //         setStep(2);
+    //         setPercentage('w-2/5');
+    //     } else if (step == 2) {
+    //         setStep(3);
+    //         setPercentage('w-3/5');
+    //     }
+    // }
 
     function nextStep() {
         if (step < 4) {
@@ -202,13 +195,15 @@ export default function SendMoneyActionsPayDirect({sendMoney, beneficiaries, mer
             initPayout(payload, String(merchant?.merchantsIds[0]?.id), String(merchant.accessToken))
                 .then(data => {
                     console.log(data);
-                    setIsSendLoading(false);
+
                     if (data.success) {
                         setErrorMessage('');
                         setStep(4);
                         setPercentage('w-full');
+                        setIsSendLoading(false);
                     } else {
                         console.log(data);
+                        setIsSendLoading(false);
                         return toast.error(data.message, {
                             className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
                         });
@@ -220,8 +215,10 @@ export default function SendMoneyActionsPayDirect({sendMoney, beneficiaries, mer
                         className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
                     });
                 });
+        } else {
+            setIsSendLoading(false);
         }
-        setIsSendLoading(false);
+        // setIsSendLoading(false);
     }
 
     const authenticateMerchant = async (password: string) => {
@@ -252,6 +249,7 @@ export default function SendMoneyActionsPayDirect({sendMoney, beneficiaries, mer
         if (step == 1 || step == 2) {
             initSendMoneyPayloadParams();
         }
+        console.log(sendMoney.getValues('amount'));
 
         const amountWithoutString = String(amount).match(/\d+/g)?.join('');
         const amountNumber = parseInt(amountWithoutString ?? '0');
@@ -282,11 +280,20 @@ export default function SendMoneyActionsPayDirect({sendMoney, beneficiaries, mer
                         <div className={`rounded-t-2xl bg-white px-8 pb-4 pt-5`}>
                             <div className={`flex justify-between items-center space-x-3`}>
                                 <h2 className={`text-base text-[#626262] font-medium`}>{`Envoi d'argent`}</h2>
-                                <DialogClose onClick={() => {
+                                <DialogClose className={`${step != 4 ? 'block' : 'hidden'}`} onClick={() => {
                                     setStep(1);
                                     setPercentage('w-1/4');
                                     setConfirmStep(0);
                                     resetSendMoneyValues();
+                                }}>
+                                    <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`}/>
+                                </DialogClose>
+                                <DialogClose className={`${step == 4 ? 'block' : 'hidden'}`} onClick={() => {
+                                    setStep(1);
+                                    setPercentage('w-1/4');
+                                    setConfirmStep(0);
+                                    resetSendMoneyValues();
+                                    window.location.reload();
                                 }}>
                                     <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`}/>
                                 </DialogClose>
