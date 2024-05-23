@@ -15,6 +15,7 @@ import LastTransactions from "@/components/dashboard/serenity-space/LastTransact
 import LoadingAnimation from "@/components/dashboard/lottie/LoadingAnimation";
 import {getAccountCountryInfo} from "@/core/apis/login";
 import {getCountries, getCountryOperators} from "@/core/apis/country";
+import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 
 export default async function Home({params: { lang }}: {
     params: { lang: Locale }
@@ -29,8 +30,11 @@ export default async function Home({params: { lang }}: {
     }
 
     const countries = await getCountries(String(merchant.accessToken));
+    // For send money (Mobile money mode)
     const accountCountryInfo = await getAccountCountryInfo(String(merchant.country));
     const accountCountryOperators = await getCountryOperators(String(merchant.country), String(merchant.accessToken));
+
+    const accountsRes = await getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken));
 
     return (
         <>
@@ -46,7 +50,7 @@ export default async function Home({params: { lang }}: {
                     <div className={`w-[25%] 2xl:w-[23%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
                             <PaynahCard lang={lang} merchant={merchant}/>
-                            <OperationShortcut lang={lang} merchant={merchant} accountCountryInfo={accountCountryInfo} accountCountryOperators={accountCountryOperators} countriesItem={countries} />
+                            <OperationShortcut lang={lang} merchant={merchant} accountCountryInfo={accountCountryInfo} accountCountryOperators={accountCountryOperators} countriesItem={countries} accountsItem={accountsRes?.accounts ?? []} />
                         </div>
                     </div>
                     <div className={`w-[50%] 2xl:w-[53%]`}>

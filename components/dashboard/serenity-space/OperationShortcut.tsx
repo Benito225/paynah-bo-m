@@ -39,7 +39,8 @@ interface OperationShortcutProps {
     merchant: IUser,
     accountCountryInfo?: any,
     accountCountryOperators?: any,
-    countriesItem?: any
+    countriesItem?: any,
+    accountsItem?: any
 }
 
 export const RANDOM_AVATAR_COLORS_CONFIG = [
@@ -50,7 +51,7 @@ export const RANDOM_AVATAR_COLORS_CONFIG = [
     {bg: '#ffadae', text: '#e03c3e'},
 ]
 
-export default function OperationShortcut({lang, merchant, accountCountryInfo, accountCountryOperators, countriesItem}: OperationShortcutProps) {
+export default function OperationShortcut({lang, merchant, accountCountryInfo, accountCountryOperators, countriesItem, accountsItem}: OperationShortcutProps) {
 
     const [isLoading, setLoading] = useState(true);
     const [isLoadingCountryOps, setLoadingCountryOps] = useState(false);
@@ -63,7 +64,7 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
     const [dOperator, setDOperator] = useState(accountCountryOperators[0]);
     const [pCountry, setPCountry] = useState(accountCountryInfo.code ?? 'CI');
     const [pAccountNumber, setPAccountNumber] = useState('');
-    const [accounts, setAccounts] = useState([]);
+    const [accounts, setAccounts] = useState<IAccount[]>([...accountsItem].reverse());
 
     const refPhone = useRef<PhoneInputRefType>(null);
     // const refPhone =  React.forwardRef<PhoneInputRefType>(0);
@@ -169,10 +170,10 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
     }
 
     const getAccountNummberReference = (accountNumber: string) => {
-        const accountFilter: IAccount[] = accounts.filter((account: IAccount) => account.reference == accountNumber);
+        const accountFilter: IAccount[] = accounts.filter((account: IAccount) => account.id == accountNumber);
         console.log(accountFilter);
         if (accountFilter.length > 0) {
-            paymentLink.setValue('accountCoreBankId', accountFilter[0].coreBankId);
+            paymentLink.setValue('accountCoreBankId', accountFilter[0].name);
         }
     }
 
@@ -252,7 +253,8 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
     }
 
     useEffect(() => {
-        fetchMerchantBankAccounts();
+        // fetchMerchantBankAccounts();
+        // paymentLink.setValue('accountNumber', accounts[0].id);
         fetchMerchantBeneficiaries();
         // fetchCountries();
         if (refBankAccountNumber.current) {
@@ -268,7 +270,7 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
 
             console.log(mask.value);
         }
-    }, [sendMoney]);
+    }, [sendMoney, paymentLink]);
 
     // console.log(sendMoney.getValues('bankAccountNumber'));
     // console.log(refBankAccountNumber.current);
@@ -579,7 +581,8 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
                                                                                                 <Select
                                                                                                     onValueChange={field.onChange}
                                                                                                     value={field.value}
-                                                                                                    defaultValue={dOperator?.code ?? 'WAVE'} disabled={isLoadingCountryOps}>
+                                                                                                    defaultValue={dOperator?.code ?? 'WAVE'}
+                                                                                                    disabled={isLoadingCountryOps}>
                                                                                                     <SelectTrigger
                                                                                                         className={`w-[4rem] selectedItemMM h-[2.8rem] rounded-l-lg !pb-[0px] rounded-r-none border border-[#e4e4e4] pl-2.5 pr-1 font-light`}
                                                                                                         style={{
@@ -595,7 +598,8 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
                                                                                                                 <SelectItem
                                                                                                                     key={operator.id}
                                                                                                                     className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`}
-                                                                                                                    value={operator.code} disabled={!activePayouts().includes(operator.code)}>
+                                                                                                                    value={operator.code}
+                                                                                                                    disabled={!activePayouts().includes(operator.code)}>
                                                                                                                     <div
                                                                                                                         className={`inline-flex items-center space-x-2.5`}>
                                                                                                                         <Image
@@ -607,7 +611,8 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
                                                                                                                         <span
                                                                                                                             className={`mm-label`}>{operator.name}</span>
                                                                                                                         {!activePayouts().includes(operator.code) &&
-                                                                                                                            <span className={`text-xs py-1 px-2 rounded-full bg-amber-200 text-amber-600 font-medium`}>A venir</span>
+                                                                                                                            <span
+                                                                                                                                className={`text-xs py-1 px-2 rounded-full bg-amber-200 text-amber-600 font-medium`}>A venir</span>
                                                                                                                         }
                                                                                                                     </div>
                                                                                                                 </SelectItem>
@@ -815,7 +820,7 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
                                                             <Select onValueChange={(value) => {
                                                                 field.onChange(value);
                                                                 getAccountNummberReference(value);
-                                                            }} defaultValue={paymentLink.getValues('accountNumber')}>
+                                                            }} value={!field.value ? accounts[0]?.id : field.value} defaultValue={accounts[0]?.id}>
                                                                 <SelectTrigger
                                                                     className={`w-full text-sm !pt-[.8rem] h-[2.8rem] rounded-lg border border-[#e4e4e4] pl-2.5 pr-1 font-normal`}
                                                                     style={{
@@ -829,7 +834,7 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
                                                                             <SelectItem key={account.id}
                                                                                         className={`text-sm px-7 flex items-center focus:bg-gray-100 font-normal`}
                                                                                         value={account.id}>
-                                                                                {account.coreBankId}
+                                                                                {!account.name || account.name == 'Main' ? "Compte principal" : `${account.name}`}
                                                                             </SelectItem>
                                                                         ))
                                                                     }
@@ -856,7 +861,7 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
                                                                     id="amount"
                                                                     className={`primary-form-input h-[2.8rem] peer !bg-[#f4f4f7] focus:border focus:border-[#e4e4e4] ${field.value && '!bg-white border border-[#e4e4e4]'} focus:!bg-white`}
                                                                     placeholder=" "
-                                                                    thousandSeparator=" " prefix="FCFA "
+                                                                    thousandSeparator=" " prefix="FCFA " value={field.value}
                                                                     onValueChange={(e) => {
                                                                         paymentLink.setValue('amount', e.value);
                                                                     }}/>

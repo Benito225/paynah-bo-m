@@ -27,14 +27,19 @@ export async function generatePaymentLinkToShare(values: any, merchantId: string
 export async function generateQuickPaymentLink(values: any, merchantId: string, token: string) {
     const data = {
         'bankAccountId': values.bankAccountId,
-        'firstName': values.firstName,
-        'lastName': values.lastName,
-        'email': values.email,
+        'firstName': !values.firstName ? 'Destinataire' : values.firstName,
+        'lastName': !values.lastName ? 'QuickPayment' : values.lastName,
+        'email': values.email ?? '',
         'amount': values.amount,
         'motif': GET_PAY_LINK_DESC,
         'expirationDate': formatISO(new Date()),
     };
 
+    if (!values.email) {
+        delete data.email;
+    }
+
+    console.log(data);
     return await fetchData(`/merchants/${merchantId}/quick-payment-link`, 'POST', data, token, true);
 }
 
