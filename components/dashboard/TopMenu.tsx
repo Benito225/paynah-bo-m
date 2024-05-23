@@ -23,8 +23,8 @@ export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps
     const [isLoading, setLoading] = useState(true);
     const [balance, setBalance] = useState(0);
     const [availableBalance, setAvailableBalance] = useState(0);
-    const [currentAccount, setCurrentAccount] = useState<IAccount | null>(null);
-    const [accounts, setAccounts] = useState([]);
+    const [currentAccount, setCurrentAccount] = useState<IAccount | {}>({});
+    const [accounts, setAccounts] = useState<any[]>([]);
 
     const pathname = usePathname();
 
@@ -34,25 +34,25 @@ export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps
         }
     }
 
-    const handleChangeAccount = (event: any) => {
-        const selectedCoreBankId = event.target.value;
+    const handleChangeAccount = (value: string) => {
+        const selectedCoreBankId = value;
         const accoundFounded = accounts.filter((account: IAccount) => account.coreBankId == selectedCoreBankId);
         if (accoundFounded.length === 0) {
             setCurrentAccount(accoundFounded[0]);
         }
-        // console.log(accoundFounded);
+        console.log(accoundFounded);
     };
 
     useEffect(() => {
         setLoading(true);
         // @ts-ignore
-        // clientFetchData("/merchants/"+merchant.merchantsIds[0].id+"/bank-accounts", 'GET', null, String(merchant.accessToken), true)
         getMerchantBankAccounts(merchant.merchantsIds[0].id, String(merchant.accessToken))
             .then(data => {
+                const accountsItem = [...data.accounts].reverse();
                 setBalance(data.total_balance);
                 setAvailableBalance(data.total_skaleet_balance);
-                setAccounts(data.accounts);
-                initializeCurrentAccount(data.accounts)
+                setAccounts(accountsItem);
+                initializeCurrentAccount(accountsItem);
                 setLoading(false);
             })
             .catch(err => {

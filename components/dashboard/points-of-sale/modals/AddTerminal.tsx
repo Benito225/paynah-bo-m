@@ -66,7 +66,7 @@ export default function AddTerminal({lang, merchant, children, bankAccountsRes}:
                 {children}
             </DialogTrigger>
             <DialogContent
-                className={`sm:max-w-[35rem] overflow-y-hidden overflow-x-hidden duration-200 !rounded-3xl bg-[#f4f4f7] px-3 py-3`}>
+                className={`sm:max-w-[38rem] overflow-y-hidden overflow-x-hidden duration-200 !rounded-3xl bg-[#f4f4f7] px-3 py-3`}>
                 <div>
                     <div className={`rounded-t-2xl bg-white px-8 pb-4 pt-5`}>
                         <div className={`flex justify-between items-center space-x-3`}>

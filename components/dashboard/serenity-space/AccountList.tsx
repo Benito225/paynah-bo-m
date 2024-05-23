@@ -24,6 +24,7 @@ import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 import {IUser} from "@/core/interfaces/user";
 import {IAccount} from "@/core/interfaces/account";
 import { Skeleton } from "@/components/ui/skeleton"
+import AccountsAction from "@/components/dashboard/serenity-space/modals/AccountsAction";
 interface AccountListProps {
     lang: Locale,
     merchant: IUser
@@ -32,13 +33,15 @@ interface AccountListProps {
 export default function AccountList({lang, merchant}: AccountListProps) {
 
     const [isLoading, setLoading] = useState(true);
-    const [accounts, setAccounts] = useState([]);
+    const [accounts, setAccounts] = useState<any[]>([]);
+    const [isAccountActionLoading, setAccountActionLoading] = useState(false);
 
     function fetchMerchantBankAccounts() {
         // @ts-ignore
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
-            setAccounts(data.accounts);
+            const accountsItem = [...data.accounts].reverse()
+            setAccounts(accountsItem);
             setLoading(false);
         })
         .catch(err => {
@@ -49,7 +52,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
 
     useEffect(() => {
         fetchMerchantBankAccounts()
-    }, []);
+    }, [isAccountActionLoading]);
 
     const showLoader = () => {
         return (
@@ -86,14 +89,16 @@ export default function AccountList({lang, merchant}: AccountListProps) {
     return (
         <div className={`account-list`}>
             <div className={`flex space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto`}>
-                <button type={"button"}
-                        className={`snap-end shrink-0 w-[30%] 2xl:w-[24%] border border-dashed border-[#959596] flex flex-col justify-center items-center space-y-8 2xl:space-y-8 p-4 rounded-3xl text-[#767676]`}>
-                    <div className={`inline-flex flex-col justify-center`}>
-                        <Plus className={`h-6 w-auto`}/>
-                        <span
-                            className={`text-xs font-light mt-1 w-[80%] mx-auto text-center`}>Créer un nouveau compte</span>
-                    </div>
-                </button>
+                <AccountsAction lang={lang} merchant={merchant} mode={'add'} isAccountActionLoading={isAccountActionLoading} setAccountActionLoading={setAccountActionLoading}>
+                    <button type={"button"}
+                            className={`snap-end shrink-0 w-[30%] 2xl:w-[24%] border border-dashed border-[#959596] flex flex-col justify-center items-center space-y-8 2xl:space-y-8 p-4 rounded-3xl text-[#767676]`}>
+                        <div className={`inline-flex flex-col justify-center`}>
+                            <Plus className={`h-6 w-auto`}/>
+                            <span
+                                className={`text-xs font-light mt-1 w-[80%] mx-auto text-center`}>Créer un nouveau compte</span>
+                        </div>
+                    </button>
+                </AccountsAction>
                 {
                     isLoading ? showLoader() :
                         accounts.map((account: IAccount) => (
@@ -102,7 +107,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                 <div className={`flex justify-between items-start`}>
                                     <div>
                                         <div className={`inline-flex flex-col`}>
-                                            <div
+                                        <div
                                                 className={`mb-1 rounded-xl p-2 bg-[#f0f0f0] w-[2.7rem] h-[2.7rem] inline-flex justify-center items-center`}>
                                                 <svg className={`h-[1.1rem] fill-[#767676] w-auto`}
                                                      viewBox="0 0 19.474 17.751">
@@ -133,31 +138,32 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                                 className={`text-[12px] font-light text-[#626262]`}>{account.name ? account.name : (account.isMain ? 'Compte Principal' : 'Compte')}</span>
                                         </div>
                                     </div>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger className={`focus:outline-none`} asChild>
-                                            <button className={`text-[#626262]`}>
-                                                <svg className={`h-4 w-auto`} viewBox="0 0 24 24"
-                                                     fill="none" stroke="currentColor" strokeWidth="2"
-                                                     strokeLinecap="round"
-                                                     strokeLinejoin="round">
-                                                    <circle cx="12" cy="12" r="1"/>
-                                                    <circle cx="12" cy="5" r="1"/>
-                                                    <circle cx="12" cy="19" r="1"/>
-                                                </svg>
-                                            </button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent className="w-56 rounded-xl shadow-md" align={"end"}>
-                                            <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                                <ClipboardList className="mr-2 h-3.5 w-3.5"/>
-                                                <span className={`mt-[1.5px]`}>Détails du compte</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator/>
-                                            <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                                <Pencil className="mr-2 h-3.5 w-3.5"/>
-                                                <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator/>
-                                            {/* <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                    {!account.isMain &&
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger className={`focus:outline-none`} asChild>
+                                                <button className={`text-[#626262]`}>
+                                                    <svg className={`h-4 w-auto`} viewBox="0 0 24 24"
+                                                         fill="none" stroke="currentColor" strokeWidth="2"
+                                                         strokeLinecap="round"
+                                                         strokeLinejoin="round">
+                                                        <circle cx="12" cy="12" r="1"/>
+                                                        <circle cx="12" cy="5" r="1"/>
+                                                        <circle cx="12" cy="19" r="1"/>
+                                                    </svg>
+                                                </button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className="w-56 rounded-xl shadow-md" align={"end"}>
+                                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                                    <ClipboardList className="mr-2 h-3.5 w-3.5"/>
+                                                    <span className={`mt-[1.5px]`}>Détails du compte</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator/>
+                                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                                    <Pencil className="mr-2 h-3.5 w-3.5"/>
+                                                    <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
+                                                </DropdownMenuItem>
+                                                {/*<DropdownMenuSeparator/>*/}
+                                                {/* <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                             <svg className="mr-2 h-3.5 w-3.5" viewBox="0 0 24 24"
                                                 fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
                                                 strokeLinejoin="round">
@@ -173,13 +179,14 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                             </svg>
                                             <span className={`mt-[1.5px]`}>Règle du compte</span>
                                         </DropdownMenuItem> */}
-                                        {/*<DropdownMenuSeparator />*/}
-                                        <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                            <Trash2 className="mr-2 h-3.5 w-3.5" />
-                                            <span className={`mt-[1.5px]`}>Supprimer le compte</span>
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                                {/*<DropdownMenuSeparator />*/}
+                                                {/*<DropdownMenuItem className={`text-xs cursor-pointer`}>*/}
+                                                {/*    <Trash2 className="mr-2 h-3.5 w-3.5" />*/}
+                                                {/*    <span className={`mt-[1.5px]`}>Supprimer le compte</span>*/}
+                                                {/*</DropdownMenuItem>*/}
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    }
                             </div>
                             <div className={`inline-flex flex-col`}>
                                 <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Solde disponible</h3>
