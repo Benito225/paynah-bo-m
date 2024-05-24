@@ -370,16 +370,16 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                                                         <ClipboardList className="mr-2 h-3.5 w-3.5"/>
                                                         <span className={`mt-[1.5px]`}>{`Détails de l'opération`}</span>
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuSeparator/>
-                                                    <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                                        <AlertTriangle className="mr-2 h-3.5 w-3.5"/>
-                                                        <span className={`mt-[1.5px]`}>Faire une réclamation</span>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator/>
-                                                    <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                                        <RotateCw className="mr-2 h-3.5 w-3.5"/>
-                                                        <span className={`mt-[1.5px]`}>{`Refaire l'opération`}</span>
-                                                    </DropdownMenuItem>
+                                                    {/*<DropdownMenuSeparator/>*/}
+                                                    {/*<DropdownMenuItem className={`text-xs cursor-pointer`}>*/}
+                                                    {/*    <AlertTriangle className="mr-2 h-3.5 w-3.5"/>*/}
+                                                    {/*    <span className={`mt-[1.5px]`}>Faire une réclamation</span>*/}
+                                                    {/*</DropdownMenuItem>*/}
+                                                    {/*<DropdownMenuSeparator/>*/}
+                                                    {/*<DropdownMenuItem className={`text-xs cursor-pointer`}>*/}
+                                                    {/*    <RotateCw className="mr-2 h-3.5 w-3.5"/>*/}
+                                                    {/*    <span className={`mt-[1.5px]`}>{`Refaire l'opération`}</span>*/}
+                                                    {/*</DropdownMenuItem>*/}
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>

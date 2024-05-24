@@ -48,7 +48,8 @@ export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps
         // @ts-ignore
         getMerchantBankAccounts(merchant.merchantsIds[0].id, String(merchant.accessToken))
             .then(data => {
-                const accountsItem = [...data.accounts].reverse();
+                const accountsItem = data.accounts.sort((a: any, b: any) => b.isMain - a.isMain);
+                console.log('top menu', data);
                 setBalance(data.total_balance);
                 setAvailableBalance(data.total_skaleet_balance);
                 setAccounts(accountsItem);
@@ -59,7 +60,7 @@ export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps
                 setAccounts([]);
                 setLoading(false);
             });
-    }, [merchant, pathname]);
+    }, [pathname]);
 
     return (
         <div className={`bg-white border-b border-[#d2d3d3] py-2`}>

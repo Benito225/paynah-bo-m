@@ -18,6 +18,19 @@ export function formatCFA(amount: number) {
     return formattedAmount;
 }
 
+export function balanceOffset(balance: number, skaleetBalance: number) {
+
+    const nonCompensatedBalance = balance - skaleetBalance;
+
+    const proportion = (nonCompensatedBalance / balance) * 100;
+    const proportionString = parseFloat(proportion.toFixed(2)).toString();
+
+    return {
+        nonCompensatedBalance,
+        proportion: proportionString
+    };
+}
+
 export function hiddeBalance(amount: string) {
     const amountToString = `${amount}`;
     return amountToString.replace(/./g, '*');

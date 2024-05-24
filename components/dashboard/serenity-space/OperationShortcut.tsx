@@ -64,7 +64,7 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
     const [dOperator, setDOperator] = useState(accountCountryOperators[0]);
     const [pCountry, setPCountry] = useState(accountCountryInfo.code ?? 'CI');
     const [pAccountNumber, setPAccountNumber] = useState('');
-    const [accounts, setAccounts] = useState<IAccount[]>([...accountsItem].reverse());
+    const [accounts, setAccounts] = useState<IAccount[]>(accountsItem.sort((a:any, b:any) => b.isMain - a.isMain));
 
     const refPhone = useRef<PhoneInputRefType>(null);
     // const refPhone =  React.forwardRef<PhoneInputRefType>(0);

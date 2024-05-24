@@ -25,6 +25,7 @@ import {IUser} from "@/core/interfaces/user";
 import {IAccount} from "@/core/interfaces/account";
 import { Skeleton } from "@/components/ui/skeleton"
 import AccountsAction from "@/components/dashboard/serenity-space/modals/AccountsAction";
+import {Button} from "@/components/ui/button";
 interface AccountListProps {
     lang: Locale,
     merchant: IUser
@@ -35,12 +36,17 @@ export default function AccountList({lang, merchant}: AccountListProps) {
     const [isLoading, setLoading] = useState(true);
     const [accounts, setAccounts] = useState<any[]>([]);
     const [isAccountActionLoading, setAccountActionLoading] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [account, setAccount] = useState<IAccount>();
+    const [mode, setMode] = useState('add');
 
     function fetchMerchantBankAccounts() {
+        setLoading(true);
         // @ts-ignore
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
-            const accountsItem = [...data.accounts].reverse()
+            const accountsItem = data.accounts.sort((a:any, b:any) => b.isMain - a.isMain)
+            console.log('AccountList', data);
             setAccounts(accountsItem);
             setLoading(false);
         })
@@ -51,8 +57,22 @@ export default function AccountList({lang, merchant}: AccountListProps) {
     }
 
     useEffect(() => {
-        fetchMerchantBankAccounts()
+        if (!isAccountActionLoading) {
+            fetchMerchantBankAccounts()
+        }
     }, [isAccountActionLoading]);
+
+    const openEditAccountModal = (account: IAccount) => {
+        setAccount(account);
+        setMode("edit");
+        setOpen(true);
+    };
+
+    const openAccountDetailModal = (account: IAccount) => {
+        setAccount(account);
+        setMode("detail");
+        setOpen(true);
+    };
 
     const showLoader = () => {
         return (
@@ -89,8 +109,8 @@ export default function AccountList({lang, merchant}: AccountListProps) {
     return (
         <div className={`account-list`}>
             <div className={`flex space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto`}>
-                <AccountsAction lang={lang} merchant={merchant} mode={'add'} isAccountActionLoading={isAccountActionLoading} setAccountActionLoading={setAccountActionLoading}>
-                    <button type={"button"}
+                <AccountsAction lang={lang} merchant={merchant} mode={mode} isAccountActionLoading={isAccountActionLoading} setAccountActionLoading={setAccountActionLoading} open={open} setOpen={setOpen} account={account}>
+                    <button type={"button"} onClick={() => {setMode('add')}}
                             className={`snap-end shrink-0 w-[30%] 2xl:w-[24%] border border-dashed border-[#959596] flex flex-col justify-center items-center space-y-8 2xl:space-y-8 p-4 rounded-3xl text-[#767676]`}>
                         <div className={`inline-flex flex-col justify-center`}>
                             <Plus className={`h-6 w-auto`}/>
@@ -138,7 +158,6 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                                 className={`text-[12px] font-light text-[#626262]`}>{account.name ? account.name : (account.isMain ? 'Compte Principal' : 'Compte')}</span>
                                         </div>
                                     </div>
-                                    {!account.isMain &&
                                         <DropdownMenu>
                                             <DropdownMenuTrigger className={`focus:outline-none`} asChild>
                                                 <button className={`text-[#626262]`}>
@@ -153,15 +172,21 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                                 </button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent className="w-56 rounded-xl shadow-md" align={"end"}>
-                                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                                <DropdownMenuItem onClick={() => openAccountDetailModal(account)} className={`text-xs cursor-pointer`}>
                                                     <ClipboardList className="mr-2 h-3.5 w-3.5"/>
                                                     <span className={`mt-[1.5px]`}>Détails du compte</span>
                                                 </DropdownMenuItem>
-                                                <DropdownMenuSeparator/>
-                                                <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                                    <Pencil className="mr-2 h-3.5 w-3.5"/>
-                                                    <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
-                                                </DropdownMenuItem>
+                                                {!account.isMain &&
+                                                    <>
+                                                        <DropdownMenuSeparator/>
+                                                        <DropdownMenuItem onClick={() => openEditAccountModal(account)}
+                                                                          className={`text-xs cursor-pointer`}>
+                                                            <Pencil className="mr-2 h-3.5 w-3.5"/>
+                                                            <span
+                                                                className={`mt-[1.5px]`}>Modifier le nom du compte</span>
+                                                        </DropdownMenuItem>
+                                                    </>
+                                                }
                                                 {/*<DropdownMenuSeparator/>*/}
                                                 {/* <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                             <svg className="mr-2 h-3.5 w-3.5" viewBox="0 0 24 24"
@@ -186,7 +211,6 @@ export default function AccountList({lang, merchant}: AccountListProps) {
                                                 {/*</DropdownMenuItem>*/}
                                             </DropdownMenuContent>
                                         </DropdownMenu>
-                                    }
                             </div>
                             <div className={`inline-flex flex-col`}>
                                 <h3 className={`text-[10px] font-normal text-[#afafaf]`}>Solde disponible</h3>

@@ -444,7 +444,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                                                         }}>
                                                         <SelectValue placeholder="Choisir un compte"/>
                                                     </SelectTrigger>
-                                                    <SelectContent className={`z-[999] bg-[#f0f0f0]`}>
+                                                    <SelectContent className={`z-[999] max-w-[24rem] bg-[#f0f0f0]`}>
                                                         {
                                                             accounts.map((account: IAccount) => (
                                                                 <SelectItem key={account.id}

@@ -13,3 +13,10 @@ export async function addAccount(values: any, merchantId: string, token: string)
     console.log("resData", resData);
     return resData;
 }
+
+export async function editAccount(values: any, merchantId: string, bankAccountId: string, token: string) {
+    console.log("edit account val", bankAccountId);
+    const resData = await fetchData("/merchants/"+merchantId+"/bank-accounts"+bankAccountId, "PUT", values, token, true);
+    console.log("resData", resData);
+    return resData;
+}

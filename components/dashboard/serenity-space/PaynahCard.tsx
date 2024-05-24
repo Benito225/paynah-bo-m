@@ -35,6 +35,7 @@ export default function PaynahCard({ lang, className, onClick, merchant }: Payna
         // @ts-ignore
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
+            console.log('Paynah card', data);
             setBalance(data.total_balance);
             setAvailableBalance(data.total_skaleet_balance);
             setLoading(false)
