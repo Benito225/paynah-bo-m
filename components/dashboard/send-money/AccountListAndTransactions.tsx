@@ -15,6 +15,7 @@ import TransactionsTable from "@/components/dashboard/send-money/TransactionsTab
 import {IUser} from '@/core/interfaces/user';
 import {ITransaction} from '@/core/interfaces/transaction';
 import { getMerchantBankAccounts } from "@/core/apis/bank-account";
+import { getMerchantBeneficiaries } from "@/core/apis/beneficiary";
 import {getTransactions} from "@/core/apis/transaction";
 import {IAccount} from "@/core/interfaces/account";
 

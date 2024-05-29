@@ -417,7 +417,7 @@ export default function SendMoneyActions({lang, merchant, children}: MainActions
 
     }, [amount, payFees]);
 
-        console.log(beneficiaries, merchant.merchantsIds[0].id);
+        // console.log(beneficiaries, merchant.merchantsIds[0].id);
 
     return (
         <>

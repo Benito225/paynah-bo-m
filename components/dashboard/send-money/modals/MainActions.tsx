@@ -55,6 +55,7 @@ interface MainActionsProps {
     merchant: IUser,
     countries?: any[],
     beneficiaries?: any[]
+    operators?: IOperator[]
 }
 
 const defaultAccount = {
@@ -69,7 +70,7 @@ const defaultAccount = {
     skaleet_balance: 0
 };
 
-export default function MainActions({lang, merchant, countries, beneficiaries}: MainActionsProps) {
+export default function MainActions({lang, merchant, countries, beneficiaries, operators}: MainActionsProps) {
 
     return (
         <>
@@ -80,7 +81,7 @@ export default function MainActions({lang, merchant, countries, beneficiaries}: 
                 </Button>
             </SendMoneyActions>
 
-            <BeneficiaryActions lang={lang} merchant={merchant}>
+            <BeneficiaryActions lang={lang} merchant={merchant} operators={operators}>
                 <Button className={`w-full text-black border border-black bg-transparent py-6 hover:text-white `}>
                     {`Ajouter un bénéficiaire`}
                 </Button>
