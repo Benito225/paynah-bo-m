@@ -18,6 +18,19 @@ export function formatCFA(amount: number) {
     return formattedAmount;
 }
 
+export function balanceOffset(balance: number, skaleetBalance: number) {
+
+    const nonCompensatedBalance = balance - skaleetBalance;
+
+    const proportion = (nonCompensatedBalance / balance) * 100;
+    const proportionString = parseFloat(proportion.toFixed(2)).toString();
+
+    return {
+        nonCompensatedBalance,
+        proportion: proportionString
+    };
+}
+
 export function hiddeBalance(amount: string) {
     const amountToString = `${amount}`;
     return amountToString.replace(/./g, '*');
@@ -282,3 +295,43 @@ export function getTransactionType(type: string) {
 
     return transactionTypes[type] ?? "-";
 }
+
+export function calculatePercentageOfAmount(amount: number, percent: number) {
+    let percentage = amount * percent;
+    let percentageStr = percentage.toString();
+    let roundedPercentage;
+
+    if (percentageStr.includes('.')) {
+        let parts = percentageStr.split('.');
+        let integerPart = parseInt(parts[0]);
+        let decimalPart = parts[1];
+
+        if (parseInt(decimalPart[0]) < 5) {
+            roundedPercentage = integerPart;
+        } else {
+            roundedPercentage = integerPart + 1;
+        }
+    } else {
+        roundedPercentage = percentage;
+    }
+
+    return roundedPercentage;
+}
+
+export function getInitPhoneNumberByCountryCode(countryCode: string) {
+    const init: any = {
+        'ci': '+225',
+        'sn': '+221',
+        'bn': '+229',
+    };
+
+    return init[countryCode.toLocaleLowerCase()];
+}
+
+export const activePayouts = () => {
+    return [
+        'WAVE',
+        'MTN'
+    ];
+}
+

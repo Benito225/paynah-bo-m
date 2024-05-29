@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import {Input} from "@/components/ui/input";
 import {PhoneInput, PhoneInputRefType, CountryData} from 'react-international-phone';
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
@@ -35,32 +35,45 @@ import {Checkbox} from "@/components/ui/checkbox";
 import Link from "next/link";
 import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
 import SendMoneyActions from '@/components/dashboard/send-money/modals/SendMoneyActions'
-import { IUser } from "@/core/interfaces/user";
+import {IUser} from "@/core/interfaces/user";
 import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
 import {getCountries, getCountryOperators} from "@/core/apis/country";
 import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 import {ICountry} from "@/core/interfaces/country";
 import {IOperator} from "@/core/interfaces/operator";
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
-import { IAccount } from "@/core/interfaces/account";
-import { login } from '@/core/apis/login';
+import {IAccount} from "@/core/interfaces/account";
+import {login} from '@/core/apis/login';
 import {initPayout} from '@/core/apis/payment';
 import toast from "react-hot-toast";
-import { ScaleLoader } from "react-spinners";
-import { FlagImage } from "react-international-phone";
+import {ScaleLoader} from "react-spinners";
+import {FlagImage} from "react-international-phone";
 import Image from "next/image";
+
 interface MainActionsProps {
     lang: string,
     merchant: IUser,
+    countries?: any[],
+    beneficiaries?: any[]
 }
 
-const defaultAccount = { id: '', reference: '', coreBankId: '', bankAccountId: '', balance: 0, name: "", balanceDayMinus1: 0, isMain: false, skaleet_balance: 0 };
+const defaultAccount = {
+    id: '',
+    reference: '',
+    coreBankId: '',
+    bankAccountId: '',
+    balance: 0,
+    name: "",
+    balanceDayMinus1: 0,
+    isMain: false,
+    skaleet_balance: 0
+};
 
-export default function MainActions({lang, merchant}: MainActionsProps) {
+export default function MainActions({lang, merchant, countries, beneficiaries}: MainActionsProps) {
 
     return (
         <>
-            
+
             <SendMoneyActions lang={lang} merchant={merchant}>
                 <Button className={`w-full py-6`}>
                     {`Envoyez de l'argent`}

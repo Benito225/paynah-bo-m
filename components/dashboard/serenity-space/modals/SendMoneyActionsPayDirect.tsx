@@ -19,7 +19,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Banknote, ClipboardList, Goal, Pencil, Search, SquarePen, Trash2, X} from "lucide-react";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {calculatePercentageOfAmount, formatCFA, getInitPhoneNumberByCountryCode} from "@/lib/utils";
+import {formatCFA} from "@/lib/utils";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -40,33 +40,27 @@ import {login} from '@/core/apis/login';
 import toast from "react-hot-toast";
 import {ScaleLoader} from "react-spinners";
 
-interface SendMoneyActionsProps {
+interface SendMoneyActionsPayDirectProps {
     lang: string,
     sendMoney: any,
     beneficiaries: IBeneficiary[],
     merchant: IUser,
     accounts: IAccount[],
     activeSendMode: string,
-    isLoadingCountryOps?: boolean,
-    pCountry?: unknown
 }
 
-export default function SendMoneyActions({sendMoney, beneficiaries, merchant, accounts, activeSendMode, isLoadingCountryOps, pCountry}: SendMoneyActionsProps) {
+export default function SendMoneyActionsPayDirect({sendMoney, beneficiaries, merchant, accounts, activeSendMode}: SendMoneyActionsPayDirectProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{ id: string, name: string }>({id: '', name: ''});
     const [beneficiary, setBeneficiary] = useState<IBeneficiary>({});
     const [existBenef, setExistBenef] = useState(true);
-
     const [payFees, setPayFees] = useState(false);
     const [amount, setAmount] = useState("");
-    const [benefAmount, setBenefAmount] = useState("");
-    const [feePercent, setFeePercent] = useState(0);
-
     const [phoneNumber, setPhoneNumber] = useState('');
     const [totalAmount, setTotalAmount] = useState('');
     const [reason, setReason] = useState('');
-    const [percentage, setPercentage] = useState('w-1/4');
+    const [percentage, setPercentage] = useState('w-1/5');
 
     const [confirmStep, setConfirmStep] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
@@ -103,19 +97,22 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
     const {handleSubmit, formState: {errors}, setValue} = sendMoneyForm;
 
     function initSendMoneyPayloadParams() {
-        setAmount(Number(sendMoney.getValues('mmAmount')).toLocaleString("fr-FR"));
-        setTotalAmount(Number(sendMoney.getValues('mmAmount')).toLocaleString('fr-FR'));
-        setAccount(sendMoney.getValues('mmAccountNumber'));
-        setOperator((sendMoney.getValues('mmCountry') == undefined ? pCountry : sendMoney.getValues('mmCountry')) + '_' + sendMoney.getValues('mmOperator'));
+        setAmount(Number(sendMoney.getValues('amount')).toLocaleString("fr-FR"));
+        setTotalAmount(Number(sendMoney.getValues('amount')).toLocaleString('fr-FR'));
+        setAccount(sendMoney.getValues('accountNumber'));
     }
 
-    // console.log(sendMoney.getValues('mmAccountNumber'));
-
-    // function showBeneficiaryForm() {
-    //     if (displayBeneficiaryForm) {
-    //         resetCreateBeneficiaryValues();
+    // function updateFormValue(value: any) {
+    //     if (step == 1) {
+    //         initSendMoneyPayloadParams();
+    //         // setBeneficiary(value)
+    //         // setAccount(value);
+    //         setStep(2);
+    //         setPercentage('w-2/5');
+    //     } else if (step == 2) {
+    //         setStep(3);
+    //         setPercentage('w-3/5');
     //     }
-    //     setDisplayBeneficiaryForm(!displayBeneficiaryForm);
     // }
 
     function nextStep() {
@@ -123,11 +120,11 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
             setStep(step + 1);
 
             if (step + 1 == 4) {
-                setPercentage('w-4/5');
+                setPercentage('w-4/4');
             } else if (step + 1 == 3) {
-                setPercentage('w-3/5');
+                setPercentage('w-3/4');
             } else {
-                setPercentage('w-2/5');
+                setPercentage('w-2/4');
             }
         }
     }
@@ -159,23 +156,16 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
         setValue('lastName', '');
         setValue('firstName', '');
         setValue('email', '');
-        sendMoney.setValue('mmAccountNumber', getInitPhoneNumberByCountryCode(sendMoney.getValues('mmCountry') ?? pCountry));
-        sendMoney.setValue('mmAmount', '');
-        // setAmount('');
+        sendMoney.reset();
         setBeneficiary({});
     }
 
     function resetSendMoneyValues() {
         setStep(1)
         resetCreateBeneficiaryValues()
-        // setAccount({id: '', name: ''})
-        // setBeneficiary({id: '', name: ''})
-        setExistBenef(true)
         setPayFees(false)
         setAmount('')
-        setBenefAmount('')
         setTotalAmount('')
-        setReason('')
         setPercentage('w-1/4')
         setErrorMessage('')
         setConfirmStep(0)
@@ -186,15 +176,15 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
 
     const sendMoneyToBeneficiary = async () => {
         setIsSendLoading(true);
+        const amountString = String(amount).match(/\d+/g)?.join('');
+
         // @ts-ignore
         const payload = {
             bankAccountId: bankAccountId,
             firstName: beneficiary.firstName ?? '',
             lastName: beneficiary.lastName ?? '',
-            operator: operator,
-            phoneNumber: account,
-            amount: parseInt(sendMoney.getValues('mmAmount')),
-            // amount: Number(amount),
+            paynahAccount: account,
+            amount: parseInt(amountString ?? '0'),
             mode: activeSendMode,
             feeSupport: payFees,
         };
@@ -205,12 +195,14 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
             initPayout(payload, String(merchant?.merchantsIds[0]?.id), String(merchant.accessToken))
                 .then(data => {
                     console.log(data);
+
                     if (data.success) {
                         setErrorMessage('');
                         setStep(4);
                         setPercentage('w-full');
                         setIsSendLoading(false);
                     } else {
+                        console.log(data);
                         setIsSendLoading(false);
                         return toast.error(data.message, {
                             className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
@@ -226,6 +218,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
         } else {
             setIsSendLoading(false);
         }
+        // setIsSendLoading(false);
     }
 
     const authenticateMerchant = async (password: string) => {
@@ -253,59 +246,54 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
     }
 
     useEffect(() => {
-        if (step == 2) {
-            initSendMoneyPayloadParams()
+        if (step == 1 || step == 2) {
+            initSendMoneyPayloadParams();
         }
-
-        let feePercent = 0;
-
-        if (sendMoney.getValues('mmOperator') == 'WAVE') {
-            feePercent = 0.01;
-            setFeePercent(feePercent * 100);
-        } else if (sendMoney.getValues('mmOperator') == 'MTN') {
-            feePercent = 0.005;
-            setFeePercent(feePercent * 100);
-        }
+        console.log(sendMoney.getValues('amount'));
 
         const amountWithoutString = String(amount).match(/\d+/g)?.join('');
         const amountNumber = parseInt(amountWithoutString ?? '0');
 
         if (payFees) {
-            const finalAmountNumber = amountNumber + calculatePercentageOfAmount(amountNumber, feePercent);
-            setTotalAmount(finalAmountNumber.toLocaleString('fr-FR'));
-
-            setBenefAmount(amount);
-        } else {
-            const benefAmount = amountNumber - calculatePercentageOfAmount(amountNumber, feePercent);
-            setBenefAmount(benefAmount.toLocaleString('fr-FR'));
-
             setTotalAmount(amountNumber.toLocaleString('fr-FR'));
+        } else {
+            const finalAmountNumber = amountNumber - amountNumber * (1 / 100);
+            const finalAmount = finalAmountNumber.toLocaleString('fr-FR');
+            setTotalAmount(finalAmount);
         }
 
     }, [amount, payFees, sendMoney, step]);
 
-    console.log(sendMoney.getValues('mmAccountNumber'));
-    // console.log(sendMoney.getValues('account'));
+
     return (
         <>
             <Dialog>
                 <DialogTrigger asChild>
                     <Button className={`absolute rounded-lg p-3 top-0 right-0`}
-                            disabled={sendMoney.getValues('mmAmount') == '' || sendMoney.getValues('mmAccountNumber') == '' || sendMoney.getValues('mmCountry') == '' || sendMoney.getValues('mmOperator') == '' || isLoadingCountryOps}>
+                            disabled={sendMoney.getValues('accountNumber') == '' || sendMoney.getValues('amount') == ''}>
                         <Send className={`h-[1.1rem] text-[#fff] `}/>
                     </Button>
                 </DialogTrigger>
                 <DialogContent
-                    className={`sm:max-w-[40rem] overflow-x-hidden duration-200 !rounded-3xl bg-[#f4f4f7] px-3 py-3`}>
+                    className={`${"sm:max-w-[40rem]"}  overflow-x-hidden duration-200 !rounded-3xl bg-[#f4f4f7] px-3 py-3`}>
                     <div>
                         <div className={`rounded-t-2xl bg-white px-8 pb-4 pt-5`}>
                             <div className={`flex justify-between items-center space-x-3`}>
                                 <h2 className={`text-base text-[#626262] font-medium`}>{`Envoi d'argent`}</h2>
-                                <DialogClose onClick={() => {
+                                <DialogClose className={`${step != 4 ? 'block' : 'hidden'}`} onClick={() => {
                                     setStep(1);
                                     setPercentage('w-1/4');
                                     setConfirmStep(0);
                                     resetSendMoneyValues();
+                                }}>
+                                    <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`}/>
+                                </DialogClose>
+                                <DialogClose className={`${step == 4 ? 'block' : 'hidden'}`} onClick={() => {
+                                    setStep(1);
+                                    setPercentage('w-1/4');
+                                    setConfirmStep(0);
+                                    resetSendMoneyValues();
+                                    window.location.reload();
                                 }}>
                                     <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`}/>
                                 </DialogClose>
@@ -315,6 +303,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                             <div className={`h-full ${percentage} duration-200 bg-black`}></div>
                         </div>
                     </div>
+
 
                     <div className={`min-h-[6rem] pt-2 pb-4 px-8`}>
                         <Form {...sendMoneyForm}>
@@ -444,7 +433,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                                                         }}>
                                                         <SelectValue placeholder="Choisir un compte"/>
                                                     </SelectTrigger>
-                                                    <SelectContent className={`z-[999] max-w-[24rem] bg-[#f0f0f0]`}>
+                                                    <SelectContent className={`z-[999] bg-[#f0f0f0]`}>
                                                         {
                                                             accounts.map((account: IAccount) => (
                                                                 <SelectItem key={account.id}
@@ -577,31 +566,13 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                                                     </g>
                                                 </g>
                                             </svg>
-                                            <p className={`text-sm text-[#707070] mt-3`}>{`Vous êtes sur le point d'envoyer`}</p>
-                                            <p className={`text-sm text-[#707070]`}>
-                                                <span className={`text-black font-semibold`}>{`${amount} FCFA`}</span>
+                                            <p className={`text-sm text-center text-[#707070] mt-6 mb-3`}>{`Vous êtes sur le point d'envoyer`}
+                                                <br/>
+                                                <span className={`text-black font-semibold`}>{` ${amount} FCFA`}</span>
                                                 <span
-                                                    className={`text-black`}>{!beneficiary.lastName && !beneficiary.firstName ? ` sur le compte Mobile Money` : ` à ${beneficiary?.lastName} ${beneficiary?.firstName} sur son compte Mobile Money`}</span>
-                                            </p>
-                                            <p className={`text-sm text-[#707070]`}><span
-                                                className={`text-black font-semibold`}>{`${account}`}</span></p>
-                                            <div className="flex items-start space-x-2 mt-6">
-                                                <Checkbox onCheckedChange={(checked) => {
-                                                    checked == 'indeterminate' ? setPayFees(false) : setPayFees(checked)
-                                                }} className={`bg-white border-[#dfdfdf]`} id="fees"/>
-                                                <label
-                                                    htmlFor="fees"
-                                                    className="text-sm -mt-1 text-[#777778] cursor-pointer font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 gap-2"
-                                                >
-                                                    <span className={"text-sm"}>Je paie les frais </span><span
-                                                    className={`text-black font-semibold`}>({feePercent}%)</span><br/><span
-                                                    className={'text-sm mt-3'}>Le bénéficiaire recevra</span> <span
-                                                    className={`mt-3 text-black font-semibold`}>{`${benefAmount} FCFA`}</span>
-                                                </label>
-                                            </div>
-                                            <p className={`text-sm text-center text-[#707070] mt-6`}>{`Montant total débité`}
-                                                <br/> <span
-                                                    className={`text-black font-semibold`}>{` ${totalAmount} FCFA`}</span>
+                                                    className={`text-black`}>{!beneficiary.lastName && !beneficiary.firstName ? `` : ` à ${beneficiary?.lastName} ${beneficiary?.firstName}`}</span>{` sur le compte Paynah`}
+                                                <br/>
+                                                <span className={`text-black font-semibold`}>{` ${account}`}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -689,7 +660,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                                     </div>
                                 </div>
 
-                                {/*step 4*/}
+                                {/*Step 4*/}
                                 <div className={`${step == 4 ? 'flex' : 'hidden'} flex-col mb-4 -mt-3`}>
                                     <div className={`w-[70%] mx-auto`}>
                                         <div className={`flex flex-col items-center`}>
@@ -700,9 +671,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                                                       className="relative inline-flex rounded-full w-40 h-40 bg-[#41a38c]"></span>
                                                 </span>
                                             <p className={`text-base mt-10 text-center`}>Votre envoi de <span
-                                                className="text-black font-semibold">{`${amount} FCFA`}</span> {!beneficiary.lastName && !beneficiary.firstName ? `sur le compte Mobile Money ` : ` à `}
-                                                <span
-                                                    className={`font-semibold`}>{!beneficiary.lastName && !beneficiary.firstName ? `${account}` : `${beneficiary?.lastName} ${beneficiary?.firstName}`}</span> a
+                                                className="text-black font-semibold">{`${amount} FCFA`}</span> {!beneficiary.lastName && !beneficiary.firstName ? `sur le compte Paynah ` : ` à `} <span className={`font-semibold`}>{!beneficiary.lastName && !beneficiary.firstName ? `${account}` : `${beneficiary?.lastName} ${beneficiary?.firstName}`}</span> a
                                                 été traité avec succès !</p>
                                         </div>
                                     </div>
@@ -711,7 +680,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
 
                                 <div className={`flex justify-center items-center mb-3`}>
                                     <Button onClick={() => prevStep()}
-                                            className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 3 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}
+                                            className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 4 || confirmStep != 0 ? 'hidden' : 'block'}`}
                                             disabled={isSendLoading}>
                                         Retour
                                     </Button>
@@ -720,8 +689,6 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                                         Continuer
                                     </Button>
                                     <Button onClick={() => {
-                                        // setConfirmStep(1);
-                                        // nextStep();
                                         sendMoneyToBeneficiary();
                                     }} className={`mt-5 w-[30%] text-sm ${step == 3 ? 'block' : 'hidden'}`}
                                             disabled={isSendLoading}>
@@ -735,6 +702,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                             </div>
                         </Form>
                     </div>
+
                 </DialogContent>
             </Dialog>
         </>
