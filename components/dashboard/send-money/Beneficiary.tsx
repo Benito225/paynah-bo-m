@@ -8,8 +8,9 @@ import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import Routes from "@/components/Routes";
 import {IUser} from "@/core/interfaces/user";
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
-import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
+// import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
 import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 
 interface BeneficiaryProps {
     lang: Locale,
@@ -36,24 +37,6 @@ export default function Beneficiary({lang, merchant, beneficiaries}: Beneficiary
         return beneficiaryFullNameAvatar;
     }
 
-    // function fetchMerchantBeneficiaries() {
-    //     // @ts-ignore
-    //     getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-    //         .then(data => {
-    //             setBeneficiaries(data);
-    //             setLoading(false);
-    //         })
-    //         .catch(err => {
-    //             setLoading(false);
-    //             setBeneficiaries([]);
-    //         });
-    // }
-    //
-    // useEffect(() => {
-    //     fetchMerchantBeneficiaries();
-    // }, []);
-    // console.log(benefs, merchant.merchantsIds[0].id);
-
     return (
         <div className={`mt-8`}>
             <div className={`flex items-center justify-between pb-1.5 border-dashed`}>
@@ -70,14 +53,24 @@ export default function Beneficiary({lang, merchant, beneficiaries}: Beneficiary
                 <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires individuels</h3>
                 <div className={`inline-flex space-x-1 mt-2`}>
                     {
-                        benefs && benefs.length > 0 &&
-                        benefs.slice(0, 5).map((beneficiary: IBeneficiary, index: number) => (
-                            <Avatar key={beneficiary.id} className={`cursor-pointer`}>
-                                <AvatarFallback
-                                    className={`bg-[${RANDOM_AVATAR_COLORS_CONFIG[index].bg}] text-[${RANDOM_AVATAR_COLORS_CONFIG[index].text}]`}>
-                                    {transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}
-                                </AvatarFallback>
-                            </Avatar>
+                        beneficiaries && beneficiaries.length > 0 &&
+                        beneficiaries.slice(0, 5).map((beneficiary: IBeneficiary, index: number) => (
+                            <TooltipProvider key={beneficiary.id} delayDuration={10}>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Avatar
+                                            className={`cursor-pointer`}>
+                                            <AvatarFallback
+                                                className={`bg-[${RANDOM_AVATAR_COLORS_CONFIG[index].bg}] text-[${RANDOM_AVATAR_COLORS_CONFIG[index].text}]`}>
+                                                {transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p className={`text-xs`}>{beneficiary.lastName} {beneficiary.firstName}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         ))
                     }
                     <BeneficiaryActions lang={lang} merchant={merchant}>

@@ -63,6 +63,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
     const [showPassword, setShowPassword] = useState(false);
     const [accessKey, setAccessKey] = useState('');
     const [accounts, setAccounts] = useState([]);
+    const [accountsFiltered, setAccountsFiltered] = useState([]);
     const [beneficiaries, setBeneficiaries] = useState([]);
     const [isSendLoading, setIsSendLoading] = useState(false);
     const [paymentLinkToShare, setPaymentLinkToShare] = useState('');
@@ -79,6 +80,15 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
         country: z.string(),
         mmAccountNumber: z.string(),
         mmOperator: z.string(),
+    })
+    .refine((data) => {
+        if (step > 3) {
+            return data.amount > 0
+        }
+        return true;
+    }, {
+        message: "Le montant doit être suppérieur à 0",
+        path: ["amount"],
     })
 
     const handleTogglePassword = () => {
@@ -227,6 +237,19 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
         }
     }
 
+    const verifyPaymentLinkInputs = (data: any) => {
+        initPaymentLinkPayloadParams();
+        console.log(sendMoneyForm.getValues('amount'))
+        try {
+            formSchema.parse(data); // Valider les données
+            setConfirmStep(1);
+            setStep(0);
+            setPercentage('w-full')
+        } catch (error) {
+            console.error('Erreur de validation du formulaire :', error);
+        }
+    }
+
     function resetSendMoneyValues() {
         setStep(1)
         setAccount(defaultAccount)
@@ -258,10 +281,6 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
         // if (activeSendModeSelected == 'direct') {
         //     setAccountNumber(sendMoneyForm.getValues('accountNumber'));
         // }
-
-        setConfirmStep(1);
-        setStep(0);
-        setPercentage('w-full')
     }
 
     const authenticateMerchant = async (password: string) => {
@@ -293,6 +312,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             setAccounts(data.accounts);
+            setAccountsFiltered(data.accounts);
             setLoading(false);
         })
         .catch(err => {
@@ -370,7 +390,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                 <h3 className={`text-sm font-medium`}>1- Choisissez le compte à débiter</h3>
                                 <div className={`relative`}>
                                     <Input type={`text`} className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-[15rem]`}
-                                           placeholder="Recherchez un compte" onChange={(e) => console.log(e.target.value) }/>
+                                        placeholder="Recherchez un compte" onChange={(e) => { console.log(e.target.value, accounts) }}/>
                                     <Search className={`absolute h-4 w-4 top-3.5 left-3`} />
                                 </div>
                             </div>
@@ -391,7 +411,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                 {/*Step 1*/}
                                 <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto ${step == 1 ? 'flex' : 'hidden'}`}>
                                     {
-                                        accounts && accounts.map((account: IAccount) => (
+                                        accountsFiltered && accountsFiltered.map((account: IAccount) => (
                                             <div key={account.id} onClick={() => updateAccountData(account)}
                                                 className={`snap-end shrink-0 w-[40%] 2xl:w-[35%] bg-white flex flex-col justify-between cursor-pointer ${account.id == '3' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                                                 <div className={`flex justify-between items-start`}>
@@ -655,7 +675,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                             </div>
                                             <div className={`relative mt-2`}>
                                                 <NumericFormat value={amount}
-                                                    className={`primary-form-input !pr-[12rem] !pt-2 h-[2.8rem] peer !bg-white focus:border focus:border-[#e4e4e4] focus:!bg-white`} placeholder=" "
+                                                    className={`primary-form-input !pr-[12rem] !pt-2 h-[2.8rem] peer !bg-white focus:border focus:border-[#e4e4e4] focus:!bg-white ${showConError && "border-[#e95d5d]"}`} placeholder=" "
                                                     thousandSeparator=" " prefix="FCFA " onChange={(e) => {setAmount(e.target.value)} } />
 
                                                 <div className={`absolute right-1 top-[4.4px]`}>
@@ -671,6 +691,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                                         </button>
                                                     </div>
                                                 </div>
+                                                {errors.amount && <span className={`text-xs text-[#e95d5d] mt-1 hover:font-medium duration-200`}>{errors.amount.message}</span>}
                                             </div>
                                         </div>
                                         <div>
@@ -831,6 +852,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                                     <Banknote className={`text-[#767676] h-5 w-5`} />
                                                     <span className={`text-sm font-normal`}>{amount}</span>
                                                 </div>
+                                                {errors.amount && <span className={`text-xs text-[#e95d5d] mt-1 hover:font-medium duration-200`}>{errors.amount.message}</span>}
                                             </div>
                                         </div>
                                         <div>
@@ -975,9 +997,11 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                     <Button onClick={() => nextStep()} className={`mt-5 w-36 text-sm ${step < 4 && step > 2  ? 'block' : 'hidden'}`}>
                                         Continuer
                                     </Button>
-                                    <Button onClick={() => {
-                                        initPaymentLinkPayloadParams();
-                                    }} className={`mt-5 w-[30%] text-sm ${step == 4 ? 'block' : 'hidden'}`}>
+                                    <Button onClick={
+                                        // () => {
+                                        // initPaymentLinkPayloadParams()}; 
+                                        handleSubmit((data) => verifyPaymentLinkInputs(data))
+                                    } className={`mt-5 w-[30%] text-sm ${step == 4 ? 'block' : 'hidden'}`}>
                                         {`Confirmer l'envoi`}
                                     </Button>
                                     <Button onClick={() => sendPaymentLinkToRecipient()} className={`mt-5 w-[30%] text-sm ${confirmStep == 1 ? 'block' : 'hidden'}`} disabled={isSendLoading}>

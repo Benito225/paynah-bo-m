@@ -48,6 +48,7 @@ interface MainActionsProps {
     lang: string,
     merchant: IUser,
     children: React.ReactNode,
+    operators?: IOperator[],
 }
 
 interface IBeneficiarySchema {
@@ -167,6 +168,7 @@ export default function BeneficiaryActions({lang, merchant, children}: MainActio
 
     async function onSubmitBenefPersForm(values: z.infer<typeof formSchema>) {
         console.log(values);
+        getOperatorList();
         nextStep();
     }
 
