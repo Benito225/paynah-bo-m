@@ -62,7 +62,7 @@ interface IBeneficiarySchema {
     bankAccount: string
 }
 
-export default function BeneficiaryActions({lang, merchant, operators, children}: MainActionsProps) {
+export default function BeneficiaryActions({lang, merchant, children}: MainActionsProps) {
 
     const divOptionsRef = useRef<HTMLDivElement | null>(null);
 
@@ -86,7 +86,7 @@ export default function BeneficiaryActions({lang, merchant, operators, children}
     const [isAddBenefLoading, setAddBenefLoading] = useState(false);
     const [accountType, setAccountType] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    // const [operators, setOperators] = useState([]);
+    const [operators, setOperators] = useState([]);
     const [showConError, setShowConError] = useState(false);
     const [beneficiaries, setBeneficiaries] = useState<IBeneficiarySchema[]>([]);
     const [bankName, setBankName] = useState('');
@@ -168,6 +168,7 @@ export default function BeneficiaryActions({lang, merchant, operators, children}
 
     async function onSubmitBenefPersForm(values: z.infer<typeof formSchema>) {
         console.log(values);
+        getOperatorList();
         nextStep();
     }
 
@@ -245,15 +246,15 @@ export default function BeneficiaryActions({lang, merchant, operators, children}
 
     const getOperatorList = () => {
         // @ts-ignore
-        // getOperators(String(merchant.accessToken))
-        // .then(data => {
-        //     setOperators(data);
-        //     setLoading(false);
-        // })
-        // .catch(err => {
-        //     setLoading(false);
-        //     setOperators([]);
-        // });
+        getOperators(String(merchant.accessToken))
+        .then(data => {
+            setOperators(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            setLoading(false);
+            setOperators([]);
+        });
     }
 
     const handleChangeAccountType = (accountType: string) => {
