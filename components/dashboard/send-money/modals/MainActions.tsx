@@ -56,7 +56,7 @@ interface MainActionsProps {
     countries?: any[],
     beneficiaries?: any[]
     operators?: IOperator[]
-    accounts?: IAccount[]
+    accounts: IAccount[]
 }
 
 const defaultAccount = {

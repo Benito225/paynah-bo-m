@@ -53,7 +53,7 @@ interface MainActionsProps {
     merchant: IUser,
     children: React.ReactNode,
     countries?: ICountry[],
-    accounts?: IAccount[],
+    accounts: IAccount[],
     beneficiaries?: IBeneficiary[],
 }
 
@@ -79,7 +79,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
     const [country, setCountry] = useState('CI');
     const [isLoading, setLoading] = useState(false);
     // const [beneficiaries, setBeneficiaries] = useState([]);
-    // const [accounts, setAccounts] = useState([]);
+    const [accountsSearch, setAccounts] = useState<IAccount[]>(accounts);
     // const [countries, setCountries] = useState([]);
     const [operators, setOperators] = useState([]);
     const [displayBeneficiaryForm, setDisplayBeneficiaryForm] = useState(false);
@@ -347,43 +347,16 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
         setShowConError(false)
     }
 
-    function fetchMerchantBeneficiaries() {
-        // @ts-ignore
-        // getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-        // .then(data => {
-        //     setBeneficiaries(data);
-        //     setLoading(false);
-        // })
-        // .catch(err => {
-        //     setLoading(false);
-        //     setBeneficiaries([]);
-        // });
-    }
-
-    function fetchMerchantBankAccounts() {
-        // @ts-ignore
-        // getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-        // .then(data => {
-        //     setAccounts(data.accounts);
-        //     setLoading(false);
-        // })
-        // .catch(err => {
-        //     setLoading(false);
-        //     setAccounts([]);
-        // });
-    }
-
-    function fetchCountries() {
-        // @ts-ignore
-        // getCountries(String(merchant.accessToken))
-        // .then(data => {
-        //     setCountries(data);
-        //     setLoading(false);
-        // })
-        // .catch(err => {
-        //     setLoading(false);
-        //     setCountries([]);
-        // });
+    function searchAccount(e: React.ChangeEvent<HTMLInputElement>) {
+        const keyword = e.target.value;
+        let accountsMatch = [...accounts];
+        if (keyword.trim().length > 0 && keyword.trim().length < 3) {
+            accountsMatch = [...accountsSearch];
+        } else {
+            accountsMatch = accounts.filter(account => account.coreBankId.search(keyword) !== -1 );
+        }
+        console.log(accountsMatch);
+        setAccounts(accountsMatch);
     }
 
     function fetchCountryOperators(countryCode: string) {
@@ -404,9 +377,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
     }
 
     useEffect(() => {
-        fetchCountries();
-        fetchMerchantBankAccounts();
-        fetchMerchantBeneficiaries();
+        setAccounts(accounts);
         if (payFees) {
             const amountWithoutString = amount.match(/\d+/g)?.join('');
             const amountNumber = parseInt(amountWithoutString ?? '0');
@@ -417,9 +388,9 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
             setTotalAmount(amount);
         }
 
-    }, [amount, payFees]);
+    }, [amount, payFees, accounts]);
 
-        // console.log(beneficiaries, merchant.merchantsIds[0].id);
+        console.log(accounts, accountsSearch);
 
     return (
         <>
@@ -459,7 +430,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
                                 <h3 className={`text-sm font-medium`}>2- Choisissez le compte à débiter</h3>
                                 <div className={`relative`}>
                                     <Input type={`text`} className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-[15rem]`}
-                                           placeholder="Recherchez un compte" onChange={(e) => console.log(e.target.value) }/>
+                                        placeholder="Recherchez un compte" onChange={(e) => searchAccount(e)}/>
                                     <Search className={`absolute h-4 w-4 top-3.5 left-3`} />
                                 </div>
                             </div>
@@ -688,7 +659,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
                                 {/*Step 2*/}
                                 <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto ${step == 2 ? 'flex' : 'hidden'}`}>
                                     {
-                                        accounts && accounts.map((account: IAccount) => (
+                                        accountsSearch && accountsSearch.map((account: IAccount) => (
                                             <div key={account.id} onClick={() => updateAccountData(account)}
                                                 className={`snap-end shrink-0 w-[40%] 2xl:w-[35%] bg-white flex flex-col justify-between cursor-pointer ${account.id == '3' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                                                 <div className={`flex justify-between items-start`}>
