@@ -4,6 +4,7 @@ import {ChevronRight} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import Beneficiary from "@/components/dashboard/send-money/Beneficiary";
 import AccountListAndTransactions from "@/components/dashboard/send-money/AccountListAndTransactions";
+import CustomOperations from "@/components/dashboard/send-money/CustomOperations";
 import {SearchParams} from "@/core/interfaces";
 import {searchParamsSchema} from "@/components/dashboard/send-money/validations";
 import MainActions from "@/components/dashboard/send-money/modals/MainActions";
@@ -47,9 +48,10 @@ export default async function SendMoneyPage({params: { lang }, searchParams}: In
                     <div className={`w-[28%] 2xl:w-[26%]`}>
                         <div className={`h-full bg-white px-6 py-8 rounded-2xl`}>
                             <div className={`flex flex-col space-y-2.5`}>
-                               <MainActions lang={lang} merchant={merchant}/>
+                               {/* <MainActions lang={lang} merchant={merchant}/> */}
                             </div>
-                            <Beneficiary lang={lang} merchant={merchant}/>
+                            {/* <Beneficiary lang={lang} merchant={merchant}/> */}
+                            <CustomOperations lang={lang} searchItems={searchItems} merchant={merchant}/>
                         </div>
                     </div>
                     <div className={`w-[72%] 2xl:w-[74%]`}>
