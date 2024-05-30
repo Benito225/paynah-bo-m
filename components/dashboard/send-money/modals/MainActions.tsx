@@ -54,7 +54,7 @@ interface MainActionsProps {
     lang: string,
     merchant: IUser,
     countries?: any[],
-    beneficiaries?: any[]
+    beneficiaries: any[]
     operators?: IOperator[]
     accounts: IAccount[]
 }

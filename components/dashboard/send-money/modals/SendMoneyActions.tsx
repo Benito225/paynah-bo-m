@@ -54,16 +54,17 @@ interface MainActionsProps {
     children: React.ReactNode,
     countries?: ICountry[],
     accounts: IAccount[],
-    beneficiaries?: IBeneficiary[],
+    beneficiaries: IBeneficiary[],
 }
 
 const defaultAccount = { id: '', reference: '', coreBankId: '', bankAccountId: '', balance: 0, name: "", balanceDayMinus1: 0, isMain: false, skaleet_balance: 0 };
+const defaultBeneficiary = { id: '', firstName: '', lastName: '', email: '' };
 
 export default function SendMoneyActions({lang, merchant, countries, accounts, beneficiaries, children}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<IAccount>(defaultAccount);
-    const [beneficiary, setBeneficiary] = useState<IBeneficiary>({});
+    const [beneficiary, setBeneficiary] = useState<IBeneficiary>(defaultBeneficiary);
     const [existBenef, setExistBenef] = useState(true);
     const [payFees, setPayFees] = useState(false);
     const [amount, setAmount] = useState('0');
@@ -78,7 +79,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
     const [accessKey, setAccessKey] = useState('');
     const [country, setCountry] = useState('CI');
     const [isLoading, setLoading] = useState(false);
-    // const [beneficiaries, setBeneficiaries] = useState([]);
+    const [beneficiariesSearch, setBeneficiaries] = useState<IBeneficiary[]>(beneficiaries);
     const [accountsSearch, setAccounts] = useState<IAccount[]>(accounts);
     // const [countries, setCountries] = useState([]);
     const [operators, setOperators] = useState([]);
@@ -331,7 +332,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
     function resetSendMoneyValues() {
         setStep(1)
         setAccount(defaultAccount)
-        setBeneficiary({})
+        setBeneficiary(defaultBeneficiary)
         setExistBenef(true)
         setPayFees(false)
         setAmount('0')
@@ -359,6 +360,18 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
         setAccounts(accountsMatch);
     }
 
+    function searchBeneficiary(e: React.ChangeEvent<HTMLInputElement>) {
+        const keyword = e.target.value;
+        let beneficiariesMatch = [...beneficiaries];
+        if (keyword.trim().length > 0 && keyword.trim().length < 3) {
+            beneficiariesMatch = [...beneficiariesSearch];
+        } else {
+            beneficiariesMatch = beneficiaries.filter(beneficiary => beneficiary.lastName.search(keyword) !== -1 || beneficiary.firstName.search(keyword) !== -1 || beneficiary.email.search(keyword) !== -1 );
+        }
+        console.log(beneficiariesMatch);
+        setBeneficiaries(beneficiariesMatch);
+    }
+
     function fetchCountryOperators(countryCode: string) {
         // console.log(countryCode);
         // @ts-ignore
@@ -378,6 +391,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
 
     useEffect(() => {
         setAccounts(accounts);
+        setBeneficiaries(beneficiaries);
         if (payFees) {
             const amountWithoutString = amount.match(/\d+/g)?.join('');
             const amountNumber = parseInt(amountWithoutString ?? '0');
@@ -388,9 +402,10 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
             setTotalAmount(amount);
         }
 
-    }, [amount, payFees, accounts]);
+    }, [amount, payFees, accounts, beneficiaries]);
 
-        console.log(accounts, accountsSearch);
+        // console.log(accounts, accountsSearch);
+        // console.log(beneficiaries, beneficiariesSearch);
 
     return (
         <>
@@ -443,7 +458,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
                                         !displayBeneficiaryForm &&
                                         <>
                                         <Input type={`text`} className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-[15rem]`}
-                                            placeholder="Recherchez un bénéficiaire" onChange={(e) => console.log(e.target.value) }/>
+                                            placeholder="Recherchez un bénéficiaire" onChange={(e) => searchBeneficiary(e) }/>
                                         <Search className={`absolute h-4 w-4 top-3.5 left-3`} />
                                         </>
                                     }
@@ -739,7 +754,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
                                             !displayBeneficiaryForm &&
                                             <div className={`grid grid-cols-3 gap-3`}>
                                             {
-                                                beneficiaries && beneficiaries.map((beneficiary: IBeneficiary) => (
+                                                beneficiariesSearch && beneficiariesSearch.map((beneficiary: IBeneficiary) => (
                                                 <div key={beneficiary.id} onClick={() => updateBeneficiaryData(beneficiary)} 
                                                     className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
                                                     <Avatar className={`cursor-pointer`}>
