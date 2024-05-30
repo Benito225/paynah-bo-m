@@ -35,6 +35,7 @@ export default async function Home({params: { lang }}: {
     const accountCountryOperators = await getCountryOperators(String(merchant.country), String(merchant.accessToken));
 
     const accountsRes = await getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken));
+    // console.log(accountsRes);
 
     return (
         <>
@@ -49,7 +50,7 @@ export default async function Home({params: { lang }}: {
                 <div className={`flex gap-3 mt-2.5 flex-grow`}>
                     <div className={`w-[25%] 2xl:w-[23%]`}>
                         <div className={`flex flex-col h-full space-y-3`}>
-                            <PaynahCard lang={lang} merchant={merchant}/>
+                            <PaynahCard lang={lang} merchant={merchant} />
                             <OperationShortcut lang={lang} merchant={merchant} accountCountryInfo={accountCountryInfo} accountCountryOperators={accountCountryOperators} countriesItem={countries} accountsItem={accountsRes?.accounts ?? []} />
                         </div>
                     </div>

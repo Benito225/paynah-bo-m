@@ -106,6 +106,7 @@ export default function OperationShortcut({lang, merchant, accountCountryInfo, a
         accountNumber: z.string(),
         accountCoreBankId: z.string(),
         amount: z.string(),
+        firstName: z.string(),
     });
 
     const sendMoney = useForm<z.infer<typeof formSchema>>({
