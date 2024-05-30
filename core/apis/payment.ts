@@ -49,7 +49,7 @@ export async function initPayout(values: any, merchantId: string, token: string)
     if (values.mode == 'direct') {
         data = {
             'bankAccountId': values.bankAccountId,
-            'firstName': values.firstName == '' ? values.paynahAccount : values.firstName,
+            'firstName': values.firstName == '' ? values.paynahAccount.replace(/[^\w\s]/gi, '') : values.firstName,
             'lastName': values.lastName == '' ? 'Bénéficiaire' : values.lastName,
             'paynahAccount': values.paynahAccount,
             'amount': values.amount,
@@ -60,7 +60,7 @@ export async function initPayout(values: any, merchantId: string, token: string)
     } else if (values.mode == 'mm') {
         data = {
             'bankAccountId': values.bankAccountId,
-            'firstName': values.firstName == '' ? values.phoneNumber : values.firstName,
+            'firstName': values.firstName == '' ? values.phoneNumber.replace(/[^\w\s]/gi, '') : values.firstName,
             'lastName': values.lastName == '' ? 'Bénéficiaire' : values.lastName,
             'operator': values.operator,
             'phoneNumber': values.phoneNumber,
@@ -72,7 +72,7 @@ export async function initPayout(values: any, merchantId: string, token: string)
     } else {
         data = {
             'bankAccountId': values.bankAccountId,
-            'firstName': values.firstName == '' ? values.bankAccount : values.firstName,
+            'firstName': values.firstName == '' ? values.bankAccount.replace(/[^\w\s]/gi, '') : values.firstName,
             'lastName': values.lastName == '' ? 'Bénéficiaire' : values.lastName,
             'bankAccount': values.bankAccount,
             'amount': values.amount,
@@ -83,6 +83,7 @@ export async function initPayout(values: any, merchantId: string, token: string)
     }
 
     console.log(data);
+    console.log('url', `/merchants/${merchantId}/payout`);
     return fetchData(`/merchants/${merchantId}/payout`, 'POST', data, token, true);
 }
 

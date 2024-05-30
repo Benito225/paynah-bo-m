@@ -37,10 +37,10 @@ export default function DashboardTopMenu({lang, merchant}: DashboardTopMenuProps
     const handleChangeAccount = (value: string) => {
         const selectedCoreBankId = value;
         const accoundFounded = accounts.filter((account: IAccount) => account.coreBankId == selectedCoreBankId);
-        if (accoundFounded.length === 0) {
+        // console.log('ELement 1', accoundFounded.length);
+        if (accoundFounded.length != 0) {
             setCurrentAccount(accoundFounded[0]);
         }
-        console.log(accoundFounded);
     };
 
     useEffect(() => {

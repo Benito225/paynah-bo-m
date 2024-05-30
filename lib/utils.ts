@@ -20,7 +20,7 @@ export function formatCFA(amount: number) {
 
 export function balanceOffset(balance: number, skaleetBalance: number) {
 
-    const nonCompensatedBalance = balance - skaleetBalance;
+    const nonCompensatedBalance =  skaleetBalance - balance;
 
     const proportion = (nonCompensatedBalance / balance) * 100;
     const proportionString = parseFloat(proportion.toFixed(2)).toString();

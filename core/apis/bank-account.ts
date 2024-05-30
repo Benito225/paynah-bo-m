@@ -15,8 +15,7 @@ export async function addAccount(values: any, merchantId: string, token: string)
 }
 
 export async function editAccount(values: any, merchantId: string, bankAccountId: string, token: string) {
-    console.log("edit account val", bankAccountId);
-    const resData = await fetchData("/merchants/"+merchantId+"/bank-accounts"+bankAccountId, "PUT", values, token, true);
-    console.log("resData", resData);
-    return resData;
+    const url = "/merchants/"+merchantId+"/bank-accounts/"+bankAccountId;
+    console.log("editURL", url);
+    return await fetchData(url, "PUT", values, token, true);
 }
