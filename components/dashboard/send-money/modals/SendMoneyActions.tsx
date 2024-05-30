@@ -52,11 +52,14 @@ interface MainActionsProps {
     lang: string,
     merchant: IUser,
     children: React.ReactNode,
+    countries?: ICountry[],
+    accounts?: IAccount[],
+    beneficiaries?: IBeneficiary[],
 }
 
 const defaultAccount = { id: '', reference: '', coreBankId: '', bankAccountId: '', balance: 0, name: "", balanceDayMinus1: 0, isMain: false, skaleet_balance: 0 };
 
-export default function SendMoneyActions({lang, merchant, children}: MainActionsProps) {
+export default function SendMoneyActions({lang, merchant, countries, accounts, beneficiaries, children}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<IAccount>(defaultAccount);
@@ -75,9 +78,9 @@ export default function SendMoneyActions({lang, merchant, children}: MainActions
     const [accessKey, setAccessKey] = useState('');
     const [country, setCountry] = useState('CI');
     const [isLoading, setLoading] = useState(false);
-    const [beneficiaries, setBeneficiaries] = useState([]);
-    const [accounts, setAccounts] = useState([]);
-    const [countries, setCountries] = useState([]);
+    // const [beneficiaries, setBeneficiaries] = useState([]);
+    // const [accounts, setAccounts] = useState([]);
+    // const [countries, setCountries] = useState([]);
     const [operators, setOperators] = useState([]);
     const [displayBeneficiaryForm, setDisplayBeneficiaryForm] = useState(false);
     const [activeSendModeSelected, setActiveSendModeSelected] = useState('direct');
@@ -346,41 +349,41 @@ export default function SendMoneyActions({lang, merchant, children}: MainActions
 
     function fetchMerchantBeneficiaries() {
         // @ts-ignore
-        getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-        .then(data => {
-            setBeneficiaries(data);
-            setLoading(false);
-        })
-        .catch(err => {
-            setLoading(false);
-            setBeneficiaries([]);
-        });
+        // getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        // .then(data => {
+        //     setBeneficiaries(data);
+        //     setLoading(false);
+        // })
+        // .catch(err => {
+        //     setLoading(false);
+        //     setBeneficiaries([]);
+        // });
     }
 
     function fetchMerchantBankAccounts() {
         // @ts-ignore
-        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-        .then(data => {
-            setAccounts(data.accounts);
-            setLoading(false);
-        })
-        .catch(err => {
-            setLoading(false);
-            setAccounts([]);
-        });
+        // getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        // .then(data => {
+        //     setAccounts(data.accounts);
+        //     setLoading(false);
+        // })
+        // .catch(err => {
+        //     setLoading(false);
+        //     setAccounts([]);
+        // });
     }
 
     function fetchCountries() {
         // @ts-ignore
-        getCountries(String(merchant.accessToken))
-        .then(data => {
-            setCountries(data);
-            setLoading(false);
-        })
-        .catch(err => {
-            setLoading(false);
-            setCountries([]);
-        });
+        // getCountries(String(merchant.accessToken))
+        // .then(data => {
+        //     setCountries(data);
+        //     setLoading(false);
+        // })
+        // .catch(err => {
+        //     setLoading(false);
+        //     setCountries([]);
+        // });
     }
 
     function fetchCountryOperators(countryCode: string) {
@@ -397,7 +400,6 @@ export default function SendMoneyActions({lang, merchant, children}: MainActions
         })
         .catch(err => {
             setLoading(false);
-            setCountries([]);
         });
     }
 
