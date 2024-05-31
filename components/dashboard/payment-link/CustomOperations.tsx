@@ -4,7 +4,7 @@ import { Locale } from "@/i18n.config";
 import React, { useState, useEffect } from "react";
 import Recipients from "@/components/dashboard/payment-link/Recipients";
 import Beneficiary from "@/components/dashboard/send-money/Beneficiary";
-import MainActions from "@/components/dashboard/send-money/modals/MainActions";
+import MainActions from "@/components/dashboard/payment-link/modals/MainActions";
 import {IUser} from '@/core/interfaces/user';
 import { getMerchantBankAccounts } from "@/core/apis/bank-account";
 import { getMerchantBeneficiaries } from "@/core/apis/beneficiary";
@@ -96,7 +96,7 @@ export default function CustomOperations({ lang, searchItems, merchant }: Custom
     return (
         <div className={`h-full bg-white px-6 py-8 rounded-2xl`}>
             <div className={`flex flex-col space-y-2.5`}>
-                <MainActions lang={lang} merchant={merchant} countries={countries} accounts={accounts} beneficiaries={beneficiaries} />
+                <MainActions lang={lang} merchant={merchant} accounts={accounts} beneficiaries={beneficiaries} />
             </div>
             {/* <Beneficiary lang={lang} merchant={merchant} beneficiaries={beneficiaries}/> */}
             <Recipients lang={lang} merchant={merchant} beneficiaries={beneficiaries}/>
