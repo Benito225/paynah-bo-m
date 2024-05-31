@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import TransactionsTable from "@/components/dashboard/payment-link/TransactionsTable";
+import AccountsAction from "@/components/dashboard/serenity-space/modals/AccountsAction";
 import { IUser } from "@/core/interfaces/user";
 import { getMerchantBankAccounts } from "@/core/apis/bank-account";
 import {IAccount} from "@/core/interfaces/account";
@@ -36,6 +37,10 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
     const [availableBalance, setAvailableBalance] = useState(0);
     const [accounts, setAccounts] = useState([]);
     const [isLoading, setLoading] = useState(false);
+    const [isAccountActionLoading, setAccountActionLoading] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [account, setAccount] = useState<IAccount>();
+    const [mode, setMode] = useState('add');
 
     function fetchMerchantBankAccounts() {
         // @ts-ignore
@@ -52,6 +57,12 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
         });
     }
 
+    const openAccountDetailModal = (account: IAccount) => {
+        setAccount(account);
+        setMode("detail");
+        setOpen(true);
+    };
+
     useEffect(() => {
         fetchMerchantBankAccounts()
     }, []);
@@ -60,6 +71,9 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
         <div className={`flex flex-col h-full space-y-3`}>
             <div className={`account-list`}>
                 <div className={`flex p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto`}>
+                    <AccountsAction lang={lang} merchant={merchant} mode={mode} isAccountActionLoading={isAccountActionLoading} setAccountActionLoading={setAccountActionLoading} open={open} setOpen={setOpen} account={account}>
+                        {''}
+                    </AccountsAction>
                     <div onClick={() => setSelectedAccount('all')} className={`snap-end shrink-0 w-[40%] 2xl:w-[31%] bg-white flex flex-col justify-between cursor-pointer ${selectedAccount == 'all' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                         <div className={`flex justify-between items-start`}>
                             <div>
@@ -138,11 +152,11 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
                                         </button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="w-56 rounded-xl shadow-md" align={"end"}>
-                                        <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                        <DropdownMenuItem className={`text-xs cursor-pointer`} onClick={() => openAccountDetailModal(account)}>
                                             <ClipboardList className="mr-2 h-3.5 w-3.5" />
                                             <span className={`mt-[1.5px]`}>Détails du compte</span>
                                         </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
+                                        {/* <DropdownMenuSeparator />
                                         <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                             <Pencil className="mr-2 h-3.5 w-3.5"  />
                                             <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
@@ -168,7 +182,7 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
                                         <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                             <Trash2 className="mr-2 h-3.5 w-3.5" />
                                             <span className={`mt-[1.5px]`}>Supprimer le compte</span>
-                                        </DropdownMenuItem>
+                                        </DropdownMenuItem> */}
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
