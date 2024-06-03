@@ -76,9 +76,10 @@ interface TDataTableProps<TData, TValue> {
     lang: string,
     isLoading: boolean,
     exportTransactionsData: (e: any) => void,
+    isExportDataLoading: boolean,
 }
 
-export function TDataTable<TData, TValue>({ table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, isLoading, exportTransactionsData }: TDataTableProps<TData, TValue>) {
+export function TDataTable<TData, TValue>({ table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, isLoading, exportTransactionsData, isExportDataLoading }: TDataTableProps<TData, TValue>) {
     
     const defaultOptions = {
         loop: true,
@@ -103,6 +104,7 @@ export function TDataTable<TData, TValue>({ table, columns, searchableColumns = 
                 newRowLink={newRowLink}
                 deleteRowsAction={deleteRowsAction}
                 exportTransactionsData={exportTransactionsData}
+                isExportDataLoading={isExportDataLoading}
             />
             <div className="">
                 {
