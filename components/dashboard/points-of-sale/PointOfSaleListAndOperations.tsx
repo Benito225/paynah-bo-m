@@ -60,8 +60,6 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
     const [pointOfSales, setPointOfSales] = useState<IPointOfSale[]>([]);
     const [accounts, setAccounts] = useState<IAccount[]>([]);
 
-    const defaultAccount = { id: '', reference: '', coreBankId: '', bankAccountId: '', balance: 0, name: "", balanceDayMinus1: 0, isMain: false, skaleet_balance: 0 };
-
     const formSchema = z.object({
         search: z.string()
     })
