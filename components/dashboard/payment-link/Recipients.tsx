@@ -16,10 +16,12 @@ import {
 import { IUser } from '@/core/interfaces/user';
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
 import { getMerchantBeneficiaries } from "@/core/apis/beneficiary";
+import {Skeleton} from "@/components/ui/skeleton";
 interface RecipientsProps {
     lang: Locale,
     merchant: IUser,
     beneficiaries: IBeneficiary[],
+    isLoading: boolean,
 }
 
 export const RANDOM_AVATAR_COLORS_CONFIG = [
@@ -30,9 +32,9 @@ export const RANDOM_AVATAR_COLORS_CONFIG = [
     {bg: '#ffadae', text: '#e03c3e'},
 ]
 
-export default function Recipients({lang, merchant, beneficiaries}: RecipientsProps) {
+export default function Recipients({lang, merchant, beneficiaries, isLoading}: RecipientsProps) {
 
-    const [isLoading, setLoading] = useState(false);
+    // const [isLoading, setLoading] = useState(false);
     // const [beneficiaries, setBeneficiaries] = useState([]);
 
     const transformBeneficiaryFullNameToBeneficiaryAvatar = (beneficiaryFullName: string) => {
@@ -52,6 +54,22 @@ export default function Recipients({lang, merchant, beneficiaries}: RecipientsPr
         //     setLoading(false);
         //     setBeneficiaries([]);
         // });
+    }
+
+    const showLoader = () => {
+        return (
+            <div className={`py-2`}>
+                <div className={`flex justify-between items-center space-x-1`}>
+                    <div className={`inline-flex space-x-2 items-center`}>
+                        <Skeleton className={`rounded-full h-10 w-10 bg-gray-300`}/>
+                        <div className={`inline-flex flex-col`}>
+                            <Skeleton className={`h-[8px] my-1 w-[5rem] bg-gray-300 rounded-full`}></Skeleton>
+                            <Skeleton className={`h-[8px] my-1 w-[5rem] bg-gray-300 rounded-full`}></Skeleton>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     useEffect(() => {
@@ -119,6 +137,7 @@ export default function Recipients({lang, merchant, beneficiaries}: RecipientsPr
                     </div>
                 </div> */}
                 {
+                    isLoading ? showLoader() :
                     beneficiaries && beneficiaries.length > 0 &&
                     beneficiaries.slice(0, 5).map((beneficiary: IBeneficiary, index: number) => (
                         <div key={beneficiary.id} className={`py-2`}>
