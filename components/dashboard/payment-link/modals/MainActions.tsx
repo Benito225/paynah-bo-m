@@ -23,13 +23,17 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
 import PaymentLinkActions from '@/components/dashboard/payment-link/modals/PaymentLinkActions'
 import { IUser } from "@/core/interfaces/user";
+import { IAccount } from "@/core/interfaces/account";
+import { IBeneficiary } from "@/core/interfaces/beneficiary";
 
 interface MainActionsProps {
     lang: string,
     merchant: IUser,
+    accounts: IAccount[],
+    beneficiaries: IBeneficiary[],
 }
 
-export default function MainActions({lang, merchant}: MainActionsProps) {
+export default function MainActions({lang, merchant, accounts, beneficiaries}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{id: string, name: string}>({id: '', name: ''});
@@ -145,7 +149,7 @@ export default function MainActions({lang, merchant}: MainActionsProps) {
 
     return (
         <>
-            <PaymentLinkActions lang={lang} merchant={merchant}>
+            <PaymentLinkActions lang={lang} merchant={merchant} accounts={accounts} beneficiaries={beneficiaries}>
                 <Button className={`w-full`}>
                     {`Nouveau lien de paiement`}
                 </Button>
