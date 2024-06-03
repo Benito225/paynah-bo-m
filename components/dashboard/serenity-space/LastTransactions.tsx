@@ -174,7 +174,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                     </Form>
                 </div>
                 <div>
-                    <Link className={`inline-flex text-xs text-[#909090] hover:underline duration-200 mb-1`} href={Routes.dashboard.transactions.replace('{lang}', lang)}>
+                    <Link className={`inline-flex cursor-pointer text-xs text-[#909090] hover:underline duration-200 mb-1`} href={Routes.dashboard.transactions.replace('{lang}', lang)}>
                         <span>Voir tout</span>
                         <ChevronRight className={`h-4 w-auto`} />
                     </Link>
@@ -308,13 +308,13 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                         <Table>
                             <TableHeader>
                                 <TableRow className={`text-xs border-[#f4f4f4]`}>
-                                    <TableHead className={`text-[#afafaf] font-normal h-9 min-w-[8rem]`}>ID
+                                    <TableHead className={`text-[#afafaf] font-normal h-9 max-w-[8rem]`}>ID
                                         Transactions</TableHead>
                                     <TableHead
-                                        className={`text-[#afafaf] font-normal h-9 min-w-[7rem]`}>Descritpion</TableHead>
+                                        className={`text-[#afafaf] font-normal h-9 max-w-[7rem]`}>Descritpion</TableHead>
                                     <TableHead className={`text-[#afafaf] font-normal h-9`}>Montant</TableHead>
                                     <TableHead
-                                        className={`text-[#afafaf] font-normal h-9 min-w-[7rem]`}>Date</TableHead>
+                                        className={`text-[#afafaf] font-normal h-9 max-w-[7rem]`}>Date</TableHead>
                                     <TableHead className={`text-[#afafaf] font-normal h-9`}>Statut</TableHead>
                                     <TableHead
                                         className={`text-[#afafaf] font-normal h-9 text-center`}>Actions</TableHead>
@@ -324,7 +324,7 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                                 {transactions.map((transaction: ITransaction) => (
                                     <TableRow className={`border-[#f4f4f4]`} key={transaction.transactionId}>
                                         <TableCell
-                                            className="text-xs font-medium !py-3.5">{transaction.transactionId}</TableCell>
+                                            className="text-xs font-medium !py-3.5 break-all">{transaction.transactionId}</TableCell>
                                         <TableCell className="text-xs !py-3.5">{transaction.description}</TableCell>
                                         <TableCell className="text-xs font-medium !py-3.5">
                                             <div
@@ -370,16 +370,16 @@ export default function LastTransactions({lang, merchant}: LastTransactionsProps
                                                         <ClipboardList className="mr-2 h-3.5 w-3.5"/>
                                                         <span className={`mt-[1.5px]`}>{`Détails de l'opération`}</span>
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuSeparator/>
-                                                    <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                                        <AlertTriangle className="mr-2 h-3.5 w-3.5"/>
-                                                        <span className={`mt-[1.5px]`}>Faire une réclamation</span>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator/>
-                                                    <DropdownMenuItem className={`text-xs cursor-pointer`}>
-                                                        <RotateCw className="mr-2 h-3.5 w-3.5"/>
-                                                        <span className={`mt-[1.5px]`}>{`Refaire l'opération`}</span>
-                                                    </DropdownMenuItem>
+                                                    {/*<DropdownMenuSeparator/>*/}
+                                                    {/*<DropdownMenuItem className={`text-xs cursor-pointer`}>*/}
+                                                    {/*    <AlertTriangle className="mr-2 h-3.5 w-3.5"/>*/}
+                                                    {/*    <span className={`mt-[1.5px]`}>Faire une réclamation</span>*/}
+                                                    {/*</DropdownMenuItem>*/}
+                                                    {/*<DropdownMenuSeparator/>*/}
+                                                    {/*<DropdownMenuItem className={`text-xs cursor-pointer`}>*/}
+                                                    {/*    <RotateCw className="mr-2 h-3.5 w-3.5"/>*/}
+                                                    {/*    <span className={`mt-[1.5px]`}>{`Refaire l'opération`}</span>*/}
+                                                    {/*</DropdownMenuItem>*/}
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>

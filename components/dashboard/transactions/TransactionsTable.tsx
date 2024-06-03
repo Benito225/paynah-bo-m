@@ -92,19 +92,19 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
     const endPeriod = new Date(query.to ?? "");
     const formatStartPeriod = startPeriod.toLocaleDateString('en-GB');
     const formatEndPeriod = endPeriod.toLocaleDateString('en-GB');
-    const url = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&search=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false`;
+    const url = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false`;
 
-    const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&search=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true`;
+    const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true`;
     function exportTransactionsData() {
         setExportDataLoading(true);
 
-        downloadFile(urlDownload, String(merchant.accessToken), false)
+        downloadFile(urlDownload, 'GET', null, String(merchant.accessToken), false)
             .then(response => response.blob())
             .then(blob => {
                 const downloadUrl = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;
-                // a.download = 'data.csv';
+                a.download = 'transactions.csv';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -263,7 +263,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
                         <div className={`mb-4 mt-3`}>
                             <div className={`flex justify-between items-center`}>
                                 <div className={`inline-flex items-center`}>
-                                    <h1 className={`text-2xl font-medium mr-4`}>Historique des transactions</h1>
+                                    <h1 className={`text-xl font-medium mr-4`}>Historique des transactions</h1>
                                 </div>
                                 <div>
                                     <Button onClick={() => exportTransactionsData()} className={`px-6 text-xs inline-flex space-x-2 items-center`} disabled={isExportDataLoading}>

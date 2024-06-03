@@ -14,6 +14,7 @@ import {formatCFA, hiddeBalance} from "@/lib/utils";
 import {IUser} from "@/core/interfaces/user";
 import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 import {Skeleton} from "@/components/ui/skeleton";
+import {usePathname} from "next/navigation";
 
 interface PaynahCardProps {
     lang: Locale,
@@ -31,22 +32,29 @@ export default function PaynahCard({ lang, className, onClick, merchant }: Payna
     const [balance, setBalance] = useState(0);
     const [availableBalance, setAvailableBalance] = useState(0);
 
+    const pathname = usePathname()
+
     function fetchMerchantBankAccounts() {
+        setLoading(true)
         // @ts-ignore
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
+            console.log('Paynah card', data);
             setBalance(data.total_balance);
             setAvailableBalance(data.total_skaleet_balance);
             setLoading(false)
         })
         .catch(err => {
             // setAccounts([]);
+            setLoading(false)
         });
     }
 
     useEffect(() => {
-        fetchMerchantBankAccounts()
-    }, []);
+        fetchMerchantBankAccounts();
+        console.log('1', pathname)
+        console.log('1-2', balance)
+    }, [pathname]);
 
     const showLoader = () => {
         return (

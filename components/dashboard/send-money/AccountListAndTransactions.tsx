@@ -12,11 +12,14 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import TransactionsTable from "@/components/dashboard/send-money/TransactionsTable";
+import AccountsAction from "@/components/dashboard/serenity-space/modals/AccountsAction";
 import {IUser} from '@/core/interfaces/user';
 import {ITransaction} from '@/core/interfaces/transaction';
 import { getMerchantBankAccounts } from "@/core/apis/bank-account";
+import { getMerchantBeneficiaries } from "@/core/apis/beneficiary";
 import {getTransactions} from "@/core/apis/transaction";
 import {IAccount} from "@/core/interfaces/account";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface AccountListAndTransactionsProps {
     lang: Locale,
@@ -37,11 +40,15 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
     const [balance, setBalance] = useState(0);
     const [availableBalance, setAvailableBalance] = useState(0);
     const [accounts, setAccounts] = useState([]);
-    const [transactions, setTransactions] = useState([]);
     const [isLoading, setLoading] = useState(false);
+    const [isAccountActionLoading, setAccountActionLoading] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [account, setAccount] = useState<IAccount>();
+    const [mode, setMode] = useState('add');
 
     function fetchMerchantBankAccounts() {
         // @ts-ignore
+        setLoading(true);
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             setAccounts(data.accounts);
@@ -55,30 +62,48 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
         });
     }
 
-    function fecthTransactions(coreBankId: string) {
-        // @ts-ignore
-        const query = {coreBankId: coreBankId, merchantId: merchant.merchantsIds[0].id}
-        getTransactions(query, String(merchant.accessToken))
-            .then(data => {
-                console.log(data);
-                setTransactions(data ?? []);
-                setLoading(false);
-            })
-            .catch(err => {
-                setTransactions([]);
-                setLoading(false);
-            });
+    const openAccountDetailModal = (account: IAccount) => {
+        setAccount(account);
+        setMode("detail");
+        setOpen(true);
+    };
+
+    const showLoader = () => {
+        return (
+            <Skeleton
+                className={`snap-end shrink-0 w-[40%] 2xl:w-[31%] cursor-pointer bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}>
+                <div className={`flex justify-between items-start`}>
+                    <div>
+                        <div className={`flex flex-col`}>
+                            <Skeleton
+                                className={`mb-1 rounded-xl p-2 bg-gray-300 w-[2.7rem] h-[2.7rem] inline-flex justify-center items-center`}>
+                                <div className={`h-[1.3rem] w-auto`}>
+                                </div>
+                            </Skeleton>
+                            <Skeleton
+                                className={`font-light h-[13px] my-1 bg-gray-300 w-[7rem] rounded-full`}></Skeleton>
+                        </div>
+                    </div>
+                </div>
+                <div className={`inline-flex flex-col`}>
+                    <Skeleton className={`h-[8px] my-1 w-[5rem] bg-gray-300 rounded-full`}></Skeleton>
+                    <Skeleton className={`text-base h-[16px] mb-1 w-[90%] bg-gray-300 font-semibold rounded-full`}></Skeleton>
+                </div>
+            </Skeleton>
+        );
     }
 
     useEffect(() => {
         fetchMerchantBankAccounts()
-        // fecthTransactions("")
     }, []);
     
     return (
         <div className={`flex flex-col h-full space-y-3`}>
             <div className={`account-list`}>
                 <div className={`flex p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto`}>
+                    <AccountsAction lang={lang} merchant={merchant} mode={mode} isAccountActionLoading={isAccountActionLoading} setAccountActionLoading={setAccountActionLoading} open={open} setOpen={setOpen} account={account}>
+                        {''}
+                    </AccountsAction>
                     <div onClick={() => setSelectedAccount('all')} className={`snap-end shrink-0 w-[40%] 2xl:w-[31%] bg-white flex flex-col justify-between cursor-pointer ${selectedAccount == 'all' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                         <div className={`flex justify-between items-start`}>
                             <div>
@@ -118,6 +143,7 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
                     </div>
 
                     {
+                        isLoading ? showLoader() :
                         accounts && accounts.map((account: IAccount) => (
                         <div key={account.id} onClick={() => setSelectedAccount(account.id)} className={`snap-end shrink-0 w-[40%] 2xl:w-[31%] bg-white flex flex-col justify-between cursor-pointer ${selectedAccount == account.id && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                             <div className={`flex justify-between items-start`}>
@@ -157,11 +183,11 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
                                         </button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="w-56 rounded-xl shadow-md" align={"end"}>
-                                        <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                        <DropdownMenuItem className={`text-xs cursor-pointer`} onClick={() => openAccountDetailModal(account)}>
                                             <ClipboardList className="mr-2 h-3.5 w-3.5" />
                                             <span className={`mt-[1.5px]`}>Détails du compte</span>
                                         </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
+                                        {/* <DropdownMenuSeparator />
                                         <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                             <Pencil className="mr-2 h-3.5 w-3.5"  />
                                             <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
@@ -187,7 +213,7 @@ export default function AccountListAndTransactions({lang, searchItems, merchant}
                                         <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                             <Trash2 className="mr-2 h-3.5 w-3.5" />
                                             <span className={`mt-[1.5px]`}>Supprimer le compte</span>
-                                        </DropdownMenuItem>
+                                        </DropdownMenuItem> */}
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>

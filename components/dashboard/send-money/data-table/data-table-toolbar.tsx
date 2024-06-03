@@ -12,13 +12,14 @@ import {Form} from "@/components/ui/form";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import { CalendarIcon, Search} from "lucide-react";
+import { CalendarIcon, RotateCcw, Search} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {DateRange} from "react-day-picker";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {format} from "date-fns";
 import {Calendar} from "@/components/ui/calendar";
-
+import Routes from "@/components/Routes";
+import { ScaleLoader } from "react-spinners";
 interface DataTableToolbarProps<TData> {
   table: Table<TData>,
   newRowLink?: string,
@@ -30,9 +31,11 @@ interface DataTableToolbarProps<TData> {
   date: DateRange | undefined,
   setDate: (value: (((prevState: (DateRange | undefined)) => (DateRange | undefined)) | DateRange | undefined)) => void,
   lang: string
+  exportTransactionsData: (e: any) => void,
+  isExportDataLoading: boolean
 }
 
-export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, exportTransactionsData, isExportDataLoading }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
   const [isDeletePending, startDeleteTransition] = React.useTransition()
 
@@ -125,15 +128,25 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                 </div>
 
                 <div className={`w-[20%] 2xl:w-auto`}>
-                  <Button className={`text-xs inline-flex w-full 2xl:w-32 items-center space-x-2`}>
-                    <svg className={`h-4 w-4`} viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                      <polyline points="7 10 12 15 17 10"/>
-                      <line x1="12" x2="12" y1="15" y2="3"/>
-                    </svg>
-                    <span>Exporter</span>
+                <Button onClick={(e) => { exportTransactionsData(e);  console.log('alert')}} className={`text-xs inline-flex w-full 2xl:w-32 items-center space-x-2`} disabled={isExportDataLoading}>
+                    {
+                      isExportDataLoading ? <ScaleLoader color="#fff" height={15} width={3} /> :
+                      <>
+                        <svg className={`h-4 w-4`} viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="7 10 12 15 17 10"/>
+                          <line x1="12" x2="12" y1="15" y2="3"/>
+                        </svg>
+                        <span>Exporter</span>
+                      </>
+                    }
                   </Button>
+                </div>
+                <div className={`flex items-center justify-end`}>
+                  <a className={``} href={`${Routes.dashboard.sendMoney.replace('{lang}', lang)}`}>
+                    <RotateCcw strokeWidth={2.5} className="text-[#D3D3D3] w-6 h-6" />
+                  </a>
                 </div>
 
               </div>

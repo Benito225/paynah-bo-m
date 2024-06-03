@@ -21,7 +21,7 @@ interface TopMenuAccountInfosProps {
     isDataLoading: boolean,
     accounts: any,
     currentAccount: any,
-    handleChangeAccount?: (event: any) => void
+    handleChangeAccount: (value: string) => void
 }
 
 export default function TopMenuAccountInfos({lang, merchant, isDataLoading, accounts, currentAccount, handleChangeAccount}: TopMenuAccountInfosProps) {
@@ -38,7 +38,7 @@ export default function TopMenuAccountInfos({lang, merchant, isDataLoading, acco
     });
 
     const transformMerchantNameToMerchantAvatar = (merchantName: string) => {
-        const merchantNameSplit = merchantName.trim().length > 0 ? merchantName.split(' ') : [];
+        const merchantNameSplit = merchantName.length > 0 ? merchantName.split(' ') : [];
         return merchantNameSplit.length > 0 ? (merchantNameSplit.length >= 2 ? `${merchantNameSplit[0][0]}${merchantNameSplit[1][0]}` : `${merchantNameSplit[0][0]}`) : '';
     }
 
@@ -46,6 +46,8 @@ export default function TopMenuAccountInfos({lang, merchant, isDataLoading, acco
         console.log(values)
         // setLoading(true);
     }
+
+    // console.log('conAc', currentAccount);
 
 
     return (
@@ -57,7 +59,8 @@ export default function TopMenuAccountInfos({lang, merchant, isDataLoading, acco
                             <div
                                 className={`rounded-xl border border-[#dbdbdb] bg-white aspect-square font-medium flex items-center justify-center`}>
                                 {/*@ts-ignore*/}
-                                <div className={`h-8 w-8 md:h-10 md:w-10 flex items-center justify-center`}>{transformMerchantNameToMerchantAvatar(merchant.merchantsIds[0].name)}</div>
+                                <div
+                                    className={`h-8 w-8 md:h-10 md:w-10 flex items-center justify-center`}>{transformMerchantNameToMerchantAvatar(merchant.merchantsIds[0].name)}</div>
                             </div>
                             <div className={`inline-flex items-center space-x-2`}>
                                 <div className={`flex flex-col justify-start items-start text-xs`}>
@@ -89,7 +92,10 @@ export default function TopMenuAccountInfos({lang, merchant, isDataLoading, acco
                                                     <FormItem>
                                                         <FormControl>
                                                             <div>
-                                                                <Select onValueChange={field.onChange}
+                                                                <Select onValueChange={(value) => {
+                                                                    field.onChange(value);
+                                                                    handleChangeAccount(value);
+                                                                }}
                                                                         defaultValue={currentAccount?.coreBankId}>
                                                                     <SelectTrigger
                                                                         className={`min-w-[10rem] h-[2.5rem] border-[#717171] pl-3 pr-3 font-light text-sm`}
@@ -98,13 +104,12 @@ export default function TopMenuAccountInfos({lang, merchant, isDataLoading, acco
                                                                         }}>
                                                                         <SelectValue placeholder="Choisir un compte"/>
                                                                     </SelectTrigger>
-                                                                    <SelectContent className={`bg-[#f0f0f0]`}
-                                                                                   onChange={handleChangeAccount}>
+                                                                    <SelectContent className={`bg-[#f0f0f0]`}>
                                                                         {accounts.map((account: IAccount) => (
                                                                             <SelectItem key={account.id}
                                                                                         className={`font-light px-7 focus:bg-gray-100`}
                                                                                         value={account.coreBankId}>
-                                                                                {account.coreBankId}
+                                                                                {!account.name || account.name == 'Main' ? "Compte principal" : `${account.name}`}
                                                                             </SelectItem>
                                                                         ))}
                                                                     </SelectContent>
@@ -146,7 +151,8 @@ export default function TopMenuAccountInfos({lang, merchant, isDataLoading, acco
                                 <div
                                     className={`rounded-xl border border-[#dbdbdb] bg-white font-medium p-2 flex items-center mb-2`}>
                                     {/*@ts-ignore*/}
-                                    <div className={`h-8 w-8 md:h-10 md:w-10 flex items-center text-xl justify-center`}>{transformMerchantNameToMerchantAvatar(merchant.merchantsIds[0].name)}</div>
+                                    <div
+                                        className={`h-8 w-8 md:h-10 md:w-10 flex items-center text-xl justify-center`}>{transformMerchantNameToMerchantAvatar(merchant.merchantsIds[0].name)}</div>
                                 </div>
                                 <p className={`text-sm font-light text-center text-[#767676] mb-6`}>{currentAccount?.coreBankId}</p>
                                 <Button
@@ -163,14 +169,14 @@ export default function TopMenuAccountInfos({lang, merchant, isDataLoading, acco
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Nom du compte</span>
                                             <span
-                                                className={`uppercase text-xs font-semibold`}>{currentAccount?.isMain ? 'Compte Principal' : (currentAccount?.name ? currentAccount.name : 'Compte')}</span>
+                                                className={`uppercase text-xs font-semibold`}>{currentAccount?.isMain ? 'Compte Principal' : (!currentAccount.name ? 'Compte' :  currentAccount.name)}</span>
                                         </div>
                                     </div>
                                     <div>
                                         <div className={`inline-flex flex-col`}>
                                             <span className={`font-light text-xs text-[#626262] mb-[.1rem]`}>Numéro du compte</span>
                                             <span
-                                                className={`uppercase text-xs font-semibold`}>{currentAccount?.coreBankId}</span>
+                                                className={`uppercase text-xs font-semibold`}>{currentAccount?.coreBankId ?? '-'}</span>
                                         </div>
                                     </div>
                                     <div>
