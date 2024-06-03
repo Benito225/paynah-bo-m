@@ -53,7 +53,7 @@ export default function SendMoneyActionsPayDirect({sendMoney, beneficiaries, mer
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{ id: string, name: string }>({id: '', name: ''});
-    const [beneficiary, setBeneficiary] = useState<IBeneficiary>({});
+    const [beneficiary, setBeneficiary] = useState<any>({});
     const [existBenef, setExistBenef] = useState(true);
     const [payFees, setPayFees] = useState(false);
     const [amount, setAmount] = useState("");
