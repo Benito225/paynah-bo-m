@@ -101,7 +101,7 @@ export default function CustomOperations({ lang, searchItems, merchant }: Custom
                 <MainActions lang={lang} merchant={merchant} accounts={accounts} beneficiaries={beneficiaries} />
             </div>
             {/* <Beneficiary lang={lang} merchant={merchant} beneficiaries={beneficiaries}/> */}
-            <Recipients lang={lang} merchant={merchant} beneficiaries={beneficiaries} isLoading={isLoadingBenefs}/>
+            <Recipients lang={lang} merchant={merchant} beneficiaries={beneficiaries} isLoading={isLoadingBenefs} accounts={accounts}/>
         </div>
     )
 }

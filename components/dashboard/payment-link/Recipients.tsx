@@ -17,11 +17,14 @@ import { IUser } from '@/core/interfaces/user';
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
 import { getMerchantBeneficiaries } from "@/core/apis/beneficiary";
 import {Skeleton} from "@/components/ui/skeleton";
+import { IAccount } from "@/core/interfaces/account";
+import PaymentLinkActions from '@/components/dashboard/payment-link/modals/PaymentLinkActions';
 interface RecipientsProps {
     lang: Locale,
     merchant: IUser,
     beneficiaries: IBeneficiary[],
     isLoading: boolean,
+    accounts: IAccount[],
 }
 
 export const RANDOM_AVATAR_COLORS_CONFIG = [
@@ -32,7 +35,7 @@ export const RANDOM_AVATAR_COLORS_CONFIG = [
     {bg: '#ffadae', text: '#e03c3e'},
 ]
 
-export default function Recipients({lang, merchant, beneficiaries, isLoading}: RecipientsProps) {
+export default function Recipients({lang, merchant, beneficiaries, isLoading, accounts}: RecipientsProps) {
 
     // const [isLoading, setLoading] = useState(false);
     // const [beneficiaries, setBeneficiaries] = useState([]);
@@ -155,9 +158,11 @@ export default function Recipients({lang, merchant, beneficiaries, isLoading}: R
                                     </div>
                                 </div>
                                 <div className={`inline-flex space-x-2`}>
-                                    <button className={`rounded-full bg-[#f0f0f0] hover:bg-gray-200 duration-200 p-1.5`}>
-                                        <Send className={`h-3.5 w-3.5`} />
-                                    </button>
+                                    <PaymentLinkActions lang={lang} merchant={merchant} accounts={accounts} beneficiaries={beneficiaries} selectedBeneficiary={beneficiary}>
+                                        <button className={`rounded-full bg-[#f0f0f0] hover:bg-gray-200 duration-200 p-1.5`}>
+                                            <Send className={`h-3.5 w-3.5`} />
+                                        </button>
+                                    </PaymentLinkActions>
                                     {/* <DropdownMenu>
                                         <DropdownMenuTrigger className={`focus:outline-none`} asChild>
                                             <button className={`rounded-full bg-[#f0f0f0] hover:bg-gray-200 duration-200 p-1.5`}>

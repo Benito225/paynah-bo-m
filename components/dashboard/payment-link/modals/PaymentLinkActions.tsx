@@ -37,12 +37,13 @@ interface MainActionsProps {
     accounts: IAccount[],
     beneficiaries: IBeneficiary[],
     children: React.ReactNode,
+    selectedBeneficiary: IBeneficiary,
 }
 
 const defaultAccount = { id: '', reference: '', coreBankId: '', bankAccountId: '', balance: 0, name: "", balanceDayMinus1: 0, isMain: false, skaleet_balance: 0 };
 const defaultBeneficiary = { id: '', lastName: '', firstName: '', email: '' };
 
-export default function PaymentLinkActions({lang, merchant, accounts, beneficiaries, children}: MainActionsProps) {
+export default function PaymentLinkActions({lang, merchant, accounts, beneficiaries, selectedBeneficiary, children}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<IAccount>(defaultAccount);
@@ -187,8 +188,13 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
         } else {
             if (step > 1) { 
                 const nextStep = step - 1;
-                setStep(nextStep);
-                setPercentage(`w-${nextStep}/${finalStep}`);
+                if (nextStep == 2 && selectedBeneficiary.email.length > 0) { 
+                    setStep(1);
+                    setPercentage(`w-1/${finalStep}`);
+                } else {
+                    setStep(nextStep);
+                    setPercentage(`w-${nextStep}/${finalStep}`);
+                }
             }
         }
         // if (step > 1) {
@@ -248,8 +254,15 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
 
     function updateAccountData(account: IAccount) { 
         setAccount(account);
-        setStep(2);
-        setPercentage('w-2/4');
+        if (selectedBeneficiary.email.length > 0) {
+            console.log(selectedBeneficiary);
+            updateBeneficiaryData(selectedBeneficiary);
+            setStep(3);
+            setPercentage('w-3/4');
+        } else {
+            setStep(2);
+            setPercentage('w-2/4');
+        }
     }
 
     function updateBeneficiaryData(beneficiary: IBeneficiary) { 
@@ -407,7 +420,7 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
                     <div>
                         <div className={`rounded-t-2xl bg-white px-8 pb-4 pt-5`}>
                             <div className={`flex justify-between items-center space-x-3`}>
-                                <h2 className={`text-base text-[#626262] font-medium`}>{`Envoi d'argent`}</h2>
+                                <h2 className={`text-base text-[#626262] font-medium`}>{`Nouveau lien de paiement`}</h2>
                                 <DialogClose onClick={() => {setStep(1); setPercentage('w-1/4'); setConfirmStep(0); resetSendMoneyValues();}}>
                                     <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`} />
                                 </DialogClose>
