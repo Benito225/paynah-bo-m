@@ -122,6 +122,12 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
     //     path: ["amount"],
     // })
 
+    const transformBeneficiaryFullNameToBeneficiaryAvatar = (beneficiaryFullName: string) => {
+        const beneficiaryFullNameSplit = beneficiaryFullName.trim().length > 0 ? beneficiaryFullName.split(' ') : [];
+        const beneficiaryFullNameAvatar = beneficiaryFullNameSplit.length > 0 ? (beneficiaryFullNameSplit.length >= 2 ? `${beneficiaryFullNameSplit[0][0]}${beneficiaryFullNameSplit[1][0]}` : `${beneficiaryFullNameSplit[0][0]}`) : '';
+        return beneficiaryFullNameAvatar;
+    }
+
     const handleTogglePassword = () => {
         setShowPassword(!showPassword);
     };
@@ -519,7 +525,7 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
                                                 <div key={beneficiary.id} onClick={() => updateBeneficiaryData(beneficiary)} 
                                                     className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
                                                     <Avatar className={`cursor-pointer`}>
-                                                        <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
+                                                        <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>{transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}</AvatarFallback>
                                                     </Avatar>
                                                     <div className={`inline-flex flex-col`}>
                                                         <h3 className={`text-xs font-medium`}>{`${beneficiary.firstName} ${beneficiary.lastName}`}</h3>

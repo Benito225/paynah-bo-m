@@ -126,7 +126,13 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
         }
     });
 
-    const { handleSubmit, formState: {errors}, setValue } = sendMoneyForm;
+    const { handleSubmit, formState: { errors }, setValue } = sendMoneyForm;
+    
+    const transformBeneficiaryFullNameToBeneficiaryAvatar = (beneficiaryFullName: string) => {
+        const beneficiaryFullNameSplit = beneficiaryFullName.trim().length > 0 ? beneficiaryFullName.split(' ') : [];
+        const beneficiaryFullNameAvatar = beneficiaryFullNameSplit.length > 0 ? (beneficiaryFullNameSplit.length >= 2 ? `${beneficiaryFullNameSplit[0][0]}${beneficiaryFullNameSplit[1][0]}` : `${beneficiaryFullNameSplit[0][0]}`) : '';
+        return beneficiaryFullNameAvatar;
+    }
 
     function updateFormValue(value: any) {
         if (step == 1) {
@@ -373,10 +379,10 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
     }
 
     function fetchCountryOperators(countryCode: string) {
-        // console.log(countryCode);
+        console.log(countryCode, countries);
         // @ts-ignore
         const countryFilter: Icountry[] = countries.filter((country: ICountry) => country.code == countryCode);
-        const countryId = countryFilter[0].id;
+        const countryId = countryFilter[0]?.id;
         console.log(countryId);
         getCountryOperators(String(countryId), String(merchant.accessToken))
             .then(data => {
@@ -392,6 +398,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
     useEffect(() => {
         setAccounts(accounts);
         setBeneficiaries(beneficiaries);
+        fetchCountryOperators("CI");
         if (payFees) {
             const amountWithoutString = amount.match(/\d+/g)?.join('');
             const amountNumber = parseInt(amountWithoutString ?? '0');
@@ -574,7 +581,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
                                                                         </div>
                                                                         <FormControl>
                                                                             <div>
-                                                                                <Select onValueChange={(value) => { field.onChange(value); changePhoneInputCountrySelect(value); setCountry(value); fetchCountryOperators(value); }} defaultValue={field.value}>
+                                                                                <Select onValueChange={(value) => { field.onChange(value); changePhoneInputCountrySelect(value); setCountry(value); fetchCountryOperators(value); }} defaultValue={'CI'}>
                                                                                     <SelectTrigger className={`w-full ${showConError && "!border-[#e95d5d]"} px-4 font-light text-sm ${showConError && "border-[#e95d5d]"}`} style={{
                                                                                         backgroundColor: field.value ? '#fff' : '#f0f0f0',
                                                                                     }}>
@@ -758,7 +765,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
                                                 <div key={beneficiary.id} onClick={() => updateBeneficiaryData(beneficiary)} 
                                                     className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
                                                     <Avatar className={`cursor-pointer`}>
-                                                        <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
+                                                        <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>{transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}</AvatarFallback>
                                                     </Avatar>
                                                     <div className={`inline-flex flex-col`}>
                                                         <h3 className={`text-xs font-medium`}>{`${beneficiary.firstName} ${beneficiary.lastName}`}</h3>
