@@ -75,8 +75,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
     const endPeriod = new Date(query.to ?? "");
     const formatStartPeriod = startPeriod.toLocaleDateString('en-GB');
     const formatEndPeriod = endPeriod.toLocaleDateString('en-GB');
-    const url = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false`;
-
+    const url = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&pos=${selectedAccount}&csv=false`;
     const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true`;
     const exportTransactionsData = (e: any) => {
         setExportDataLoading(true);

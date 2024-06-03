@@ -52,13 +52,19 @@ export enum PointsOfSaleStatus {
 
 export default function PointOfSaleListAndOperations({lang, searchItems, merchant, bankAccountsRes}: PointOfSaleListAndOperationsProps) {
     const [isPosLoading, setPosLoading] = useState(false);
-    const [selectedAccount, setSelectedAccount] = useState('all');
-    const [pSearch, setPSearch] = useState('');
+    const [selectedAccount, setSelectedAccount] = useState('');
+    const [pSearch, setPSearch] = useState(searchItems.search ?? '');
     const [pTpe, setPTpe] = useState('all');
     const [pStatus, setPStatus] = useState('all');
     const [pServices, setPServices] = useState('all');
     const [pointOfSales, setPointOfSales] = useState<IPointOfSale[]>([]);
     const [accounts, setAccounts] = useState<IAccount[]>([]);
+
+    const query = {
+        // @ts-ignore
+        merchantId : merchant.merchantsIds[0].id,
+        search : pSearch,
+    }
 
     const formSchema = z.object({
         search: z.string()
@@ -88,6 +94,8 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
         {key: 'id', value: 'Service 1'},
     ];
 
+    const url = `/merchants/${query.merchantId}/pos?keyword=${query.search ?? ""}&all=true`;
+    console.log(url);
     const fetchAccounts = () => {
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(bankAccounts => {
@@ -102,11 +110,11 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
 
     const fetchPointOfSales = () => {
         setPosLoading(true);
-        getMerchantPointOfSales(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        getMerchantPointOfSales(url, String(merchant.accessToken))
         .then(pos => {
             console.log(pos);
             setPosLoading(false);
-            setPointOfSales(pos);
+            setPointOfSales(pos.data);
         })
         .catch(e => {
             setPosLoading(false);
@@ -200,11 +208,13 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
         );
     }
 
+    console.log(pSearch, pStatus, pTpe);
+
     useEffect(() => {
         fetchAccounts();
         fetchPointOfSales();
         // matchPointOfSalesAndMerchantBankAccounts();
-    }, []);
+    }, [pSearch]);
 
     return (
         <div className={`flex flex-col h-full space-y-3`}>
@@ -367,8 +377,8 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
                     {
                         isPosLoading ? showLoader() :
                         pointOfSales && pointOfSales.map((pointOfSale, index) => {
-                        return(<div key={pointOfSale.id} onClick={() => setSelectedAccount(pointOfSale.id)}
-                            className={`snap-end shrink-0 w-[23%] 2xl:w-[20%] bg-white flex flex-col justify-between cursor-pointer ${selectedAccount == pointOfSale.id && `outline outline-offset-2 outline-2 outline-[${getPosTypeColor(pointOfSale.posType.name)}]`} space-y-7 2xl:space-y-7 px-4 pb-4 pt-4 rounded-3xl`}>
+                        return(<div key={pointOfSale.id} onClick={() => setSelectedAccount(pointOfSale.name)}
+                            className={`snap-end shrink-0 w-[23%] 2xl:w-[20%] bg-white flex flex-col justify-between cursor-pointer ${selectedAccount == pointOfSale.name && `outline outline-offset-2 outline-2 outline-[${getPosTypeColor(pointOfSale.posType.name)}]`} space-y-7 2xl:space-y-7 px-4 pb-4 pt-4 rounded-3xl`}>
                             <div className={`flex justify-between items-start`}>
                                 <div>
                                     <div className={`inline-flex flex-col`}>
@@ -409,7 +419,7 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
                                 </div>
                                 <div className={`flex flex-col justify-end items-end h-full`}>
                                     <div
-                                        dangerouslySetInnerHTML={{__html: getPointsOfSaleStatusBadge(pointOfSale.disabled ? PointsOfSaleStatus.INACTIVE : PointsOfSaleStatus.ACTIVE)}}></div>
+                                        dangerouslySetInnerHTML={{__html: getPointsOfSaleStatusBadge(pointOfSale.status == 'Approved' ? PointsOfSaleStatus.ACTIVE : PointsOfSaleStatus.INACTIVE)}}></div>
                                 </div>
                             </div>
                         </div>)
