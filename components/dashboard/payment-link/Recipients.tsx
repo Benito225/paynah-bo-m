@@ -139,7 +139,7 @@ export default function Recipients({lang, merchant, beneficiaries}: RecipientsPr
                                     <button className={`rounded-full bg-[#f0f0f0] hover:bg-gray-200 duration-200 p-1.5`}>
                                         <Send className={`h-3.5 w-3.5`} />
                                     </button>
-                                    <DropdownMenu>
+                                    {/* <DropdownMenu>
                                         <DropdownMenuTrigger className={`focus:outline-none`} asChild>
                                             <button className={`rounded-full bg-[#f0f0f0] hover:bg-gray-200 duration-200 p-1.5`}>
                                                 <svg className={`h-3.5 w-3.5`} viewBox="0 0 24 24"
@@ -167,7 +167,7 @@ export default function Recipients({lang, merchant, beneficiaries}: RecipientsPr
                                                 <span className={`mt-[1.5px]`}>{`Refaire l'opération`}</span>
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
-                                    </DropdownMenu>
+                                    </DropdownMenu> */}
                                 </div>
                             </div>
                         </div>
