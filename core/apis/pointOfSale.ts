@@ -4,9 +4,7 @@
 
 import {fetchData} from "@/lib/api";
 
-export async function getMerchantPointOfSales(merchantId: string, token: string) {
-    const resData = await fetchData(`/merchants/${merchantId}/pos`, 'GET', null, token, true);
-    console.log(resData);
-    console.log(token);
-    return resData.data;
+export async function getMerchantPointOfSales(url: string, token: string) {
+    const resData = await fetchData(url, 'GET', null, token, true);
+    return resData;
 }
