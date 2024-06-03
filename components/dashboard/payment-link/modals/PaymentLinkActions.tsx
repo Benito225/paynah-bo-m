@@ -34,16 +34,19 @@ import {generateQuickPaymentLink} from '@/core/apis/payment';
 interface MainActionsProps {
     lang: string,
     merchant: IUser,
+    accounts: IAccount[],
+    beneficiaries: IBeneficiary[],
     children: React.ReactNode,
 }
 
 const defaultAccount = { id: '', reference: '', coreBankId: '', bankAccountId: '', balance: 0, name: "", balanceDayMinus1: 0, isMain: false, skaleet_balance: 0 };
+const defaultBeneficiary = { id: '', lastName: '', firstName: '', email: '' };
 
-export default function PaymentLinkActions({lang, merchant, children}: MainActionsProps) {
+export default function PaymentLinkActions({lang, merchant, accounts, beneficiaries, children}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<IAccount>(defaultAccount);
-    const [beneficiary, setBeneficiary] = useState<IBeneficiary>({});
+    const [beneficiary, setBeneficiary] = useState<IBeneficiary>(defaultBeneficiary);
     const [existBenef, setExistBenef] = useState(true);
     const [payFees, setPayFees] = useState(false);
     const [sendLinkCanal, setSendLinkCanal] = useState('');
@@ -62,17 +65,17 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
     const [confirmStep, setConfirmStep] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
     const [accessKey, setAccessKey] = useState('');
-    const [accounts, setAccounts] = useState([]);
+    const [accountsSearch, setAccounts] = useState<IAccount[]>(accounts);
     const [accountsFiltered, setAccountsFiltered] = useState([]);
-    const [beneficiaries, setBeneficiaries] = useState([]);
+    const [beneficiariesSearch, setBeneficiaries] = useState<IBeneficiary[]>(beneficiaries);
     const [isSendLoading, setIsSendLoading] = useState(false);
     const [paymentLinkToShare, setPaymentLinkToShare] = useState('');
     const [amountSendToCustomer, setAmountSentToCustomer] = useState(0);
 
     const formSchema = z.object({
-        lastName: z.string().min(2, {message: 'veuillez saisir votre nom'}),
-        firstName: z.string().min(2, {message: 'veuillez saisir votre prénoms'}),
-        email: z.string().email({message: 'veuillez saisir votre email'}),
+        lastName: z.string(),
+        firstName: z.string(),
+        email: z.string(),
         beneficiary: z.string(),
         amount: z.number(),
         sendMode: z.string(),
@@ -82,14 +85,42 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
         mmOperator: z.string(),
     })
     .refine((data) => {
-        if (step > 3) {
-            return data.amount > 0
+        if (displayBeneficiaryForm) {
+            return data.lastName.trim().length > 2
         }
         return true;
     }, {
-        message: "Le montant doit être suppérieur à 0",
-        path: ["amount"],
+        message: "veuillez saisir votre nom",
+        path: ["lastName"],
     })
+    .refine((data) => {
+        if (displayBeneficiaryForm) {
+            return data.firstName.trim().length > 2
+        }
+        return true;
+    }, {
+        message: "veuillez saisir votre prénoms",
+        path: ["firstName"],
+    })
+    .refine((data) => {
+        if (displayBeneficiaryForm) {
+            const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(data.email);
+        }
+        return true;
+    }, {
+        message: "veuillez saisir un email valide",
+        path: ["email"],
+    })
+    // .refine((data) => {
+    //     if (step > 3) {
+    //         return data.amount > 0
+    //     }
+    //     return true;
+    // }, {
+    //     message: "Le montant doit être suppérieur à 0",
+    //     path: ["amount"],
+    // })
 
     const handleTogglePassword = () => {
         setShowPassword(!showPassword);
@@ -238,6 +269,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
     }
 
     const verifyPaymentLinkInputs = (data: any) => {
+        console.log('Hello')
         initPaymentLinkPayloadParams();
         console.log(sendMoneyForm.getValues('amount'))
         try {
@@ -253,7 +285,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
     function resetSendMoneyValues() {
         setStep(1)
         setAccount(defaultAccount)
-        setBeneficiary({})
+        setBeneficiary(defaultBeneficiary)
         setExistBenef(true)
         setPayFees(false)
         setAmount('0')
@@ -307,31 +339,28 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
         return isAuthenticate;
     }
 
-    function fetchMerchantBankAccounts() {
-        // @ts-ignore
-        getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-        .then(data => {
-            setAccounts(data.accounts);
-            setAccountsFiltered(data.accounts);
-            setLoading(false);
-        })
-        .catch(err => {
-            setLoading(false);
-            setAccounts([]);
-        });
+    function searchAccount(e: React.ChangeEvent<HTMLInputElement>) {
+        const keyword = e.target.value;
+        let accountsMatch = [...accounts];
+        if (keyword.trim().length > 0 && keyword.trim().length < 3) {
+            accountsMatch = [...accountsSearch];
+        } else {
+            accountsMatch = accounts.filter(account => account.coreBankId.search(keyword) !== -1 );
+        }
+        console.log(accountsMatch);
+        setAccounts(accountsMatch);
     }
 
-    function fetchMerchantBeneficiaries() {
-        // @ts-ignore
-        getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-        .then(data => {
-            setBeneficiaries(data);
-            setLoading(false);
-        })
-        .catch(err => {
-            setLoading(false);
-            setBeneficiaries([]);
-        });
+    function searchBeneficiary(e: React.ChangeEvent<HTMLInputElement>) {
+        const keyword = e.target.value;
+        let beneficiariesMatch = [...beneficiaries];
+        if (keyword.trim().length > 0 && keyword.trim().length < 3) {
+            beneficiariesMatch = [...beneficiariesSearch];
+        } else {
+            beneficiariesMatch = beneficiaries.filter(beneficiary => beneficiary.lastName.search(keyword) !== -1 || beneficiary.firstName.search(keyword) !== -1 || beneficiary.email.search(keyword) !== -1 );
+        }
+        console.log(beneficiariesMatch);
+        setBeneficiaries(beneficiariesMatch);
     }
 
     const copyPaymentLink = async () => {
@@ -348,8 +377,8 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
     }
 
     useEffect(() => {
-        fetchMerchantBankAccounts();
-        fetchMerchantBeneficiaries();
+        setAccounts(accounts);
+        setBeneficiaries(beneficiaries);
         if (payFees) {
             const amountWithoutString = amount.match(/\d+/g)?.join('');
             const amountNumber = parseInt(amountWithoutString ?? '0');
@@ -360,7 +389,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
             setTotalAmount(amount);
         }
 
-    }, [amount, payFees]);
+    }, [amount, payFees, accounts, beneficiaries]);
 
     return (
         <>
@@ -390,7 +419,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                 <h3 className={`text-sm font-medium`}>1- Choisissez le compte à débiter</h3>
                                 <div className={`relative`}>
                                     <Input type={`text`} className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-[15rem]`}
-                                        placeholder="Recherchez un compte" onChange={(e) => { console.log(e.target.value, accounts) }}/>
+                                        placeholder="Recherchez un compte" onChange={(e) => searchAccount(e) }/>
                                     <Search className={`absolute h-4 w-4 top-3.5 left-3`} />
                                 </div>
                             </div>
@@ -402,7 +431,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                     !displayBeneficiaryForm &&
                                     <div className={`relative`}>
                                     <Input type={`text`} className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-[15rem]`}
-                                           placeholder="Recherchez un bénéficiaire" onChange={(e) => console.log(e.target.value) }/>
+                                           placeholder="Recherchez un bénéficiaire" onChange={(e) => searchBeneficiary(e) }/>
                                     <Search className={`absolute h-4 w-4 top-3.5 left-3`} />
                                 </div>
                                 }
@@ -411,7 +440,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                 {/*Step 1*/}
                                 <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto ${step == 1 ? 'flex' : 'hidden'}`}>
                                     {
-                                        accountsFiltered && accountsFiltered.map((account: IAccount) => (
+                                        accountsSearch && accountsSearch.map((account: IAccount) => (
                                             <div key={account.id} onClick={() => updateAccountData(account)}
                                                 className={`snap-end shrink-0 w-[40%] 2xl:w-[35%] bg-white flex flex-col justify-between cursor-pointer ${account.id == '3' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                                                 <div className={`flex justify-between items-start`}>
@@ -486,7 +515,7 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                             !displayBeneficiaryForm &&
                                             <div className={`grid grid-cols-3 gap-3`}>
                                             {
-                                                beneficiaries && beneficiaries.map((beneficiary: IBeneficiary) => (
+                                                beneficiariesSearch && beneficiariesSearch.map((beneficiary: IBeneficiary) => (
                                                 <div key={beneficiary.id} onClick={() => updateBeneficiaryData(beneficiary)} 
                                                     className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
                                                     <Avatar className={`cursor-pointer`}>
@@ -997,10 +1026,9 @@ export default function PaymentLinkActions({lang, merchant, children}: MainActio
                                     <Button onClick={() => nextStep()} className={`mt-5 w-36 text-sm ${step < 4 && step > 2  ? 'block' : 'hidden'}`}>
                                         Continuer
                                     </Button>
-                                    <Button onClick={
+                                    <Button onClick={handleSubmit((data) => verifyPaymentLinkInputs(data))
                                         // () => {
                                         // initPaymentLinkPayloadParams()}; 
-                                        handleSubmit((data) => verifyPaymentLinkInputs(data))
                                     } className={`mt-5 w-[30%] text-sm ${step == 4 ? 'block' : 'hidden'}`}>
                                         {`Confirmer l'envoi`}
                                     </Button>

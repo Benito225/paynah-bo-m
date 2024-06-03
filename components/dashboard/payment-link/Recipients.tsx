@@ -19,6 +19,7 @@ import { getMerchantBeneficiaries } from "@/core/apis/beneficiary";
 interface RecipientsProps {
     lang: Locale,
     merchant: IUser,
+    beneficiaries: IBeneficiary[],
 }
 
 export const RANDOM_AVATAR_COLORS_CONFIG = [
@@ -29,10 +30,10 @@ export const RANDOM_AVATAR_COLORS_CONFIG = [
     {bg: '#ffadae', text: '#e03c3e'},
 ]
 
-export default function Recipients({lang, merchant}: RecipientsProps) {
+export default function Recipients({lang, merchant, beneficiaries}: RecipientsProps) {
 
     const [isLoading, setLoading] = useState(false);
-    const [beneficiaries, setBeneficiaries] = useState([]);
+    // const [beneficiaries, setBeneficiaries] = useState([]);
 
     const transformBeneficiaryFullNameToBeneficiaryAvatar = (beneficiaryFullName: string) => {
         const beneficiaryFullNameSplit = beneficiaryFullName.trim().length > 0 ? beneficiaryFullName.split(' ') : [];
@@ -42,19 +43,19 @@ export default function Recipients({lang, merchant}: RecipientsProps) {
 
     function fetchMerchantBeneficiaries() {
         // @ts-ignore
-        getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
-        .then(data => {
-            setBeneficiaries(data);
-            setLoading(false);
-        })
-        .catch(err => {
-            setLoading(false);
-            setBeneficiaries([]);
-        });
+        // getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+        // .then(data => {
+        //     setBeneficiaries(data);
+        //     setLoading(false);
+        // })
+        // .catch(err => {
+        //     setLoading(false);
+        //     setBeneficiaries([]);
+        // });
     }
 
     useEffect(() => {
-        fetchMerchantBeneficiaries();
+        // fetchMerchantBeneficiaries();
     }, []);
 
     return (
