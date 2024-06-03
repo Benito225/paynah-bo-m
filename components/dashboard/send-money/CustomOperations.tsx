@@ -30,6 +30,7 @@ interface CustomOperationsProps {
 export default function CustomOperations({ lang, searchItems, merchant }: CustomOperationsProps) {
 
     const [beneficiaries, setBeneficiaries] = useState<IBeneficiary[]>([]);
+    const [isLoadingBenefs, setLoadingBenefs] = useState(false);
     const [countries, setCountries] = useState<ICountry[]>([]);
     const [accounts, setAccounts] = useState<IAccount[]>([]);
     const [isLoading, setLoading] = useState(false);
@@ -70,16 +71,17 @@ export default function CustomOperations({ lang, searchItems, merchant }: Custom
     // eslint-disable-next-line react-hooks/exhaustive-deps
     function fetchMerchantBeneficiaries() {
         // @ts-ignore
+        setLoadingBenefs(true);
         getMerchantBeneficiaries(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             console.log(data);
             setBeneficiaries(data);
-            setLoading(false);
+            setLoadingBenefs(false);
             setBeneficiaryActionLoading(true);
         })
         .catch(err => {
             setBeneficiaries([]);
-            setLoading(false);
+            setLoadingBenefs(false);
             setBeneficiaryActionLoading(true);
         });
     }
@@ -97,7 +99,7 @@ export default function CustomOperations({ lang, searchItems, merchant }: Custom
             <div className={`flex flex-col space-y-2.5`}>
                 <MainActions lang={lang} merchant={merchant} countries={countries} accounts={accounts} beneficiaries={beneficiaries} />
             </div>
-            <Beneficiary lang={lang} merchant={merchant} beneficiaries={beneficiaries}/>
+            <Beneficiary lang={lang} merchant={merchant} beneficiaries={beneficiaries} isLoadingBenef={isLoadingBenefs}/>
         </div>
     )
 }
