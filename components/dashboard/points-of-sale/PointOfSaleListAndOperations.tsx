@@ -114,7 +114,7 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
         .then(pos => {
             console.log(pos);
             setPosLoading(false);
-            setPointOfSales(pos.data);
+            pos.data != null && setPointOfSales(pos.data);
         })
         .catch(e => {
             setPosLoading(false);
@@ -223,7 +223,7 @@ export default function PointOfSaleListAndOperations({lang, searchItems, merchan
                     <div
                         className={`flex flex-col 2xl:flex-row 2xl:justify-between items-start 2xl:items-center space-y-2 2xl:space-y-0`}>
                         <div className={`inline-flex items-center w-[20%]`}>
-                            <h1 className={`text-xl font-medium mr-4 whitespace-nowrap`}>Points de vente (7)</h1>
+                            <h1 className={`text-xl font-medium mr-4 whitespace-nowrap`}>Points de vente ({pointOfSales.length +1})</h1>
                         </div>
                         <div className={`flex items-center w-full 2xl:w-[80%] justify-between space-x-3`}>
                             <Form {...filterableForm}>
