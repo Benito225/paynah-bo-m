@@ -52,7 +52,7 @@ export default function TeamList({lang, searchItems, merchant}: TeamListProps) {
             </div>
             <div className={`h-full`}>
                 <div className={`bg-white flex-grow rounded-3xl h-full`}>
-                    <TeamTable searchItems={searchItems} lang={lang}/>
+                    <TeamTable searchItems={searchItems} lang={lang} merchant={merchant}/>
                 </div>
             </div>
         </div>

@@ -11,12 +11,13 @@ import {Form} from "@/components/ui/form";
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import { CalendarIcon, Search} from "lucide-react";
+import { CalendarIcon, RotateCcw, Search} from "lucide-react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {DateRange} from "react-day-picker";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {format} from "date-fns";
 import {Calendar} from "@/components/ui/calendar";
+import Routes from "@/components/Routes";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>,
@@ -49,7 +50,7 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
   return (
       <>
         <div className={`flex space-y-2.5 lg:space-y-0 items-start lg:items-center flex-col lg:flex-row lg:justify-between px-6 pb-1 pt-4`}>
-          <h2 className={`font-medium text-base whitespace-nowrap`}>{`Utilisateurs (10)`}</h2>
+          <h2 className={`font-medium text-base whitespace-nowrap`}>{`Utilisateurs (${table.getRowCount()})`}</h2>
           <Form {...filterableForm}>
             <form action="" className={`w-full lg:w-auto`}>
               <div className={`flex 2xl:inline-flex space-x-3 2xl:space-x-3`}>
@@ -80,6 +81,11 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                       </SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div className={`flex items-center justify-end`}>
+                  <a className={``} href={`${Routes.dashboard.team.replace('{lang}', lang)}`}>
+                    <RotateCcw strokeWidth={2.5} className="text-[#D3D3D3] w-6 h-6" />
+                  </a>
                 </div>
               </div>
             </form>
