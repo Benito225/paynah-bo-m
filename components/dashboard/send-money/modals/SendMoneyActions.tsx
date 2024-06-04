@@ -60,6 +60,14 @@ interface MainActionsProps {
 const defaultAccount = { id: '', reference: '', coreBankId: '', bankAccountId: '', balance: 0, name: "", balanceDayMinus1: 0, isMain: false, skaleet_balance: 0 };
 const defaultBeneficiary = { id: '', firstName: '', lastName: '', email: '' };
 
+export const RANDOM_AVATAR_COLORS_CONFIG = [
+    {bg: '#ffc5ae', text: '#ff723b'},
+    {bg: '#aedaff', text: '#31a1ff'},
+    {bg: '#e0aeff', text: '#bc51ff'},
+    {bg: '#aeffba', text: '#02b71a'},
+    {bg: '#ffadae', text: '#e03c3e'},
+]
+
 export default function SendMoneyActions({lang, merchant, countries, accounts, beneficiaries, children}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
@@ -761,15 +769,15 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
                                             !displayBeneficiaryForm &&
                                             <div className={`grid grid-cols-3 gap-3`}>
                                             {
-                                                beneficiariesSearch && beneficiariesSearch.map((beneficiary: IBeneficiary) => (
+                                                beneficiariesSearch && beneficiariesSearch.length > 0 && beneficiariesSearch.map((beneficiary: IBeneficiary, index: number) => (
                                                 <div key={beneficiary.id} onClick={() => updateBeneficiaryData(beneficiary)} 
                                                     className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
                                                     <Avatar className={`cursor-pointer`}>
-                                                        <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>{transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}</AvatarFallback>
+                                                        <AvatarFallback className={`bg-[${RANDOM_AVATAR_COLORS_CONFIG[index%5].bg}] text-[${RANDOM_AVATAR_COLORS_CONFIG[index%5].text}]`}>{transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}</AvatarFallback>
                                                     </Avatar>
                                                     <div className={`inline-flex flex-col`}>
                                                         <h3 className={`text-xs font-medium`}>{`${beneficiary.firstName} ${beneficiary.lastName}`}</h3>
-                                                        {/* <span className={`text-xs text-[#626262]`}>{beneficiary.reference}</span> */}
+                                                        {/* <span className={`text-xs text-[#626262]`}>{index}</span> */}
                                                         <span className={`text-xs block mt-[2px] text-[#626262] break-all leading-3`}>{beneficiary.email}</span>
                                                     </div>
                                                 </div>
