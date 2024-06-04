@@ -684,7 +684,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
                                 </div>
 
                                 {/*Step 2*/}
-                                <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto ${step == 2 ? 'flex' : 'hidden'}`}>
+                                <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] max-w-[54rem] snap-x snap-mandatory overflow-x-auto ${step == 2 ? 'flex' : 'hidden'}`}>
                                     {
                                         accountsSearch && accountsSearch.map((account: IAccount) => (
                                             <div key={account.id} onClick={() => updateAccountData(account)}
