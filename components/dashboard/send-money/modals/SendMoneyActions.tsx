@@ -102,9 +102,12 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
     const refPhone = useRef<PhoneInputRefType>(null);
 
     const formSchema = z.object({
-        lastName: z.string().min(2, {message: 'veuillez saisir votre nom'}),
-        firstName: z.string().min(2, {message: 'veuillez saisir votre prénoms'}),
-        email: z.string().email({message: 'veuillez saisir votre email'}),
+        // lastName: z.string().min(2, {message: 'veuillez saisir votre nom'}),
+        // firstName: z.string().min(2, {message: 'veuillez saisir votre prénoms'}),
+        // email: z.string().email({message: 'veuillez saisir votre email'}),
+        lastName: z.string(),
+        firstName: z.string(),
+        email: z.string(),
         beneficiary: z.string(),
         amount: z.number(),
         sendMode: z.string(),
@@ -112,6 +115,61 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
         country: z.string(),
         mmAccountNumber: z.string(),
         mmOperator: z.string(),
+    })
+    .refine((data) => {
+        if (data.sendMode == 'direct') {
+            return data.accountNumber.trim().length > 0
+        }
+        return true;
+    }, {
+        message: "veuillez saisir un numéro de compte",
+        path: ["accountNumber"],
+    })
+    .refine((data) => {
+        if (data.sendMode == 'mm') {
+            return data.mmAccountNumber.trim().length > 4
+        }
+        return true;
+    }, {
+        message: "veuillez saisir votre numéro de téléphone",
+        path: ["mmAccountNumber"],
+    })
+    .refine((data) => {
+        if (data.sendMode == 'mm') {
+            return data.mmOperator.trim().length > 0
+        }
+        return true;
+    }, {
+        message: "veuillez choisir un opérateur",
+        path: ["mmAccountNumber"],
+    })
+    .refine((data) => {
+        if (displayBeneficiaryForm) {
+            return data.lastName.trim().length > 2
+        }
+        return true;
+    }, {
+        message: "veuillez saisir votre nom",
+        path: ["lastName"],
+    })
+    .refine((data) => {
+        if (displayBeneficiaryForm) {
+            return data.firstName.trim().length > 2
+        }
+        return true;
+    }, {
+        message: "veuillez saisir votre prénoms",
+        path: ["firstName"],
+    })
+    .refine((data) => {
+        if (displayBeneficiaryForm) {
+            const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(data.email);
+        }
+        return true;
+    }, {
+        message: "veuillez saisir votre email",
+        path: ["email"],
     })
 
     const handleTogglePassword = () => {
@@ -180,6 +238,16 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
             // resetCreateBeneficiaryValues();
         }
         setDisplayBeneficiaryForm(!displayBeneficiaryForm);
+    }
+
+    const checkSendMode = (data: any) => {
+        try {
+            console.log(data);
+            formSchema.parse(data); // Valider les données
+            nextStep();
+        } catch (error) {
+            console.error('Erreur de validation du formulaire :', error);
+        }
     }
 
     const addNewBeneficiary = (data: any) => {
@@ -272,6 +340,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
         } else {
             if (step > 1) { 
                 const nextStep = step - 1;
+                nextStep == 2 && setDisplayBeneficiaryForm(false);
                 setStep(nextStep);
                 setPercentage(`w-${nextStep}/${finalStep}`);
             }
@@ -674,6 +743,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
                                                                                                         </Select>
                                                                                                     </div>
                                                                                                 </FormControl>
+                                                                                                <FormMessage className={`text-xs`}>{errors.mmAccountNumber && errors.mmAccountNumber.message as string}</FormMessage>
                                                                                             </FormItem>
                                                                                         )}
                                                                                     />
@@ -1201,7 +1271,7 @@ export default function SendMoneyActions({lang, merchant, countries, accounts, b
                                     <Button onClick={() => prevStep()} className={`mt-5 w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 ${step == 1 || step == 6 || confirmStep == 2 ? 'hidden' : 'block'}`} disabled={isSendLoading}>
                                         Retour
                                     </Button>
-                                    <Button onClick={() => nextStep()} className={`mt-5 w-36 text-sm ${step == 1  ? 'block' : 'hidden'}`}>
+                                    <Button onClick={handleSubmit((data) => checkSendMode(data))} className={`mt-5 w-36 text-sm ${step == 1  ? 'block' : 'hidden'}`}>
                                         Suivant
                                     </Button>
                                     <Button onClick={() => nextStep()} className={`mt-5 w-36 text-sm ${step < 5 && step > 3  ? 'block' : 'hidden'}`}>
