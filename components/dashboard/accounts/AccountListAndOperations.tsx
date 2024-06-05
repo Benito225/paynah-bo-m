@@ -22,6 +22,7 @@ import {Input} from "@/components/ui/input";
 import {IUser} from "@/core/interfaces/user";
 import {IAccount} from "@/core/interfaces/account";
 import {getMerchantBankAccounts} from "@/core/apis/bank-account";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface AccountListAndOperationsProps {
     lang: Locale,
@@ -56,6 +57,8 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
 
     function fetchMerchantBankAccounts() {
         // @ts-ignore
+        setLoading(true);
+        // @ts-ignore
         getMerchantBankAccounts(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
         .then(data => {
             setAccounts(data.accounts);
@@ -65,6 +68,31 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
             setLoading(false);
             setAccounts([]);
         });
+    }
+
+    const showLoader = () => {
+        return (
+            <Skeleton
+                className={`snap-end shrink-0 w-[28.5%] 2xl:w-[23%] cursor-pointer bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}>
+                <div className={`flex justify-between items-start`}>
+                    <div>
+                        <div className={`flex flex-col`}>
+                            <Skeleton
+                                className={`mb-1 rounded-xl p-2 bg-gray-300 w-[2.7rem] h-[2.7rem] inline-flex justify-center items-center`}>
+                                <div className={`h-[1.3rem] w-auto`}>
+                                </div>
+                            </Skeleton>
+                            <Skeleton
+                                className={`font-light h-[13px] my-1 bg-gray-300 w-[7rem] rounded-full`}></Skeleton>
+                        </div>
+                    </div>
+                </div>
+                <div className={`inline-flex flex-col`}>
+                    <Skeleton className={`h-[8px] my-1 w-[5rem] bg-gray-300 rounded-full`}></Skeleton>
+                    <Skeleton className={`text-base h-[16px] mb-1 w-[90%] bg-gray-300 font-semibold rounded-full`}></Skeleton>
+                </div>
+            </Skeleton>
+        );
     }
 
     useEffect(() => {
@@ -101,6 +129,7 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
                     <PaynahCard merchant={merchant} onClick={() => setSelectedAccount('all')} lang={lang} className={`snap-end shrink-0 w-[28.5%] 2xl:w-[23%] cursor-pointer rounded-3xl ${selectedAccount == 'all' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`} />
 
                     {
+                        isLoading ? showLoader() :
                         accounts && accounts.map((account: IAccount) => (
                             <div key={account.id} onClick={() => setSelectedAccount('1')} className={`snap-end shrink-0 w-[28.5%] 2xl:w-[23%] bg-white flex flex-col justify-between cursor-pointer ${selectedAccount == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                                 <div className={`flex justify-between items-start`}>

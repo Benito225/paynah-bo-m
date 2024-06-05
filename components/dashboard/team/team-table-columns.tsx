@@ -13,8 +13,9 @@ import {AlertTriangle, ClipboardList, RotateCw} from "lucide-react";
 import React from "react";
 import {TeamDataType} from "@/components/dashboard/team/TeamTable";
 import {DataTableFilterableColumn, DataTableSearchableColumn} from "@/core/interfaces";
+import { IUserAccount } from "@/core/interfaces/userAccount";
 
-export function getColumns(lang: string): ColumnDef<TeamDataType>[] {
+export function getColumns(lang: string): ColumnDef<IUserAccount>[] {
     return [
         // {
         //     id: "select",
@@ -41,11 +42,11 @@ export function getColumns(lang: string): ColumnDef<TeamDataType>[] {
         //     enableHiding: false,
         // },
         {
-            accessorKey: "username",
+            accessorKey: "firstname",
             header: ({ column }) => (
                 <DataTableColumnHeader className={`text-xs font-normal`} column={column} title="Nom utilisateur" />
             ),
-            cell: ({ row }) => <div className="min-w-[6rem]">{row.getValue("username")}</div>,
+            cell: ({ row }) => <div className="min-w-[6rem]">{`${row.original.firstname} ${row.original.lastname}`}</div>,
             enableSorting: false,
             enableHiding: false,
         },
@@ -57,7 +58,7 @@ export function getColumns(lang: string): ColumnDef<TeamDataType>[] {
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {row.getValue("role")}
+                        {row.original.profile.name}
                     </div>
                 )
             },
@@ -76,27 +77,27 @@ export function getColumns(lang: string): ColumnDef<TeamDataType>[] {
             },
         },
         {
-            accessorKey: "email",
+            accessorKey: "login",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Adresse e-mail" />
             ),
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {row.getValue("email")}
+                        {row.getValue("login")}
                     </div>
                 )
             },
         },
         {
-            accessorKey: "date",
+            accessorKey: "createdAt",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Ajouté le" />
             ),
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {formatDate(row.getValue("date"), lang)}
+                        {formatDate(row.getValue("createdAt"), lang)}
                     </div>
                 )
             },
@@ -143,7 +144,7 @@ export const searchableColumns: DataTableSearchableColumn[] = [
     // },
 ]
 
-export const filterableColumns: DataTableFilterableColumn<TeamDataType>[] = [
+export const filterableColumns: DataTableFilterableColumn<IUserAccount>[] = [
     // {
     //     id: "status",
     //     title: "Statut de transaction",

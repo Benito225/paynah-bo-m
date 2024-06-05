@@ -11,10 +11,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {AlertTriangle, ClipboardList, RotateCw} from "lucide-react";
 import React from "react";
-import {TransactionsDataType} from "@/components/dashboard/points-of-sale/TransactionsTable";
+// import {ITransaction} from "@/components/dashboard/points-of-sale/TransactionsTable";
 import {DataTableFilterableColumn, DataTableSearchableColumn} from "@/core/interfaces";
+import { ITransaction } from "@/core/interfaces/transaction";
 
-export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
+export enum TransactionsType {
+    DEBIT = 'PAYOUT',
+    CREDIT = 'PAYIN',
+}
+
+export function getColumns(lang: string): ColumnDef<ITransaction>[] {
     return [
         // {
         //     id: "select",
@@ -56,21 +62,21 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
             ),
             cell: ({ row }) => {
                 return (
-                    <div className="">
-                        {formatCFA(row.getValue("amount"))}
+                    <div className={`font-medium ${row.original.transaction_type.name == TransactionsType.DEBIT ? 'text-[#ff0000]' : 'text-[#19b2a6]'}`}>
+                        {row.original.transaction_type.name == TransactionsType.DEBIT ? '-' : ''}{formatCFA(row.getValue("amount"))}
                     </div>
                 )
             },
         },
         {
-            accessorKey: "account",
+            accessorKey: "number",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Compte crédité" />
             ),
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {row.getValue("account")}
+                        {row.getValue("number")}
                     </div>
                 )
             },
@@ -89,14 +95,14 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
             },
         },
         {
-            accessorKey: "date",
+            accessorKey: "dateOperation",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Date" />
             ),
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {formatDate(row.getValue("date"), lang)}
+                        {formatDate(row.getValue("dateOperation"), lang)}
                     </div>
                 )
             },
@@ -107,14 +113,14 @@ export function getColumns(lang: string): ColumnDef<TransactionsDataType>[] {
                 <DataTableColumnHeader className={`text-xs font-normal`} column={column} title="Statut" />
             ),
             cell: ({ row }) => {
-                const status = TStatus.find(
-                    (status) => status === row.original.status
-                )
+                // const status = TStatus.find(
+                //     (status) => status === row.original.status.toLowerCase()
+                // )
 
-                if (!status) return null
+                // if (!status) return null
 
                 return (
-                    <div className="" dangerouslySetInnerHTML={{__html: getStatusBadge(status)}}></div>
+                    <div className="" dangerouslySetInnerHTML={{__html: getStatusBadge(row.original.status)}}></div>
                 )
             },
             filterFn: (row, id, value) => {
@@ -176,7 +182,7 @@ export const searchableColumns: DataTableSearchableColumn[] = [
     // },
 ]
 
-export const filterableColumns: DataTableFilterableColumn<TransactionsDataType>[] = [
+export const filterableColumns: DataTableFilterableColumn<ITransaction>[] = [
     // {
     //     id: "status",
     //     title: "Statut de transaction",

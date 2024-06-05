@@ -37,12 +37,21 @@ interface MainActionsProps {
     accounts: IAccount[],
     beneficiaries: IBeneficiary[],
     children: React.ReactNode,
+    selectedBeneficiary: IBeneficiary,
 }
 
 const defaultAccount = { id: '', reference: '', coreBankId: '', bankAccountId: '', balance: 0, name: "", balanceDayMinus1: 0, isMain: false, skaleet_balance: 0 };
 const defaultBeneficiary = { id: '', lastName: '', firstName: '', email: '' };
 
-export default function PaymentLinkActions({lang, merchant, accounts, beneficiaries, children}: MainActionsProps) {
+export const RANDOM_AVATAR_COLORS_CONFIG = [
+    {bg: '#ffc5ae', text: '#ff723b'},
+    {bg: '#aedaff', text: '#31a1ff'},
+    {bg: '#e0aeff', text: '#bc51ff'},
+    {bg: '#aeffba', text: '#02b71a'},
+    {bg: '#ffadae', text: '#e03c3e'},
+]
+
+export default function PaymentLinkActions({lang, merchant, accounts, beneficiaries, selectedBeneficiary, children}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<IAccount>(defaultAccount);
@@ -122,6 +131,12 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
     //     path: ["amount"],
     // })
 
+    const transformBeneficiaryFullNameToBeneficiaryAvatar = (beneficiaryFullName: string) => {
+        const beneficiaryFullNameSplit = beneficiaryFullName.trim().length > 0 ? beneficiaryFullName.split(' ') : [];
+        const beneficiaryFullNameAvatar = beneficiaryFullNameSplit.length > 0 ? (beneficiaryFullNameSplit.length >= 2 ? `${beneficiaryFullNameSplit[0][0]}${beneficiaryFullNameSplit[1][0]}` : `${beneficiaryFullNameSplit[0][0]}`) : '';
+        return beneficiaryFullNameAvatar;
+    }
+
     const handleTogglePassword = () => {
         setShowPassword(!showPassword);
     };
@@ -181,8 +196,13 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
         } else {
             if (step > 1) { 
                 const nextStep = step - 1;
-                setStep(nextStep);
-                setPercentage(`w-${nextStep}/${finalStep}`);
+                if (nextStep == 2 && selectedBeneficiary.email.length > 0) { 
+                    setStep(1);
+                    setPercentage(`w-1/${finalStep}`);
+                } else {
+                    setStep(nextStep);
+                    setPercentage(`w-${nextStep}/${finalStep}`);
+                }
             }
         }
         // if (step > 1) {
@@ -242,8 +262,15 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
 
     function updateAccountData(account: IAccount) { 
         setAccount(account);
-        setStep(2);
-        setPercentage('w-2/4');
+        if (selectedBeneficiary.email.length > 0) {
+            console.log(selectedBeneficiary);
+            updateBeneficiaryData(selectedBeneficiary);
+            setStep(3);
+            setPercentage('w-3/4');
+        } else {
+            setStep(2);
+            setPercentage('w-2/4');
+        }
     }
 
     function updateBeneficiaryData(beneficiary: IBeneficiary) { 
@@ -401,7 +428,7 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
                     <div>
                         <div className={`rounded-t-2xl bg-white px-8 pb-4 pt-5`}>
                             <div className={`flex justify-between items-center space-x-3`}>
-                                <h2 className={`text-base text-[#626262] font-medium`}>{`Envoi d'argent`}</h2>
+                                <h2 className={`text-base text-[#626262] font-medium`}>{`Nouveau lien de paiement`}</h2>
                                 <DialogClose onClick={() => {setStep(1); setPercentage('w-1/4'); setConfirmStep(0); resetSendMoneyValues();}}>
                                     <X strokeWidth={2.4} className={`text-[#767676] h-5 w-5`} />
                                 </DialogClose>
@@ -438,9 +465,9 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
                             </div>
                             <div className={`mt-4`}>
                                 {/*Step 1*/}
-                                <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto ${step == 1 ? 'flex' : 'hidden'}`}>
+                                <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] max-w-[54rem] snap-x snap-mandatory overflow-x-auto ${step == 1 ? 'flex' : 'hidden'}`}>
                                     {
-                                        accountsSearch && accountsSearch.map((account: IAccount) => (
+                                        accountsSearch && accountsSearch.slice(0,6).map((account: IAccount) => (
                                             <div key={account.id} onClick={() => updateAccountData(account)}
                                                 className={`snap-end shrink-0 w-[40%] 2xl:w-[35%] bg-white flex flex-col justify-between cursor-pointer ${account.id == '3' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                                                 <div className={`flex justify-between items-start`}>
@@ -515,11 +542,11 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
                                             !displayBeneficiaryForm &&
                                             <div className={`grid grid-cols-3 gap-3`}>
                                             {
-                                                beneficiariesSearch && beneficiariesSearch.map((beneficiary: IBeneficiary) => (
+                                                beneficiariesSearch && beneficiariesSearch.length > 0 && beneficiariesSearch.map((beneficiary: IBeneficiary, index: number) => (
                                                 <div key={beneficiary.id} onClick={() => updateBeneficiaryData(beneficiary)} 
                                                     className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
                                                     <Avatar className={`cursor-pointer`}>
-                                                        <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>AD</AvatarFallback>
+                                                        <AvatarFallback className={`bg-[${RANDOM_AVATAR_COLORS_CONFIG[index%5].bg}] text-[${RANDOM_AVATAR_COLORS_CONFIG[index%5].text}]`}>{transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}</AvatarFallback>
                                                     </Avatar>
                                                     <div className={`inline-flex flex-col`}>
                                                         <h3 className={`text-xs font-medium`}>{`${beneficiary.firstName} ${beneficiary.lastName}`}</h3>

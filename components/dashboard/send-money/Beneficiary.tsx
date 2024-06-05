@@ -11,11 +11,13 @@ import {IBeneficiary} from "@/core/interfaces/beneficiary";
 // import {getMerchantBeneficiaries} from "@/core/apis/beneficiary";
 import BeneficiaryActions from '@/components/dashboard/send-money/modals/BeneficiaryActions'
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface BeneficiaryProps {
     lang: Locale,
     merchant: IUser,
-    beneficiaries?: any[]
+    beneficiaries?: any[],
+    isLoadingBenef?: boolean
 }
 
 export const RANDOM_AVATAR_COLORS_CONFIG = [
@@ -26,9 +28,8 @@ export const RANDOM_AVATAR_COLORS_CONFIG = [
     {bg: '#ffadae', text: '#e03c3e'},
 ]
 
-export default function Beneficiary({lang, merchant, beneficiaries}: BeneficiaryProps) {
+export default function Beneficiary({lang, merchant, beneficiaries, isLoadingBenef}: BeneficiaryProps) {
 
-    const [isLoading, setLoading] = useState(false);
     const [benefs, setBeneficiaries] = useState(beneficiaries);
 
     const transformBeneficiaryFullNameToBeneficiaryAvatar = (beneficiaryFullName: string) => {
@@ -53,6 +54,7 @@ export default function Beneficiary({lang, merchant, beneficiaries}: Beneficiary
                 <h3 className={`text-xs font-light text-gray-400`}>Bénéficiaires individuels</h3>
                 <div className={`inline-flex space-x-1 mt-2`}>
                     {
+                        isLoadingBenef ? <Skeleton className={`rounded-full h-10 w-10 bg-gray-300`}/> :
                         beneficiaries && beneficiaries.length > 0 &&
                         beneficiaries.slice(0, 5).map((beneficiary: IBeneficiary, index: number) => (
                             <TooltipProvider key={beneficiary.id} delayDuration={10}>

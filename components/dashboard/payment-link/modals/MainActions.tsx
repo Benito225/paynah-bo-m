@@ -147,9 +147,11 @@ export default function MainActions({lang, merchant, accounts, beneficiaries}: M
 
     }, [amount, payFees]);
 
+    const defaultBeneficiary = { id: '', lastName: '', firstName: '', email: '' };
+
     return (
         <>
-            <PaymentLinkActions lang={lang} merchant={merchant} accounts={accounts} beneficiaries={beneficiaries}>
+            <PaymentLinkActions lang={lang} merchant={merchant} accounts={accounts} beneficiaries={beneficiaries} selectedBeneficiary={defaultBeneficiary}>
                 <Button className={`w-full`}>
                     {`Nouveau lien de paiement`}
                 </Button>

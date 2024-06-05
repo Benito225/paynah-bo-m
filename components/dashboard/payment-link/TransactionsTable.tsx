@@ -157,6 +157,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
                 setDate={setDate}
                 lang={lang}
                 exportTransactionsData={exportTransactionsData}
+                isExportDataLoading={isExportDataLoading}
             />
         </div>
     );

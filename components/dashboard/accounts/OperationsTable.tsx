@@ -224,6 +224,7 @@ export default function OperationsTable({ searchItems, lang, selectedAccount, me
                 setDate={setDate}
                 lang={lang}
                 exportTransactionsData={exportTransactionsData}
+                isExportDataLoading={isExportDataLoading}
             />
         </div>
     );
