@@ -100,6 +100,12 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
         );
     }
 
+    const openAccountDetailModal = (account: IAccount) => {
+        setAccount(account);
+        setMode("detail");
+        setOpen(true);
+    };
+
     useEffect(() => {
         fetchMerchantBankAccounts();
     }, [isAccountActionLoading]);
@@ -178,11 +184,11 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
                                             </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent className="w-56 rounded-xl shadow-md" align={"end"}>
-                                            <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                            <DropdownMenuItem className={`text-xs cursor-pointer`} onClick={() => openAccountDetailModal(account)}>
                                                 <ClipboardList className="mr-2 h-3.5 w-3.5" />
                                                 <span className={`mt-[1.5px]`}>Détails du compte</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
+                                            {/* <DropdownMenuSeparator />
                                             <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                                 <Pencil className="mr-2 h-3.5 w-3.5"  />
                                                 <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
@@ -208,7 +214,7 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
                                             <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                                 <Trash2 className="mr-2 h-3.5 w-3.5" />
                                                 <span className={`mt-[1.5px]`}>Supprimer le compte</span>
-                                            </DropdownMenuItem>
+                                            </DropdownMenuItem> */}
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
