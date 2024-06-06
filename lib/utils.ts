@@ -20,9 +20,9 @@ export function formatCFA(amount: number) {
 
 export function balanceOffset(balance: number, skaleetBalance: number) {
 
-    const nonCompensatedBalance =  skaleetBalance - balance;
+    const nonCompensatedBalance = balance - skaleetBalance;
 
-    const proportion = (nonCompensatedBalance / balance) * 100;
+    const proportion = ((nonCompensatedBalance / balance) * 100) / (balance + skaleetBalance);
     const proportionString = parseFloat(proportion.toFixed(2)).toString();
 
     return {
@@ -258,11 +258,19 @@ export const getPeriod = (type: string) => {
 }
 
 export const getTransactionMode = (type: string) => {
+    if (!type) {
+        return "-";
+    }
+
     const stringArray = type.split('_');
     return stringArray[stringArray.length - 1];
 }
 
 export const getTransactionModeType = (type: string) => {
+    if (!type) {
+        return "-";
+    }
+
     const stringArray = type.split('_');
     const operator = stringArray[stringArray.length - 1];
 
