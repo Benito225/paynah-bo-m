@@ -23,6 +23,7 @@ import {IUser} from "@/core/interfaces/user";
 import {IAccount} from "@/core/interfaces/account";
 import {getMerchantBankAccounts} from "@/core/apis/bank-account";
 import {Skeleton} from "@/components/ui/skeleton";
+import AccountsAction from "@/components/dashboard/serenity-space/modals/AccountsAction";
 
 interface AccountListAndOperationsProps {
     lang: Locale,
@@ -43,6 +44,10 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
     const [pSearch, setPSearch] = useState('');
     const [isLoading, setLoading] = useState(false);
     const [accounts, setAccounts] = useState<IAccount[]>([]);
+    const [mode, setMode] = useState('');
+    const [isAccountActionLoading, setAccountActionLoading] = useState(false);
+    const [account, setAccount] = useState<IAccount>();
+    const [open, setOpen] = useState(false);
 
     const formSchema = z.object({
         search: z.string()
@@ -95,9 +100,17 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
         );
     }
 
+    const openAccountDetailModal = (account: IAccount) => {
+        setAccount(account);
+        setMode("detail");
+        setOpen(true);
+    };
+
     useEffect(() => {
-        fetchMerchantBankAccounts()
-    }, []);
+        fetchMerchantBankAccounts();
+    }, [isAccountActionLoading]);
+
+    console.log(selectedAccount);
 
     return (
         <div className={`flex flex-col h-full space-y-3`}>
@@ -117,10 +130,12 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
                             </Form>
                         </div>
                         <div>
-                            <Button className={`px-6 items-center text-xs`}>
-                                <PlusCircle className={`h-4 w-4 mr-2`} />
-                                <span>Ajouter un compte</span>
-                            </Button>
+                            <AccountsAction lang={lang} merchant={merchant} mode={mode} isAccountActionLoading={isAccountActionLoading} setAccountActionLoading={setAccountActionLoading} open={open} setOpen={setOpen} account={account}>
+                                <Button className={`px-6 items-center text-xs`} onClick={() => {setMode('add')}}>
+                                    <PlusCircle className={`h-4 w-4 mr-2`} />
+                                    <span>Ajouter un compte</span>
+                                </Button>
+                            </AccountsAction>
                         </div>
                     </div>
                 </div>
@@ -131,7 +146,7 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
                     {
                         isLoading ? showLoader() :
                         accounts && accounts.map((account: IAccount) => (
-                            <div key={account.id} onClick={() => setSelectedAccount('1')} className={`snap-end shrink-0 w-[28.5%] 2xl:w-[23%] bg-white flex flex-col justify-between cursor-pointer ${selectedAccount == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
+                            <div key={account.id} onClick={() => { setSelectedAccount(account.id)}} className={`snap-end shrink-0 w-[28.5%] 2xl:w-[23%] bg-white flex flex-col justify-between cursor-pointer ${selectedAccount == account.id && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                                 <div className={`flex justify-between items-start`}>
                                     <div>
                                         <div className={`inline-flex flex-col`}>
@@ -169,11 +184,11 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
                                             </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent className="w-56 rounded-xl shadow-md" align={"end"}>
-                                            <DropdownMenuItem className={`text-xs cursor-pointer`}>
+                                            <DropdownMenuItem className={`text-xs cursor-pointer`} onClick={() => openAccountDetailModal(account)}>
                                                 <ClipboardList className="mr-2 h-3.5 w-3.5" />
                                                 <span className={`mt-[1.5px]`}>Détails du compte</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
+                                            {/* <DropdownMenuSeparator />
                                             <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                                 <Pencil className="mr-2 h-3.5 w-3.5"  />
                                                 <span className={`mt-[1.5px]`}>Modifier le nom du compte</span>
@@ -199,7 +214,7 @@ export default function AccountListAndOperations({lang, searchItems, merchant}: 
                                             <DropdownMenuItem className={`text-xs cursor-pointer`}>
                                                 <Trash2 className="mr-2 h-3.5 w-3.5" />
                                                 <span className={`mt-[1.5px]`}>Supprimer le compte</span>
-                                            </DropdownMenuItem>
+                                            </DropdownMenuItem> */}
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
