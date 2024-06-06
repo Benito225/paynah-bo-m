@@ -13,8 +13,8 @@ import {TDataTable} from "@/components/dashboard/team/data-table/DataTable";
 import { DateRange } from "react-day-picker"
 import { addDays, startOfYear, endOfDay, format } from "date-fns"
 import {IUser} from '@/core/interfaces/user';
-import {IUserAccount} from '@/core/interfaces/userAccount';
-import {getUserAccounts} from '@/core/apis/user-account';
+import {IMerchantUser} from '@/core/interfaces/merchantUser';
+import {getMerchantUsers} from '@/core/apis/merchant-user';
 interface TeamTableProps {
     searchItems: {
         per_page: number;
@@ -42,7 +42,7 @@ export type TeamDataType = {
 export default function TeamTable({ searchItems, lang, merchant }: TeamTableProps) {
 
     const [isLoading, setLoading] = useState(false);
-    const [userAccounts, setUserAccounts] = useState<IUserAccount[]>([]);
+    const [userAccounts, setUserAccounts] = useState<IMerchantUser[]>([]);
     const [userAccountsPagination, setUserAccountsPagination] = useState(1);
     const [pSearch, setPSearch] = useState(searchItems.search ?? '');
     const [pStatus, setPStatus] = useState(searchItems.status ?? '');
@@ -54,7 +54,7 @@ export default function TeamTable({ searchItems, lang, merchant }: TeamTableProp
     const data = userAccounts;
     const pageCount = userAccountsPagination;
 
-    const columns = React.useMemo<ColumnDef<IUserAccount, unknown>[]>(
+    const columns = React.useMemo<ColumnDef<IMerchantUser, unknown>[]>(
         () => getColumns(lang),
         []
     )
@@ -75,7 +75,7 @@ export default function TeamTable({ searchItems, lang, merchant }: TeamTableProp
 
     useEffect(() => {
         setLoading(true);
-        getUserAccounts(String(merchant.accessToken))
+        getMerchantUsers(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
             .then(data => {
                 console.log(data);
                 setLoading(false);
