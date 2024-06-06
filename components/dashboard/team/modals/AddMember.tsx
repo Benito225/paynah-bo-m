@@ -24,10 +24,11 @@ interface AddMemberProps {
     lang: string,
     merchant: IUser,
     profiles: IProfile[],
-    children: React.ReactNode
+    setIsTeamListLoading: (value: (((prevState: boolean) => boolean) | boolean)) => void,
+    children: React.ReactNode,
 }
 
-export default function AddMember({lang, merchant, profiles, children}: AddMemberProps) {
+export default function AddMember({lang, merchant, profiles, setIsTeamListLoading, children}: AddMemberProps) {
     const [showErrorPhone, setShowErrorPhone] = useState(false);
     const [step, setStep] = useState(1);
     const [percentage, setPercentage] = useState('w-1/4');
@@ -183,6 +184,7 @@ export default function AddMember({lang, merchant, profiles, children}: AddMembe
                 setIsAddMerchantUserLoading(false);
                 console.log(data);
                 if (data.success) {
+                    setIsTeamListLoading(true);
                     setErrorMessage('');
                     setStep(0);
                     setIsEndStep(true);

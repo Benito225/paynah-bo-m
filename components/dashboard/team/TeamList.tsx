@@ -34,6 +34,7 @@ export default function TeamList({lang, searchItems, merchant}: TeamListProps) {
     const [pServices, setPServices] = useState('all');
     const [profiles, setProfiles] = useState<IProfile[]>([]);
     const [isProfileLoading, setIsProfileLoading] = useState(true);
+    const [isTeamListLoading, setIsTeamListLoading] = useState(false);
 
     const fetchMerchantUserProfile = () => {
         getMerchantUserProfiles(String(merchant.accessToken))
@@ -60,7 +61,7 @@ export default function TeamList({lang, searchItems, merchant}: TeamListProps) {
                         <div className={`inline-flex items-center`}>
                             <h1 className={`text-xl font-medium mr-4`}>Gestion des utilisateurs</h1>
                         </div>
-                        <AddMember merchant={merchant} lang={lang} profiles={profiles}>
+                        <AddMember merchant={merchant} lang={lang} profiles={profiles} setIsTeamListLoading={setIsTeamListLoading}>
                             <Button type={"button"} className={`h-[2.5rem] items-center text-xs`} disabled={isProfileLoading}>
                                 <PlusCircle className={`h-4 w-4 mr-2`}/>
                                 <span>Ajouter un membre</span>
@@ -71,7 +72,7 @@ export default function TeamList({lang, searchItems, merchant}: TeamListProps) {
             </div>
             <div className={`h-full`}>
                 <div className={`bg-white flex-grow rounded-3xl h-full`}>
-                    <TeamTable searchItems={searchItems} lang={lang} merchant={merchant}/>
+                    <TeamTable searchItems={searchItems} lang={lang} merchant={merchant} isTeamListLoading={isTeamListLoading} setIsTeamListLoading={setIsTeamListLoading}/>
                 </div>
             </div>
         </div>

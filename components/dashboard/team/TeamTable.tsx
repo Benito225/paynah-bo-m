@@ -28,6 +28,8 @@ interface TeamTableProps {
     },
     lang: string,
     merchant: IUser,
+    isTeamListLoading: boolean,
+    setIsTeamListLoading: (value: (((prevState: boolean) => boolean) | boolean)) => void,
 }
 
 export type TeamDataType = {
@@ -39,7 +41,7 @@ export type TeamDataType = {
     date: string
 }
 
-export default function TeamTable({ searchItems, lang, merchant }: TeamTableProps) {
+export default function TeamTable({ searchItems, lang, merchant, isTeamListLoading, setIsTeamListLoading }: TeamTableProps) {
 
     const [isLoading, setLoading] = useState(false);
     const [userAccounts, setUserAccounts] = useState<IMerchantUser[]>([]);
@@ -79,13 +81,17 @@ export default function TeamTable({ searchItems, lang, merchant }: TeamTableProp
             .then(data => {
                 console.log(data);
                 setLoading(false);
+                setIsTeamListLoading(false);
                 setUserAccounts(data);
             })
             .catch(err => {
                 setLoading(false);
+                setIsTeamListLoading(false);
                 setUserAccounts([]);
             });
-    }, [pSearch]);
+    }, [pSearch, isTeamListLoading]);
+
+    console.log(isTeamListLoading);
 
     return (
         <div>
