@@ -13,9 +13,9 @@ import {AlertTriangle, ClipboardList, RotateCw} from "lucide-react";
 import React from "react";
 import {TeamDataType} from "@/components/dashboard/team/TeamTable";
 import {DataTableFilterableColumn, DataTableSearchableColumn} from "@/core/interfaces";
-import { IUserAccount } from "@/core/interfaces/userAccount";
+import { IMerchantUser } from "@/core/interfaces/merchantUser";
 
-export function getColumns(lang: string): ColumnDef<IUserAccount>[] {
+export function getColumns(lang: string): ColumnDef<IMerchantUser>[] {
     return [
         // {
         //     id: "select",
@@ -46,7 +46,7 @@ export function getColumns(lang: string): ColumnDef<IUserAccount>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader className={`text-xs font-normal`} column={column} title="Nom utilisateur" />
             ),
-            cell: ({ row }) => <div className="min-w-[6rem]">{`${row.original.firstname} ${row.original.lastname}`}</div>,
+            cell: ({ row }) => <div className="min-w-[6rem]">{`${row.original.user.firstname} ${row.original.user.lastname}`}</div>,
             enableSorting: false,
             enableHiding: false,
         },
@@ -58,7 +58,7 @@ export function getColumns(lang: string): ColumnDef<IUserAccount>[] {
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {row.original.profile.name}
+                        {row.original.role}
                     </div>
                 )
             },
@@ -84,7 +84,7 @@ export function getColumns(lang: string): ColumnDef<IUserAccount>[] {
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {row.getValue("login")}
+                        {row.original.user.login}
                     </div>
                 )
             },
@@ -97,7 +97,7 @@ export function getColumns(lang: string): ColumnDef<IUserAccount>[] {
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {formatDate(row.getValue("createdAt"), lang)}
+                        {formatDate(row.original.user.createdAt, lang)}
                     </div>
                 )
             },
@@ -144,7 +144,7 @@ export const searchableColumns: DataTableSearchableColumn[] = [
     // },
 ]
 
-export const filterableColumns: DataTableFilterableColumn<IUserAccount>[] = [
+export const filterableColumns: DataTableFilterableColumn<IMerchantUser>[] = [
     // {
     //     id: "status",
     //     title: "Statut de transaction",

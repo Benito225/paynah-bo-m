@@ -4,7 +4,7 @@ import {IUser} from "@/core/interfaces/user";
 import {Dialog, DialogClose, DialogContent, DialogTrigger} from "@/components/ui/dialog";
 import {PlusCircle, SquarePen, X} from "lucide-react";
 import * as React from "react";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -15,15 +15,20 @@ import toast from "react-hot-toast";
 import {isPhoneValid} from "@/components/auth/form/AddMerchant";
 import {PhoneInput} from "react-international-phone";
 import Link from "next/link";
-import {ScaleLoader} from "react-spinners";
+import { ScaleLoader } from "react-spinners";
+import { IProfile } from '@/core/interfaces/profile';
+import { addMerchantUser } from '@/core/apis/merchant-user';
+import { login } from '@/core/apis/login';
 
 interface AddMemberProps {
     lang: string,
     merchant: IUser,
-    children: React.ReactNode
+    profiles: IProfile[],
+    setIsTeamListLoading: (value: (((prevState: boolean) => boolean) | boolean)) => void,
+    children: React.ReactNode,
 }
 
-export default function AddMember({lang, merchant, children}: AddMemberProps) {
+export default function AddMember({lang, merchant, profiles, setIsTeamListLoading, children}: AddMemberProps) {
     const [showErrorPhone, setShowErrorPhone] = useState(false);
     const [step, setStep] = useState(1);
     const [percentage, setPercentage] = useState('w-1/4');
@@ -34,6 +39,8 @@ export default function AddMember({lang, merchant, children}: AddMemberProps) {
     const [showConError, setShowConError] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [accessKey, setAccessKey] = useState('');
+    const [merchantUser, setMerchantUser] = useState({});
+    const [isAddMerchantUserLoading, setIsAddMerchantUserLoading] = useState(false);
 
     const [isEndStep, setIsEndStep] = useState(false);
 
@@ -98,7 +105,7 @@ export default function AddMember({lang, merchant, children}: AddMemberProps) {
         lastName: z.string().min(2, { message: "Le nom doit contenir au moins deux lettres" }),
         firstName: z.string().min(2, { message: "Le prénoms doit contenir au moins deux lettres" }),
         email: z.string().email({message: "votre email doit avoir un format valide"}),
-        number: z.string(),
+        phoneNumber: z.string(),
     })
 
     const addMemberForm = useForm<z.infer<typeof formSchema>>({
@@ -107,12 +114,12 @@ export default function AddMember({lang, merchant, children}: AddMemberProps) {
             lastName: "",
             firstName: "",
             email: "",
-            number: ""
+            phoneNumber: ""
         }
     });
 
     async function onSubmitAddMember(values: z.infer<typeof formSchema>) {
-        const isValidPhone = isPhoneValid(values.number);
+        const isValidPhone = isPhoneValid(values.phoneNumber);
 
         if (!isValidPhone) {
             setShowErrorPhone(true);
@@ -127,14 +134,74 @@ export default function AddMember({lang, merchant, children}: AddMemberProps) {
         setShowErrorPhone(false);
 
         console.log(values);
+        setMerchantUser(values);
 
         nextStep();
     }
 
     function resetModal() {
         setStep(1);
+        setIsEndStep(false);
         addMemberForm.reset();
         setSelectedRole('');
+        setAccessKey('');
+        setIsAddMerchantUserLoading(false);
+    }
+
+    const authenticateMerchant = async (password: string) => {
+        // @ts-ignore
+        let isAuthenticate = false;
+        if(password.trim().length > 0){
+            const payload = {
+                username: merchant.login,
+                password: password,
+            }
+            try {
+                await login(payload, false);
+                setShowConError(false);
+                setErrorMessage("");
+                isAuthenticate = true;
+            } catch (error) {
+                setShowConError(true);
+                setErrorMessage("Identifiants invalides");
+            }
+        } else {
+            setShowConError(true);
+            setErrorMessage("veuillez saisir votre clé d'accès");
+        }
+        return isAuthenticate;
+    }
+
+    async function createMerchantUser() {
+        setIsAddMerchantUserLoading(true);
+        const role = { role: selectedRole };
+        const payload = { ...merchantUser, ...role };
+        console.log(payload);
+        const isAuthenticate = await authenticateMerchant(accessKey);
+        if(isAuthenticate){
+            addMerchantUser(payload, String(merchant?.merchantsIds[0]?.id), String(merchant.accessToken))
+            .then(data => {
+                setIsAddMerchantUserLoading(false);
+                console.log(data);
+                if (data.success) {
+                    setIsTeamListLoading(true);
+                    setErrorMessage('');
+                    setStep(0);
+                    setIsEndStep(true);
+                } else {
+                    return toast.error(data.message, {
+                        className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                    });
+                }
+            })
+            .catch(() => {
+                setIsAddMerchantUserLoading(false);
+                return toast.error('Une erreur est survénue', {
+                    className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+                });
+            });
+        }
+        setIsAddMerchantUserLoading(false);
     }
 
     return (
@@ -243,7 +310,7 @@ export default function AddMember({lang, merchant, children}: AddMemberProps) {
                                     <div className={''}>
                                         <FormField
                                             control={addMemberForm.control}
-                                            name="number"
+                                            name="phoneNumber"
                                             render={({field}) => (
                                                 <FormItem>
                                                     <FormControl>
@@ -282,7 +349,15 @@ export default function AddMember({lang, merchant, children}: AddMemberProps) {
                         <h3 className={`mb-10 mt-4 text-xl font-semibold`}>Ajouter ce membre en tant que…</h3>
 
                         <div className={`grid grid-cols-4 gap-4`}>
-                            <div onClick={() => setSelectedRole('viewer')}
+                            {
+                                profiles && profiles.map((profile: IProfile, index: number) => (
+                                    <div key={index} onClick={() => setSelectedRole(profile.name)}
+                                        className={`cursor-pointer ${selectedRole == profile.name && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} bg-white rounded-2xl min-h-[10rem] flex items-center justify-center`}>
+                                        <h2 className={`text-base font-semibold`}>{profile.name}</h2>
+                                    </div>
+                                ))
+                            }
+                            {/* <div onClick={() => setSelectedRole('viewer')}
                                  className={`cursor-pointer ${selectedRole == 'viewer' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} bg-white rounded-2xl min-h-[10rem] flex items-center justify-center`}>
                                 <h2 className={`text-base font-semibold`}>Visualiseur</h2>
                             </div>
@@ -297,7 +372,7 @@ export default function AddMember({lang, merchant, children}: AddMemberProps) {
                             <div onClick={() => setSelectedRole('administrator')}
                                  className={`cursor-pointer ${selectedRole == 'administrator' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} bg-white rounded-2xl min-h-[10rem] flex items-center justify-center`}>
                                 <h2 className={`text-base font-semibold`}>Administrateur</h2>
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className={`flex justify-center items-center mt-8`}>
@@ -376,7 +451,8 @@ export default function AddMember({lang, merchant, children}: AddMemberProps) {
                                 </div>
                                 <div
                                     className={`h-[3.3rem] break-all flex items-center bg-white text-sm rounded-xl px-5 py-2 border border-[#EAEAEA]`}>
-                                    {getRoleLabel(selectedRole)}
+                                    {/* {getRoleLabel(selectedRole)} */}
+                                    {selectedRole}
                                 </div>
                             </div>
                         </div>
@@ -475,42 +551,47 @@ export default function AddMember({lang, merchant, children}: AddMemberProps) {
                                 </div>
 
                                 <div className={`flex justify-center items-center mt-8`}>
+                                    <Button onClick={() => prevStep()}
+                                            className={`w-32 text-sm text-black border border-black bg-transparent hover:text-white mr-3 mt-3`} disabled={isAddMerchantUserLoading}>
+                                        Retour
+                                    </Button>
                                     <Button onClick={() => {
-                                        setStep(0);
-                                        setIsEndStep(true);
+                                        // setStep(0);
+                                        // setIsEndStep(true);
+                                        createMerchantUser();
                                     }}
-                                            className={`mt-3 w-[10rem] text-sm`}>
-                                        Déverouiller
+                                            className={`mt-3 w-[10rem] text-sm`} disabled={isAddMerchantUserLoading}>
+                                        {isAddMerchantUserLoading ? <ScaleLoader color="#fff" height={15} width={3} /> : `Déverouiller`}
                                     </Button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                        <div className={`end-step ${isEndStep ? 'block' : 'hidden'}`}>
-                            <div className={`flex flex-col mb-4 mt-3`}>
-                                <div className={`w-[70%] mx-auto`}>
-                                    <div className={`flex flex-col items-center`}>
-                                                    <span className="relative flex w-40 h-40">
-                                                      <span
-                                                          className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#caebe4]"></span>
-                                                      <span
-                                                          className="relative inline-flex rounded-full w-40 h-40 bg-[#41a38c]"></span>
-                                                    </span>
-                                        <h3 className={`text-base font-medium mt-10`}>Votre invitation a été envoyé avec succès !</h3>
-                                        <p className={`text-sm text-center mt-2 text-[#626262]`}>{`Ben Ismael va recevoir un e-mail pour rejoindre votre compte Paynah`}</p>
-                                    </div>
+                    <div className={`end-step ${isEndStep ? 'block' : 'hidden'}`}>
+                        <div className={`flex flex-col mb-4 mt-3`}>
+                            <div className={`w-[70%] mx-auto`}>
+                                <div className={`flex flex-col items-center`}>
+                                                <span className="relative flex w-40 h-40">
+                                                  <span
+                                                      className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#caebe4]"></span>
+                                                  <span
+                                                      className="relative inline-flex rounded-full w-40 h-40 bg-[#41a38c]"></span>
+                                                </span>
+                                    <h3 className={`text-base font-medium mt-10`}>Votre invitation a été envoyé avec succès !</h3>
+                                    <p className={`text-sm text-center mt-2 text-[#626262]`}>{`Ben Ismael va recevoir un e-mail pour rejoindre votre compte Paynah`}</p>
                                 </div>
                             </div>
-                            <div className={`flex justify-center items-center mt-8`}>
-                                <DialogClose onClick={() => {
-                                    goToStep(1); setIsEndStep(false); resetModal();
-                                }}>
-                                    <Button className={`mt-3 w-36 text-sm mr-3`}>
-                                        Terminer
-                                    </Button>
-                                </DialogClose>
                         </div>
+                        <div className={`flex justify-center items-center mt-8`}>
+                            <DialogClose onClick={() => {
+                                goToStep(1); setIsEndStep(false); resetModal();
+                            }}>
+                                <Button className={`mt-3 w-36 text-sm mr-3`}>
+                                    Terminer
+                                </Button>
+                            </DialogClose>
+                    </div>
                     </div>
                 </div>
             </DialogContent>
