@@ -25,6 +25,7 @@ export interface IMerchantUser {
     merchantId: string;
     userId: string;
     service_id: string;
+    phoneNumber: string;
     role: string;
     createdAt: string;
     updatedAt: string;
