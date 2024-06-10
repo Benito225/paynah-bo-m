@@ -8,6 +8,9 @@ export interface ITransaction {
     type?: string;
     amount: number;
     country?: string;
+    operator: string;
+    reference: string;
+    number: string;
     customer_firstname?: string;
     customer_lastname?: string;
     status: string;

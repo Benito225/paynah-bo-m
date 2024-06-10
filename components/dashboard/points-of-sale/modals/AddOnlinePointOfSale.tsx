@@ -52,7 +52,7 @@ export default function AddOnlinePointOfSale({lang, merchant, children, bankAcco
 
     async function onSubmitAddOnlinePointOfSale(values: z.infer<typeof formSchema>) {
         console.log(values);
-
+        
         nextStep();
     }
 

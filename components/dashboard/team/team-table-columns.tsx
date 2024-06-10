@@ -64,14 +64,14 @@ export function getColumns(lang: string): ColumnDef<IMerchantUser>[] {
             },
         },
         {
-            accessorKey: "phone",
+            accessorKey: "phoneNumber",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="Téléphone" />
             ),
             cell: ({ row }) => {
                 return (
                     <div className="">
-                        {row.getValue("phone")}
+                        {row.original.phoneNumber !== "null" ? row.getValue("phoneNumber") :  ''}
                     </div>
                 )
             },
