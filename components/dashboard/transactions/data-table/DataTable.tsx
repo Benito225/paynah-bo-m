@@ -89,6 +89,7 @@ export function TDataTable<TData, TValue>({table, columns, searchableColumns = [
         }
     };
 
+    // @ts-ignore
     return (
         <div className="w-full space-y-2.5 overflow-auto">
             <DataTableToolbar
@@ -130,6 +131,7 @@ export function TDataTable<TData, TValue>({table, columns, searchableColumns = [
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
+                                    // @ts-ignore
                                     className={`border-[#fafafa] ${row.getIsSelected() && (row.original.transaction_type.name == 'PAYIN' ? '!bg-[#F7D8D8]' : '!bg-[#F5FDFF]')}`}
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
