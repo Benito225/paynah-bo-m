@@ -25,6 +25,7 @@ import {DateRange} from "react-day-picker";
 import Lottie from "react-lottie";
 import loadingData from "@/components/dashboard/lottie/loading-2.json";
 import { ITransactionType } from "@/core/interfaces/transaction"
+import { ITerminal } from "@/core/interfaces/pointOfSale"
 
 interface TDataTableProps<TData, TValue> {
     /**
@@ -82,9 +83,10 @@ interface TDataTableProps<TData, TValue> {
     lang: string,
     isLoading?: boolean
     transactionsTypes: ITransactionType[]
+    terminals: ITerminal[]
 }
 
-export function TDataTable<TData, TValue>({table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, isLoading, transactionsTypes, pType, setPType, pTerminalId, setPTerminalId }: TDataTableProps<TData, TValue>) {
+export function TDataTable<TData, TValue>({table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, isLoading, transactionsTypes, terminals, pType, setPType, pTerminalId, setPTerminalId }: TDataTableProps<TData, TValue>) {
 
     const defaultOptions = {
         loop: true,
@@ -109,6 +111,7 @@ export function TDataTable<TData, TValue>({table, columns, searchableColumns = [
                 newRowLink={newRowLink}
                 deleteRowsAction={deleteRowsAction}
                 transactionsTypes={transactionsTypes}
+                terminals={terminals}
                 pType={pType}
                 setPType={setPType}
                 pTerminalId={pTerminalId}

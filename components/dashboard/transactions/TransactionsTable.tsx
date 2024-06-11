@@ -14,7 +14,9 @@ import { DateRange } from "react-day-picker"
 import { addDays, startOfYear, endOfDay, format } from "date-fns"
 import {IUser} from "@/core/interfaces/user";
 import {ITransactionType} from "@/core/interfaces/transaction";
-import { getFilterableTransactions, getTransactionsType} from "@/core/apis/transaction";
+import { getFilterableTransactions, getTransactionsType } from "@/core/apis/transaction";
+import { ITerminal } from "@/core/interfaces/pointOfSale";
+import { getMerchantTerminals } from "@/core/apis/pointOfSale";
 import {TransactionsStatus} from "@/components/dashboard/serenity-space/LastTransactions";
 import Link from "next/link";
 import Routes from "@/components/Routes";
@@ -77,6 +79,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
     const [pTerminalId, setPTerminalId] = useState(searchItems.terminalId ?? '');
     const [transactions, setTransactions] = useState<TransactionsDataType[]>([]);
     const [transactionsTypes, setTransactionsType] = useState<ITransactionType[]>([]);
+    const [terminals, setTerminals] = useState<ITerminal[]>([]);
     const [transactionsPagination, setTransactionsPagination] = useState<any>();
     const [date, setDate] = React.useState<DateRange | undefined>({
         from: undefined, // searchItems.from ? new Date(searchItems.from) : startOfYear(new Date()),
@@ -159,9 +162,23 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
         });
     }
 
+    const fetchMerchantTerminals = () => {
+        getMerchantTerminals(`/merchants/${String(merchant.merchantsIds[0].id)}/terminals`, String(merchant.accessToken))
+        .then(res => {
+            console.log(res.data);
+            const defaultTerminals = [{ id: 'all', name: 'Tous TPE' },]
+            const terminals = [...defaultTerminals, ...res.data];
+            setTerminals(terminals);
+        })
+        .catch(err => {
+            setTransactionsType([]);
+        });
+    }
+
     useEffect(() => {
         setLoading(true);
         fetchTransactionsType();
+        fetchMerchantTerminals();
         getFilterableTransactions(url, query, String(merchant.accessToken))
             .then(res => {
                 console.log(res.data);
@@ -257,6 +274,7 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
                                         setDate={setDate}
                                         lang={lang}
                                         transactionsTypes={transactionsTypes}
+                                        terminals={terminals}
                                         pType={pType}
                                         setPType={setPType}
                                         pTerminalId={pTerminalId}

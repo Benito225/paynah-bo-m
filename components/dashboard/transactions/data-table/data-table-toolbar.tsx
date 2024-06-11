@@ -21,6 +21,7 @@ import {Label} from "@/components/ui/label";
 import Link from "next/link";
 import Routes from "@/components/Routes";
 import { ITransactionType } from "@/core/interfaces/transaction";
+import { ITerminal } from "@/core/interfaces/pointOfSale";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>,
@@ -38,9 +39,10 @@ interface DataTableToolbarProps<TData> {
   setDate: (value: (((prevState: (DateRange | undefined)) => (DateRange | undefined)) | DateRange | undefined)) => void,
   lang: string
   transactionsTypes: ITransactionType[]
+  terminals: ITerminal[]
 }
 
-export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, transactionsTypes, pType, setPType, pTerminalId, setPTerminalId }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, transactionsTypes, terminals, pType, setPType, pTerminalId, setPTerminalId }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
   const [isDeletePending, startDeleteTransition] = React.useTransition()
 
@@ -87,10 +89,10 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
     {key: 'CI_WAVE', value: 'WAVE'},
   ];
 
-  const Tpe = [
-    {key: 'all', value: 'Tous TPE'},
-    {key: 'T909E88RR', value: 'T909E88RR'},
-  ];
+  // const Tpe = [
+  //   {key: 'all', value: 'Tous TPE'},
+  //   {key: 'T909E88RR', value: 'T909E88RR'},
+  // ];
 
   const Services = [
     {key: 'all', value: 'Tous Points en ligne'},
@@ -329,10 +331,10 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                           <SelectValue placeholder="TPE"/>
                         </SelectTrigger>
                         <SelectContent className={`bg-[#f0f0f0]`}>
-                          {Tpe.map((item, index) => (
+                          {terminals.map((item, index) => (
                               <SelectItem key={index} className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                                          value={item.key}>
-                                {item.value}
+                                          value={item.name}>
+                                {item.name}
                               </SelectItem>
                           ))}
                         </SelectContent>
