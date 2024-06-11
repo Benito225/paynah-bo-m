@@ -271,7 +271,25 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                               )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4"/>
-                            {date?.from ? (
+                            {
+                              date?.from == undefined || date?.to == undefined ? (
+                                <span>Pick a date</span>
+                              ) : (
+                                date?.from ? (
+                                  date.to ? (
+                                        <>
+                                          {format(date.from, "dd LLL y", {locale: lang == 'fr' ? fr : enUS})} -{" "}
+                                          {format(date.to, "dd LLL y", {locale: lang == 'fr' ? fr : enUS})}
+                                        </>
+                                    ) : (
+                                        format(date.from, "dd LLL y", {locale: lang == 'fr' ? fr : enUS})
+                                    )
+                                ) : (
+                                    <span>Pick a date</span>
+                                )
+                              )
+                            }
+                            {/* {date?.from ? (
                                 date.to ? (
                                     <>
                                       {format(date.from, "dd LLL y", {locale: lang == 'fr' ? fr : enUS})} -{" "}
@@ -282,7 +300,7 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
                                 )
                             ) : (
                                 <span>Pick a date</span>
-                            )}
+                            )} */}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="end">
