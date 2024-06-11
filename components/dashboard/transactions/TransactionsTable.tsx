@@ -13,7 +13,8 @@ import {TDataTable} from "@/components/dashboard/transactions/data-table/DataTab
 import { DateRange } from "react-day-picker"
 import { addDays, startOfYear, endOfDay, format } from "date-fns"
 import {IUser} from "@/core/interfaces/user";
-import { getFilterableTransactions, getTransactions} from "@/core/apis/transaction";
+import {ITransactionType} from "@/core/interfaces/transaction";
+import { getFilterableTransactions, getTransactionsType} from "@/core/apis/transaction";
 import {TransactionsStatus} from "@/components/dashboard/serenity-space/LastTransactions";
 import Link from "next/link";
 import Routes from "@/components/Routes";
@@ -34,7 +35,9 @@ interface TransactionsProps {
         from?: string;
         sort?: string;
         to?: string;
-        status?: string
+        status?: string;
+        type?: string;
+        terminalId?: string;
     },
     lang: Locale,
     selectedAccount: string,
@@ -70,7 +73,10 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
     const [isExportDataLoading, setExportDataLoading] = useState(false);
     const [pSearch, setPSearch] = useState(searchItems.search ?? '');
     const [pStatus, setPStatus] = useState(searchItems.status ?? '');
+    const [pType, setPType] = useState(searchItems.type ?? '');
+    const [pTerminalId, setPTerminalId] = useState(searchItems.terminalId ?? '');
     const [transactions, setTransactions] = useState<TransactionsDataType[]>([]);
+    const [transactionsTypes, setTransactionsType] = useState<ITransactionType[]>([]);
     const [transactionsPagination, setTransactionsPagination] = useState<any>();
     const [date, setDate] = React.useState<DateRange | undefined>({
         from: searchItems.from ? new Date(searchItems.from) : startOfYear(new Date()),
@@ -85,16 +91,18 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
         perPage : searchItems.per_page,
         from: date?.from,
         to: date?.to,
-        status : searchItems.status
+        status : searchItems.status,
+        type : searchItems.type,
+        terminalId : searchItems.terminalId
     }
 
     const startPeriod = new Date(query.from ?? "");
     const endPeriod = new Date(query.to ?? "");
     const formatStartPeriod = startPeriod.toLocaleDateString('en-GB');
     const formatEndPeriod = endPeriod.toLocaleDateString('en-GB');
-    const url = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false`;
-
-    const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true`;
+    const url = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&type=${(query.type == 'all' ? '' : query.type) ?? ""}&terminalId=${(query.terminalId == 'all' ? '' : query.terminalId) ?? ""}&csv=false`;
+    console.log(url, query);
+    const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${query.merchantId}&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${query.page}&perPage=${query.perPage}&from=${formatStartPeriod}&to=${formatEndPeriod}&type=${(query.type == 'all' ? '' : query.type) ?? ""}&csv=true`;
     function exportTransactionsData() {
         setExportDataLoading(true);
 
@@ -139,9 +147,21 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
         //     });
     }
 
+    const fetchTransactionsType = () => {
+        getTransactionsType(`/transaction-types`, String(merchant.accessToken))
+        .then(res => {
+            const defaultTransactionsType = [{ id: 'all', name: 'Tous types' },]
+            const types = [...defaultTransactionsType, ...res.data];
+            setTransactionsType(types);
+        })
+        .catch(err => {
+            setTransactionsType([]);
+        });
+    }
+
     useEffect(() => {
         setLoading(true);
-
+        fetchTransactionsType();
         getFilterableTransactions(url, query, String(merchant.accessToken))
             .then(res => {
                 console.log(res.data);
@@ -173,11 +193,13 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
         selectedAccount,
         pSearch,
         pStatus,
+        pType,
+        pTerminalId,
         date
     })
 
     const id = React.useId()
-
+    
     return (
         <>
             <div className={`flex justify-between items-center`}>
@@ -234,6 +256,11 @@ export default function TransactionsTable({ searchItems, lang, selectedAccount, 
                                         date={date}
                                         setDate={setDate}
                                         lang={lang}
+                                        transactionsTypes={transactionsTypes}
+                                        pType={pType}
+                                        setPType={setPType}
+                                        pTerminalId={pTerminalId}
+                                        setPTerminalId={setPTerminalId}
                                     />
                             </div>
                         </div>

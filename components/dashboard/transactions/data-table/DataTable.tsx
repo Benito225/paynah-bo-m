@@ -24,6 +24,7 @@ import {DateRange} from "react-day-picker";
 
 import Lottie from "react-lottie";
 import loadingData from "@/components/dashboard/lottie/loading-2.json";
+import { ITransactionType } from "@/core/interfaces/transaction"
 
 interface TDataTableProps<TData, TValue> {
     /**
@@ -72,13 +73,18 @@ interface TDataTableProps<TData, TValue> {
     setPSearch: (value: (((prevState: string) => string) | string)) => void,
     pStatus: string,
     setPStatus: (value: (((prevState: string) => string) | string)) => void,
+    pType: string,
+    setPType: (value: (((prevState: string) => string) | string)) => void,
+    pTerminalId: string,
+    setPTerminalId: (value: (((prevState: string) => string) | string)) => void,
     date: DateRange | undefined,
     setDate: (value: (((prevState: (DateRange | undefined)) => (DateRange | undefined)) | DateRange | undefined)) => void,
     lang: string,
     isLoading?: boolean
+    transactionsTypes: ITransactionType[]
 }
 
-export function TDataTable<TData, TValue>({table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, isLoading}: TDataTableProps<TData, TValue>) {
+export function TDataTable<TData, TValue>({table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, isLoading, transactionsTypes, pType, setPType, pTerminalId, setPTerminalId }: TDataTableProps<TData, TValue>) {
 
     const defaultOptions = {
         loop: true,
@@ -102,6 +108,11 @@ export function TDataTable<TData, TValue>({table, columns, searchableColumns = [
                 lang={lang}
                 newRowLink={newRowLink}
                 deleteRowsAction={deleteRowsAction}
+                transactionsTypes={transactionsTypes}
+                pType={pType}
+                setPType={setPType}
+                pTerminalId={pTerminalId}
+                setPTerminalId={setPTerminalId}
             />
             <div className="bg-white">
                 {isLoading ? <div className={`flex justify-center items-center border border-[#f0f0f0] rounded h-[24rem]`}>
