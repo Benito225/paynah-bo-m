@@ -97,7 +97,7 @@ export default function SendModeListAndSupplies({lang, searchItems, merchant}: S
     return (
         <div className={`flex flex-col h-full space-y-3`}>
             <div className={`account-list`}>
-                <div className={`flex p-1 space-x-7 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto`}>
+                <div className={`flex p-1 space-x-7 2xl:min-h-[10rem] snap-x snap-mandatory`}>
                     <AccountsAction lang={lang} merchant={merchant} mode={mode} isAccountActionLoading={isAccountActionLoading} setAccountActionLoading={setAccountActionLoading} open={open} setOpen={setOpen} account={account}>
                         {''}
                     </AccountsAction>
