@@ -89,7 +89,7 @@ export function getColumns(lang: string): ColumnDef<ITransaction>[] {
             cell: ({ row }) => {
                 return (
                     <div className={``}>
-                        {`${row.original.customer_firstname} ${row.original.customer_lastname}`}
+                        {(row.original.customer_firstname == null && row.original.customer_lastname == null) ? '-' : `${row.original.customer_firstname} ${row.original.customer_lastname}`}
                     </div>
                 )
             },
