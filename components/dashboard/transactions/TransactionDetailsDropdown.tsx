@@ -14,6 +14,7 @@ import {
     getTransactionType,
     TStatus
 } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 interface DropdownProps {
     transaction: ITransaction;
@@ -60,6 +61,19 @@ export const TransactionDetailsDropdown = ({ transaction, lang, children }: Drop
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
+
+    const copyPaymentLink = async (label: string, dataToCopy: string) => {
+        try {
+            await navigator.clipboard.writeText(dataToCopy);
+            toast.success(`${label} copié!`, {
+                className: '!bg-green-50 !max-w-xl !text-green-600 !shadow-2xl !shadow-green-50/50 text-sm font-medium'
+            });
+        } catch (err) {
+            return toast.error("une erreur est survenue!", {
+                className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
+            });
+        }
+    }
 
     return (
         <div className="relative inline-block items-center justify-center" ref={dropdownRef}>
@@ -114,7 +128,7 @@ export const TransactionDetailsDropdown = ({ transaction, lang, children }: Drop
                                                             <span
                                                                 className={`text-sm cursor-pointer font-medium leading-4 line-clamp-1`}>{transaction.transactionId}</span>
                                                         </TooltipTrigger>
-                                                        <TooltipContent>
+                                                        <TooltipContent onClick={() => copyPaymentLink('ID Transaction', transaction.transactionId as string)}>
                                                             <p className={`text-xs`}>{transaction.transactionId}</p>
                                                         </TooltipContent>
                                                     </Tooltip>
