@@ -56,7 +56,7 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
         <div className={`flex space-y-2.5 2xl:space-y-0 items-start 2xl:items-center flex-col 2xl:flex-row 2xl:justify-between px-6 pt-4`}>
           <h2 className={`font-medium text-base`}>{`Historique de paiements (${totalCount})`}</h2>
         </div>
-      <div className={`px-6 pb-1`}>
+        <div className={`px-6 pb-1`}>
           <Form {...filterableForm}>
             <form action="" className={``}>
               <div className={`flex justify-between space-y-2.5 2xl:space-y-0 items-end 2xl:items-center flex-col 2xl:flex-row 2xl:justify-between`}>
