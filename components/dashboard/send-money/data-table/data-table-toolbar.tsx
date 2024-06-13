@@ -53,11 +53,13 @@ export function DataTableToolbar<TData>({ table, newRowLink, deleteRowsAction, p
 
   return (
       <>
-        <div className={`flex space-y-2.5 2xl:space-y-0 items-start 2xl:items-center flex-col 2xl:flex-row 2xl:justify-between px-6 pb-1 pt-4`}>
+        <div className={`flex space-y-2.5 2xl:space-y-0 items-start 2xl:items-center flex-col 2xl:flex-row 2xl:justify-between px-6 pt-4`}>
           <h2 className={`font-medium text-base`}>{`Historique d'envois (${totalCount})`}</h2>
+        </div>
+        <div className={`px-6 pb-1`}>
           <Form {...filterableForm}>
-            <form action="" className={`w-full 2xl:w-auto`}>
-              <div className={`flex 2xl:inline-flex space-x-3 2xl:space-x-3`}>
+            <form action="" className={``}>
+              <div className={`flex justify-between space-y-2.5 2xl:space-y-0 items-end 2xl:items-center flex-col 2xl:flex-row 2xl:justify-between`}>
 
                 <div className={`relative w-[38%] 2xl:w-auto`}>
                   <Input value={pSearch} type={`text`} className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.5rem] w-full 2xl:w-[13rem]`}
