@@ -117,7 +117,19 @@ export const TransactionDetailsDropdown = ({ transaction, lang, children }: Drop
                                         </div>
                                         <div className={`flex-col mr-2`}>
                                             <h3 className={`font-light text-[#626262] text-xs mb-0.5`}>Référence</h3>
-                                            <span className={`text-sm font-medium leading-4`}>{transaction.reference ?? "-"}</span>
+                                                <span className={`text-sm font-medium leading-4`}>
+                                                    <TooltipProvider delayDuration={10}>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <span
+                                                                    className={`text-sm cursor-pointer font-medium leading-4 line-clamp-1`}>{transaction.reference ?? "-"}</span>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent onClick={() => copyPaymentLink('Référence', (transaction.reference ?? "-") as string)}>
+                                                                <p className={`text-xs`}>{transaction.reference ?? "-"}</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                </span>
                                         </div>
                                         <div className={`flex-col mr-2`}>
                                             <h3 className={`font-light text-[#626262] text-xs mb-1`}>ID Transaction</h3>
