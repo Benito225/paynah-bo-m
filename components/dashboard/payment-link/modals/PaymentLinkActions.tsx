@@ -43,6 +43,14 @@ interface MainActionsProps {
 const defaultAccount = { id: '', reference: '', coreBankId: '', bankAccountId: '', balance: 0, name: "", balanceDayMinus1: 0, isMain: false, skaleet_balance: 0 };
 const defaultBeneficiary = { id: '', lastName: '', firstName: '', email: '' };
 
+export const RANDOM_AVATAR_COLORS_CONFIG = [
+    {bg: '#ffc5ae', text: '#ff723b'},
+    {bg: '#aedaff', text: '#31a1ff'},
+    {bg: '#e0aeff', text: '#bc51ff'},
+    {bg: '#aeffba', text: '#02b71a'},
+    {bg: '#ffadae', text: '#e03c3e'},
+]
+
 export default function PaymentLinkActions({lang, merchant, accounts, beneficiaries, selectedBeneficiary, children}: MainActionsProps) {
 
     const [step, setStep] = useState(1);
@@ -457,9 +465,9 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
                             </div>
                             <div className={`mt-4`}>
                                 {/*Step 1*/}
-                                <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto ${step == 1 ? 'flex' : 'hidden'}`}>
+                                <div className={`p-1 space-x-2.5 2xl:min-h-[10rem] max-w-[54rem] snap-x snap-mandatory overflow-x-auto ${step == 1 ? 'flex' : 'hidden'}`}>
                                     {
-                                        accountsSearch && accountsSearch.map((account: IAccount) => (
+                                        accountsSearch && accountsSearch.slice(0,6).map((account: IAccount) => (
                                             <div key={account.id} onClick={() => updateAccountData(account)}
                                                 className={`snap-end shrink-0 w-[40%] 2xl:w-[35%] bg-white flex flex-col justify-between cursor-pointer ${account.id == '3' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'} space-y-6 2xl:space-y-6 p-4 rounded-3xl`}>
                                                 <div className={`flex justify-between items-start`}>
@@ -534,11 +542,11 @@ export default function PaymentLinkActions({lang, merchant, accounts, beneficiar
                                             !displayBeneficiaryForm &&
                                             <div className={`grid grid-cols-3 gap-3`}>
                                             {
-                                                beneficiariesSearch && beneficiariesSearch.map((beneficiary: IBeneficiary) => (
+                                                beneficiariesSearch && beneficiariesSearch.length > 0 && beneficiariesSearch.map((beneficiary: IBeneficiary, index: number) => (
                                                 <div key={beneficiary.id} onClick={() => updateBeneficiaryData(beneficiary)} 
                                                     className={`bg-white inline-flex items-center cursor-pointer space-x-2 rounded-lg p-2 ${beneficiary.id == '1' && 'outline outline-offset-2 outline-2 outline-[#3c3c3c]'}`}>
                                                     <Avatar className={`cursor-pointer`}>
-                                                        <AvatarFallback className={`bg-[#ffc5ae] text-[#ff723b]`}>{transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}</AvatarFallback>
+                                                        <AvatarFallback className={`bg-[${RANDOM_AVATAR_COLORS_CONFIG[index%5].bg}] text-[${RANDOM_AVATAR_COLORS_CONFIG[index%5].text}]`}>{transformBeneficiaryFullNameToBeneficiaryAvatar(`${beneficiary.lastName} ${beneficiary.firstName}`)}</AvatarFallback>
                                                     </Avatar>
                                                     <div className={`inline-flex flex-col`}>
                                                         <h3 className={`text-xs font-medium`}>{`${beneficiary.firstName} ${beneficiary.lastName}`}</h3>

@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { type ColumnDef } from "@tanstack/react-table"
 import {
     filterableColumns,
@@ -12,7 +12,9 @@ import {TDataTable} from "@/components/dashboard/team/data-table/DataTable";
 
 import { DateRange } from "react-day-picker"
 import { addDays, startOfYear, endOfDay, format } from "date-fns"
-
+import {IUser} from '@/core/interfaces/user';
+import {IMerchantUser} from '@/core/interfaces/merchantUser';
+import {getMerchantUsers} from '@/core/apis/merchant-user';
 interface TeamTableProps {
     searchItems: {
         per_page: number;
@@ -25,6 +27,9 @@ interface TeamTableProps {
         status?: string
     },
     lang: string,
+    merchant: IUser,
+    isTeamListLoading: boolean,
+    setIsTeamListLoading: (value: (((prevState: boolean) => boolean) | boolean)) => void,
 }
 
 export type TeamDataType = {
@@ -36,8 +41,11 @@ export type TeamDataType = {
     date: string
 }
 
-export default function TeamTable({ searchItems, lang }: TeamTableProps) {
+export default function TeamTable({ searchItems, lang, merchant, isTeamListLoading, setIsTeamListLoading }: TeamTableProps) {
 
+    const [isLoading, setLoading] = useState(false);
+    const [userAccounts, setUserAccounts] = useState<IMerchantUser[]>([]);
+    const [userAccountsPagination, setUserAccountsPagination] = useState(1);
     const [pSearch, setPSearch] = useState(searchItems.search ?? '');
     const [pStatus, setPStatus] = useState(searchItems.status ?? '');
     const [date, setDate] = React.useState<DateRange | undefined>({
@@ -45,35 +53,10 @@ export default function TeamTable({ searchItems, lang }: TeamTableProps) {
         to: searchItems.to ? new Date(searchItems.to) : endOfDay(new Date()),
     })
 
-    const data: TeamDataType[] = [
-        {
-            id: "1",
-            username: "Didier Aney",
-            role: "Administrateur",
-            phone: "+225 07 77 40 41 36",
-            email: "ismael.diomande225@gmail.com",
-            date: "2024-04-20T11:00:00",
-        },
-        {
-            id: "2",
-            username: "Didier Aney",
-            role: "Administrateur",
-            phone: "+225 07 77 40 41 36",
-            email: "ismael.diomande225@gmail.com",
-            date: "2024-04-20T11:00:00",
-        },
-        {
-            id: "3",
-            username: "Didier Aney",
-            role: "Administrateur",
-            phone: "+225 07 77 40 41 36",
-            email: "ismael.diomande225@gmail.com",
-            date: "2024-04-20T11:00:00",
-        },
-    ];
-    const pageCount = 2;
+    const data = userAccounts;
+    const pageCount = userAccountsPagination;
 
-    const columns = React.useMemo<ColumnDef<TeamDataType, unknown>[]>(
+    const columns = React.useMemo<ColumnDef<IMerchantUser, unknown>[]>(
         () => getColumns(lang),
         []
     )
@@ -92,9 +75,28 @@ export default function TeamTable({ searchItems, lang }: TeamTableProps) {
 
     const id = React.useId()
 
+    useEffect(() => {
+        setLoading(true);
+        getMerchantUsers(String(merchant.merchantsIds[0].id), String(merchant.accessToken))
+            .then(data => {
+                console.log('teamData', data);
+                setLoading(false);
+                setIsTeamListLoading(false);
+                setUserAccounts(data);
+            })
+            .catch(err => {
+                setLoading(false);
+                setIsTeamListLoading(false);
+                setUserAccounts([]);
+            });
+    }, [pSearch, isTeamListLoading]);
+
+    console.log(isTeamListLoading);
+
     return (
         <div>
             <TDataTable
+                isLoading={isLoading}
                 table={table}
                 columns={columns}
                 pSearch={pSearch}

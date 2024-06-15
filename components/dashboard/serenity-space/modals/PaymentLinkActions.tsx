@@ -3,34 +3,19 @@
 import {
     Dialog, DialogClose,
     DialogContent,
-    DialogDescription, DialogFooter,
-    DialogHeader,
-    DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Form, FormControl, FormItem} from "@/components/ui/form";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import { Banknote, ClipboardList, Goal, Pencil, Search, SquarePen, Trash2, X } from "lucide-react";
+import { X } from "lucide-react";
 import { ScaleLoader } from "react-spinners";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {formatCFA} from "@/lib/utils";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {Avatar, AvatarFallback} from "@/components/ui/avatar";
-import {NumericFormat} from "react-number-format";
-import {Checkbox} from "@/components/ui/checkbox";
 import Link from "next/link";
 import {Copy, Send} from "lucide-react";
 import {IBeneficiary} from "@/core/interfaces/beneficiary";
@@ -53,7 +38,7 @@ export default function PaymentLinkActions({paymentLink, beneficiaries, merchant
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState('');
-    const [beneficiary, setBeneficiary] = useState<IBeneficiary>({ });
+    const [beneficiary, setBeneficiary] = useState<any>({});
     const [existBenef, setExistBenef] = useState(true);
     const [payFees, setPayFees] = useState(false);
     const [amount, setAmount] = useState(0);

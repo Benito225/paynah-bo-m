@@ -21,7 +21,8 @@ import {
 import {DataTablePagination} from "./data-table-pagination"
 import {DataTableToolbar} from "./data-table-toolbar"
 import {DateRange} from "react-day-picker";
-
+import Lottie from "react-lottie";
+import loadingData from "@/components/dashboard/lottie/loading-2.json";
 interface TDataTableProps<TData, TValue> {
     /**
      * The table instance returned from useDataTable hook with pagination, sorting, filtering, etc.
@@ -71,10 +72,20 @@ interface TDataTableProps<TData, TValue> {
     setPStatus: (value: (((prevState: string) => string) | string)) => void,
     date: DateRange | undefined,
     setDate: (value: (((prevState: (DateRange | undefined)) => (DateRange | undefined)) | DateRange | undefined)) => void,
-    lang: string
+    lang: string,
+    isLoading?: boolean,
 }
 
-export function TDataTable<TData, TValue>({ table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang }: TDataTableProps<TData, TValue>) {
+const defaultOptions = {
+        loop: true,
+        autoplay: true,
+        animationData: loadingData,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    };
+
+export function TDataTable<TData, TValue>({ table, columns, searchableColumns = [], filterableColumns = [], selectedAccount = 'all', newRowLink, deleteRowsAction, pSearch, setPSearch, pStatus, setPStatus, date, setDate, lang, isLoading }: TDataTableProps<TData, TValue>) {
     return (
         <div className="w-full space-y-2.5 overflow-auto">
             <DataTableToolbar
@@ -90,6 +101,9 @@ export function TDataTable<TData, TValue>({ table, columns, searchableColumns = 
                 deleteRowsAction={deleteRowsAction}
             />
             <div className="">
+                {isLoading ? <div className={`flex justify-center items-center border border-[#f0f0f0] rounded h-[24rem]`}>
+                    <Lottie options={defaultOptions} height={110} width={110} />
+                </div> : 
                 <Table>
                     <TableHeader className={`bg-[#f0f0f0]`}>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -139,6 +153,7 @@ export function TDataTable<TData, TValue>({ table, columns, searchableColumns = 
                         )}
                     </TableBody>
                 </Table>
+                }
             </div>
             <div className="space-y-2.5">
                 <DataTablePagination table={table}/>

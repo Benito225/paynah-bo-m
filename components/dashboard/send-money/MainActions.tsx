@@ -71,7 +71,7 @@ export default function SendMoneyMainActions({ lang, merchant }: IndexPageProps)
             <div className={`w-[28%] 2xl:w-[26%]`}>
                 <div className={`h-full bg-white px-6 py-8 rounded-2xl`}>
                     <div className={`flex flex-col space-y-2.5 ${isLoading && 'hidden'}`}>
-                       <MainActions lang={lang} merchant={merchant} countries={countries} beneficiaries={beneficiaries}/>
+                       <MainActions lang={lang} merchant={merchant} countries={countries} beneficiaries={beneficiaries} accounts={[]}/>
                     </div>
                        <Beneficiary lang={lang} merchant={merchant} beneficiaries={beneficiaries}/>
                 </div>

@@ -52,7 +52,7 @@ export default function AccountsAction({lang, merchant, children, mode, isAccoun
 
     // console.log('open', open);
     // console.log('mode', mode);
-    console.log('acc', account);
+    // console.log('acc', account);
 
     const AccountsActionEditForm = useForm<z.infer<typeof formSchemaEdit>>({
         resolver: zodResolver(formSchemaEdit),
@@ -90,7 +90,7 @@ export default function AccountsAction({lang, merchant, children, mode, isAccoun
     }
 
     async function onSubmitAccountsEditAction(values: z.infer<typeof formSchemaEdit>) {
-        console.log('3', values);
+        console.log('Edit data', values);
         setAccountActionLoading(true);
 
         editAccount(values, String(merchant.merchantsIds[0].id), account?.id ?? '', String(merchant.accessToken))

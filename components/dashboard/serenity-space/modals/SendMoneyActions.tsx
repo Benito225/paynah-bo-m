@@ -55,7 +55,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
 
     const [step, setStep] = useState(1);
     const [account, setAccount] = useState<{ id: string, name: string }>({id: '', name: ''});
-    const [beneficiary, setBeneficiary] = useState<IBeneficiary>({});
+    const [beneficiary, setBeneficiary] = useState<any>({});
     const [existBenef, setExistBenef] = useState(true);
 
     const [payFees, setPayFees] = useState(false);
@@ -82,8 +82,9 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
     const formSchema = z.object({
         lastName: z.string().min(2, {message: 'veuillez saisir votre nom'}),
         firstName: z.string().min(2, {message: 'veuillez saisir votre prénoms'}),
-        email: z.string().email({message: 'veuillez saisir votre email'}),
-        beneficiary: z.string(),
+        email: z.string().optional(),
+        // email: z.string().email({message: 'veuillez saisir votre email'}),
+        beneficiary: z.string().optional(),
     })
 
     const handleTogglePassword = () => {
@@ -119,6 +120,13 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
     // }
 
     function nextStep() {
+        if (step == 1) {
+            setBeneficiary({
+                firstName: sendMoneyForm.getValues('firstName'),
+                lastName: sendMoneyForm.getValues('lastName'),
+            });
+        }
+
         if (step < 4) {
             setStep(step + 1);
 
@@ -284,7 +292,10 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
 
     }, [amount, payFees, sendMoney, step]);
 
-    console.log(sendMoney.getValues('mmAccountNumber'));
+    // console.log(sendMoney.getValues('mmAccountNumber'));
+    console.log(sendMoneyForm.getValues('firstName'));
+    console.log(sendMoneyForm.getValues('lastName'));
+    console.log(bankAccountId);
     // console.log(sendMoney.getValues('account'));
     return (
         <>
@@ -321,7 +332,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                             <div className={`mt-4`}>
                                 {/*Step 1*/}
                                 <div className={`${step == 1 ? 'flex' : 'hidden'} flex-col mb-4 -mt-3`}>
-                                    <div className={`w-[70%] mx-auto`}>
+                                    <div className={`w-[97%] mx-auto`}>
                                         <div className={`flex flex-col items-center`}>
                                             <svg className={`w-32 h-auto mt-3 scale-x-[-1]`} viewBox="0 0 169.57 119">
                                                 <g>
@@ -431,20 +442,69 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                                                     </g>
                                                 </g>
                                             </svg>
-                                            <p className={`text-sm text-[#707070] mt-3`}>{`Sélectionnez le compte à débiter`}</p>
+                                            {/*<p className={`text-sm text-[#707070] mt-3`}>{`Sélectionnez le compte à débiter`}</p>*/}
 
-                                            <div className={`w-full mt-12`}>
+                                            <h3 className={`text-sm font-medium mb-2 mt-8 w-full`}>Infos
+                                                Bénéficiaire</h3>
+                                            <div className={`flex items-center gap-3 w-full`}>
+                                                <div className={'w-[42%]'}>
+                                                    <FormField
+                                                        control={sendMoneyForm.control}
+                                                        name="lastName"
+                                                        render={({field}) => (
+                                                            <FormItem>
+                                                                <FormControl className={''}>
+                                                                    <div>
+                                                                        <Input type={`text`}
+                                                                               className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                               placeholder="Entrez le nom" {...field}
+                                                                               style={{
+                                                                                   backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                               }}/>
+                                                                    </div>
+                                                                </FormControl>
+                                                                <FormMessage
+                                                                    className={`text-xs`}>{errors.lastName && errors.lastName.message as string}</FormMessage>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                </div>
+                                                <div className={'w-[58%]'}>
+                                                    <FormField
+                                                        control={sendMoneyForm.control}
+                                                        name="firstName"
+                                                        render={({field}) => (
+                                                            <FormItem>
+                                                                <FormControl className={''}>
+                                                                    <div>
+                                                                        <Input type={`text`}
+                                                                               className={`font-light text-sm ${showConError && "border-[#e95d5d]"}`}
+                                                                               placeholder="Entrez les prénoms" {...field}
+                                                                               style={{
+                                                                                   backgroundColor: field.value ? '#fff' : '#f0f0f0',
+                                                                               }}/>
+                                                                    </div>
+                                                                </FormControl>
+                                                                <FormMessage
+                                                                    className={`text-xs`}>{errors.firstName && errors.firstName.message as string}</FormMessage>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className={`w-full mt-6`}>
+                                                <h3 className={`text-sm font-medium mb-2 w-full`}>{`Sélectionnez le compte à débiter`}</h3>
                                                 <Select onValueChange={(value) => {
                                                     setBankAccountId(value);
                                                 }} defaultValue={bankAccountId}>
                                                     <SelectTrigger
                                                         className={`w-full ${showConError && "!border-[#e95d5d]"} px-4 font-light text-sm ${showConError && "border-[#e95d5d]"}`}
                                                         style={{
-                                                            backgroundColor: bankAccountId == '' ? '#fff' : '#f0f0f0',
+                                                            backgroundColor: bankAccountId == '' ? '#f0f0f0' : '#fff',
                                                         }}>
                                                         <SelectValue placeholder="Choisir un compte"/>
                                                     </SelectTrigger>
-                                                    <SelectContent className={`z-[999] max-w-[24rem] bg-[#f0f0f0]`}>
+                                                    <SelectContent className={`z-[999] max-w-[33rem] bg-[#f0f0f0]`}>
                                                         {
                                                             accounts.map((account: IAccount) => (
                                                                 <SelectItem key={account.id}
@@ -467,7 +527,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
 
                                 {/*step 2*/}
                                 <div className={`${step == 2 ? 'flex' : 'hidden'} flex-col mb-4 -mt-3`}>
-                                    <div className={`w-[70%] mx-auto`}>
+                                <div className={`w-[70%] mx-auto`}>
                                         <div className={`flex flex-col items-center`}>
                                             <svg className={`w-32 h-auto mt-3 scale-x-[-1]`} viewBox="0 0 169.57 119">
                                                 <g>
@@ -578,13 +638,18 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                                                 </g>
                                             </svg>
                                             <p className={`text-sm text-[#707070] mt-3`}>{`Vous êtes sur le point d'envoyer`}</p>
-                                            <p className={`text-sm text-[#707070]`}>
+                                            <p className={`text-sm text-center text-[#707070]`}>
                                                 <span className={`text-black font-semibold`}>{`${amount} FCFA`}</span>
                                                 <span
-                                                    className={`text-black`}>{!beneficiary.lastName && !beneficiary.firstName ? ` sur le compte Mobile Money` : ` à ${beneficiary?.lastName} ${beneficiary?.firstName} sur son compte Mobile Money`}</span>
+                                                    className={`text-black text-center`}>{!beneficiary.lastName && !beneficiary.firstName ? ` sur le compte Mobile Money` : ` à `}</span>
+                                                <span
+                                                    className={`text-black text-center font-semibold`}>{!beneficiary.lastName && !beneficiary.firstName ? `` : `${beneficiary?.lastName} ${beneficiary?.firstName} `}</span>
+                                                <span
+                                                    className={`text-black text-center`}>{!beneficiary.lastName && !beneficiary.firstName ? `` : `sur son compte Mobile Money `}</span>
+                                                <span
+                                                    className={`text-black font-semibold`}>{`${account}`}</span>
                                             </p>
-                                            <p className={`text-sm text-[#707070]`}><span
-                                                className={`text-black font-semibold`}>{`${account}`}</span></p>
+                                            {/*<p className={`text-sm text-[#707070]`}></p>*/}
                                             <div className="flex items-start space-x-2 mt-6">
                                                 <Checkbox onCheckedChange={(checked) => {
                                                     checked == 'indeterminate' ? setPayFees(false) : setPayFees(checked)
@@ -716,7 +781,7 @@ export default function SendMoneyActions({sendMoney, beneficiaries, merchant, ac
                                         Retour
                                     </Button>
                                     <Button onClick={() => nextStep()}
-                                            className={`mt-5 w-36 text-sm ${(step == 1 || step == 2) ? 'block' : 'hidden'}`}>
+                                            className={`mt-5 w-36 text-sm ${(step == 1 || step == 2) ? 'block' : 'hidden'}`} disabled={step == 1 && (!sendMoneyForm.getValues('lastName') || !sendMoneyForm.getValues('firstName') || bankAccountId == '')}>
                                         Continuer
                                     </Button>
                                     <Button onClick={() => {

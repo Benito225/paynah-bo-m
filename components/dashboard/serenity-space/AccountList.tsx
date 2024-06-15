@@ -111,7 +111,7 @@ export default function AccountList({lang, merchant}: AccountListProps) {
             <div className={`flex space-x-2.5 2xl:min-h-[10rem] snap-x snap-mandatory overflow-x-auto`}>
                 <AccountsAction lang={lang} merchant={merchant} mode={mode} isAccountActionLoading={isAccountActionLoading} setAccountActionLoading={setAccountActionLoading} open={open} setOpen={setOpen} account={account}>
                     <button type={"button"} onClick={() => {setMode('add')}}
-                            className={`snap-end shrink-0 w-[30%] 2xl:w-[24%] border border-dashed border-[#959596] flex flex-col justify-center items-center space-y-8 2xl:space-y-8 p-4 rounded-3xl text-[#767676]`}>
+                            className={`snap-end shrink-0 w-[30%] 2xl:w-[24%] min-h-[168px] border border-dashed border-[#959596] flex flex-col justify-center items-center space-y-8 2xl:space-y-8 p-4 rounded-3xl text-[#767676]`}>
                         <div className={`inline-flex flex-col justify-center`}>
                             <Plus className={`h-6 w-auto`}/>
                             <span
