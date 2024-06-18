@@ -51,7 +51,7 @@ interface ColumnProps {
   lang: string;
   openTransactionDetailsModal: (value: ITransaction) => void;
 }
-// value: ((prevState: boolean) => boolean) | boolean;
+
 export function getColumns({
   lang,
   openTransactionDetailsModal,
