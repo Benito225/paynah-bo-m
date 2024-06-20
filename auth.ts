@@ -5,6 +5,7 @@ import {fetchData} from "@/lib/api";
 import {IUser} from "@/core/interfaces/user";
 import NextAuth, {AuthError} from "next-auth";
 import {getLocale} from "@/middleware";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const config = {
     providers: [
@@ -93,6 +94,17 @@ const config = {
                 params.token.accessToken = params.user.accessToken;
                 params.token.refreshToken = params.user.refreshToken;
             }
+
+            // Verify if the token is expired
+            if (params.token.accessToken) {
+                const decodedToken = jwt.decode(params.token.accessToken) as JwtPayload;
+                const currentTime = Math.floor(Date.now() / 1000);
+                if (decodedToken.exp && decodedToken.exp < currentTime) {
+                    console.log("Token expired");
+                    return {};
+                }
+            }
+
             return params.token;
         },
         session({session, trigger, token}: any) {
@@ -108,6 +120,17 @@ const config = {
                 session.user.accessToken = token.accessToken;
                 session.user.refreshToken = token.refreshToken;
             }
+
+            // Verify if the token is expired
+            if (token.accessToken) {
+                const decodedToken = jwt.decode(token.accessToken) as JwtPayload;
+                const currentTime = Math.floor(Date.now() / 1000);
+                if (decodedToken.exp && decodedToken.exp < currentTime) {
+                    console.log("Token expired in session");
+                    session = null;
+                }
+            }
+
             return session;
         }
     }
