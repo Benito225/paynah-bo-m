@@ -130,7 +130,7 @@ const config = {
 
                 if (decodedToken.exp && decodedToken.exp < currentTime) {
                     console.log("Token expired in session");
-                    await signOut();
+                    // await signOut();
                     session = null;
                 }
             }
