@@ -28,7 +28,7 @@ export default async function AddMerchantPage({params: { lang }}: {
     }
 
     if (!merchant || isEmptyObject(merchant)) {
-        cookies().delete('__Secure-authjs.session-token');
+        cookies().set('__Secure-authjs.session-token', '');
         return redirect('/auth/login');
     }
 

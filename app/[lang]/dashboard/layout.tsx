@@ -62,7 +62,7 @@ export default async function RootLayout({
 
     console.log('session', session);
     if (!merchant || isEmptyObject(merchant)) {
-        cookies().delete('__Secure-authjs.session-token');
+        cookies().set('__Secure-authjs.session-token', '');
         return redirect('/auth/login');
     }
 
