@@ -62,12 +62,12 @@ export default async function RootLayout({
         }
     }
 
-    console.log('session', session);
-    if (merchant || isEmptyObject(merchant)) {
+    if (!merchant || isEmptyObject(merchant)) {
         // await logout();
         // setCookie('authjs.session-token', null, { cookies });
         // console.log('cookies', getCookies({ cookies }));
         // return redirect('/auth/login');
+        console.log('session', session);
     }
 
     return (

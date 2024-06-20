@@ -15,7 +15,6 @@ export default async function AddMerchantPage({params: { lang }}: {
     const {page} = await getDictionary(lang)
 
     const session  = await auth();
-    console.log('session', session);
 
     let merchant;
     if (session && session.user) {
@@ -26,9 +25,10 @@ export default async function AddMerchantPage({params: { lang }}: {
     }
 
     if (!merchant || isEmptyObject(merchant)) {
-        cookies().set('next-auth.session-token', '');
-        cookies().set('next-auth.callback-url', '');
-        return redirect('/auth/login');
+        // cookies().set('next-auth.session-token', '');
+        // cookies().set('next-auth.callback-url', '');
+        // return redirect('/auth/login');
+        console.log('session', session);
     }
 
     if (merchant.merchantsIds && merchant.merchantsIds.length == 0) {
