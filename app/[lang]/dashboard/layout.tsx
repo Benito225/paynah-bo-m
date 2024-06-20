@@ -58,6 +58,8 @@ export default async function RootLayout({
         }
     }
 
+    console.log('session', session);
+
     return (
         <AuthProvider>
             <html lang={params.lang}>

@@ -13,6 +13,7 @@ export default async function AddMerchantPage({params: { lang }}: {
     const {page} = await getDictionary(lang)
 
     const session  = await auth();
+    console.log('session', session);
 
     let merchant;
     if (session && session.user) {
