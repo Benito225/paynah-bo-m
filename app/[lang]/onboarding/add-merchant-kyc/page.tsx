@@ -26,7 +26,8 @@ export default async function AddMerchantPage({params: { lang }}: {
     }
 
     if (!merchant || isEmptyObject(merchant)) {
-        cookies().set('__Secure-authjs.session-token', '');
+        cookies().set('next-auth.session-token', '');
+        cookies().set('next-auth.callback-url', '');
         return redirect('/auth/login');
     }
 

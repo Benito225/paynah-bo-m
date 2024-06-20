@@ -77,7 +77,7 @@ const config = {
                 // }
             }
         },
-        jwt(params: any) {
+        async jwt(params: any) {
             if (params.trigger === "update") {
                 return {...params.token, ...params.session.user}
             }
@@ -99,15 +99,17 @@ const config = {
             if (params.token.accessToken) {
                 const decodedToken = jwt.decode(params.token.accessToken) as JwtPayload;
                 const currentTime = Math.floor(Date.now() / 1000);
+
                 if (decodedToken.exp && decodedToken.exp < currentTime) {
                     console.log("Token expired");
+                    await signOut();
                     return {};
                 }
             }
 
             return params.token;
         },
-        session({session, trigger, token}: any) {
+        async session({session, trigger, token}: any) {
             if (session.user) {
                 session.user.sub = token.sub;
                 session.user.login = token.login;
@@ -125,8 +127,10 @@ const config = {
             if (token.accessToken) {
                 const decodedToken = jwt.decode(token.accessToken) as JwtPayload;
                 const currentTime = Math.floor(Date.now() / 1000);
+
                 if (decodedToken.exp && decodedToken.exp < currentTime) {
                     console.log("Token expired in session");
+                    await signOut();
                     session = null;
                 }
             }
