@@ -7,6 +7,7 @@ import {redirect} from "next/navigation";
 import {getLegalFormInfos, getMerchantIdsInfos} from "@/core/apis/signup";
 import {fetchData} from "@/lib/api";
 import {isEmptyObject} from "@/app/[lang]/onboarding/add-merchant/page";
+import {cookies} from "next/headers";
 
 export default async function AddMerchantPage({params: { lang }}: {
     params: { lang: Locale }
@@ -25,6 +26,7 @@ export default async function AddMerchantPage({params: { lang }}: {
     }
 
     if (!merchant || isEmptyObject(merchant)) {
+        cookies().delete('__Secure-authjs.session-token');
         return redirect('/auth/login');
     }
 

@@ -5,6 +5,7 @@ import {auth} from "@/auth";
 import {IUser} from "@/core/interfaces/user";
 import {redirect} from "next/navigation";
 import {fetchData} from "@/lib/api";
+import {cookies} from "next/headers";
 
 export function isEmptyObject(obj: object): boolean {
     return Object.keys(obj).length === 0;
@@ -27,6 +28,7 @@ export default async function AddMerchantPage({params: { lang }}: {
     }
 
     if (!merchant || isEmptyObject(merchant)) {
+        cookies().delete('__Secure-authjs.session-token');
         return redirect('/auth/login');
     }
 

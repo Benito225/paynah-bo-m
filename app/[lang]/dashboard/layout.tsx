@@ -15,6 +15,7 @@ import {redirect, usePathname} from "next/navigation";
 import {IUser} from "@/core/interfaces/user";
 import {auth} from "@/auth";
 import {isEmptyObject} from "@/app/[lang]/onboarding/add-merchant/page";
+import {cookies} from "next/headers";
 
 const fontPaynah = Poppins({
   weight: ['100', '300', '400', '500', '600', '800', '900'],
@@ -61,6 +62,7 @@ export default async function RootLayout({
 
     console.log('session', session);
     if (!merchant || isEmptyObject(merchant)) {
+        cookies().delete('__Secure-authjs.session-token');
         return redirect('/auth/login');
     }
 
