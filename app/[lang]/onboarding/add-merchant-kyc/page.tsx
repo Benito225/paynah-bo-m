@@ -6,6 +6,7 @@ import {IUser} from "@/core/interfaces/user";
 import {redirect} from "next/navigation";
 import {getLegalFormInfos, getMerchantIdsInfos} from "@/core/apis/signup";
 import {fetchData} from "@/lib/api";
+import {isEmptyObject} from "@/app/[lang]/onboarding/add-merchant/page";
 
 export default async function AddMerchantPage({params: { lang }}: {
     params: { lang: Locale }
@@ -21,6 +22,10 @@ export default async function AddMerchantPage({params: { lang }}: {
     } else {
         merchant = {} as IUser;
         return redirect('/auth/sign-up');
+    }
+
+    if (!merchant || isEmptyObject(merchant)) {
+        return redirect('/auth/login');
     }
 
     if (merchant.merchantsIds && merchant.merchantsIds.length == 0) {

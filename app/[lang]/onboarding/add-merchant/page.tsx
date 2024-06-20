@@ -6,6 +6,10 @@ import {IUser} from "@/core/interfaces/user";
 import {redirect} from "next/navigation";
 import {fetchData} from "@/lib/api";
 
+export function isEmptyObject(obj: object): boolean {
+    return Object.keys(obj).length === 0;
+}
+
 export default async function AddMerchantPage({params: { lang }}: {
     params: { lang: Locale }
 }) {
@@ -20,6 +24,10 @@ export default async function AddMerchantPage({params: { lang }}: {
     } else {
         merchant = {} as IUser;
         return redirect('/auth/sign-up');
+    }
+
+    if (!merchant || isEmptyObject(merchant)) {
+        return redirect('/auth/login');
     }
 
     if (merchant.merchantsIds && merchant.merchantsIds.length > 0) {

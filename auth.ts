@@ -101,8 +101,7 @@ const config = {
                 const currentTime = Math.floor(Date.now() / 1000);
                 if (decodedToken.exp && decodedToken.exp < currentTime) {
                     console.log("Token expired");
-                    // return {};
-                    return null;
+                    return {};
                 }
             }
 
