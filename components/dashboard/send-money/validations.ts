@@ -9,6 +9,7 @@ export const searchParamsSchema = z.object({
     type: z.string().optional(),
     period: z.string().optional(),
     terminalId: z.string().optional(),
+    operator: z.string().optional(),
     from: z.string().optional(),
     to: z.string().optional(),
 })
