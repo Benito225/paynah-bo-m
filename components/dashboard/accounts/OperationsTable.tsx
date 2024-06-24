@@ -96,15 +96,19 @@ export default function OperationsTable({
     query.page
   }&perPage=${
     query.perPage
-  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false`;
-
+  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false${
+    selectedAccount == "all" ? "" : `&searchTerm=${selectedAccount}`
+  }`;
+  console.log(url);
   const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${
     query.merchantId
   }&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${
     query.page
   }&perPage=${
     query.perPage
-  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true`;
+  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true${
+    selectedAccount == "all" ? "" : `&searchTerm=${selectedAccount}`
+  }`;
   const exportTransactionsData = (e: any) => {
     setExportDataLoading(true);
     e.preventDefault();

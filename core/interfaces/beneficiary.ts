@@ -9,5 +9,5 @@ export interface IBeneficiary {
     deletedAt?: Date,
     merchantId?: string,
     groupId?: string,
-    infos?: any[],
+    infos: any[],
 }
