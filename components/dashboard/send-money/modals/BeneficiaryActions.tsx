@@ -653,7 +653,7 @@ export default function BeneficiaryActions({
                         (beneficiary: IBeneficiarySchema, index: number) => (
                           <div
                             key={index}
-                            className={`snap-end shrink-0 w-[30] 2xl:w-[24] bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}
+                            className={`snap-end shrink-0 w-[14rem] 2xl:w-[14rem] bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}
                           >
                             <div className={`flex justify-between items-start`}>
                               <div>
