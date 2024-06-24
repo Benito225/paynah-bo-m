@@ -54,6 +54,7 @@ interface TransactionsProps {
   lang: Locale;
   selectedAccount: string;
   merchant: IUser;
+  accounts: IAccount[];
 }
 
 export type TransactionsDataType = {
@@ -81,11 +82,14 @@ export default function TransactionsTable({
   lang,
   selectedAccount,
   merchant,
+  accounts,
 }: TransactionsProps) {
   let currentDate = new Date();
   currentDate.setDate(currentDate.getDate() + 1);
 
   const [isLoading, setLoading] = useState(true);
+  const [isBankAccountsActionLoading, setBankAccountsActionLoading] =
+    useState(false);
   const [isExportDataLoading, setExportDataLoading] = useState(false);
   const [pSearch, setPSearch] = useState(searchItems.search ?? "");
   const [pStatus, setPStatus] = useState(searchItems.status ?? "");
@@ -99,7 +103,7 @@ export default function TransactionsTable({
   );
   const [terminals, setTerminals] = useState<ITerminal[]>([]);
   const [operators, setOperators] = useState<IOperator[]>([]);
-  const [accounts, setAccounts] = useState<IAccount[]>([]);
+  //   const [accounts, setAccounts] = useState<IAccount[]>([]);
   const [transactionsPagination, setTransactionsPagination] = useState<any>();
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: searchItems.from ? new Date(searchItems.from) : undefined, // searchItems.from ? new Date(searchItems.from) : startOfYear(new Date()),
@@ -206,28 +210,11 @@ export default function TransactionsTable({
     //     });
   }
 
-  const fetchBankAccounts = () => {
-    // @ts-ignore
-    getMerchantBankAccounts(
-      String(merchant.merchantsIds[0].id),
-      String(merchant.accessToken)
-    )
-      .then((data) => {
-        data.accounts ? setAccounts(data.accounts) : setOperators([]);
-        // setLoading(false);
-        console.log(data, "BANKS");
-      })
-      .catch((err) => {
-        // setLoading(false);
-        setAccounts([]);
-      });
-  };
-
   const fetchOperators = () => {
     // @ts-ignore
     getOperators(String(merchant.accessToken))
       .then((data) => {
-        setOperators(data);
+        data !== null && setOperators(data);
         // setLoading(false);
         console.log(data, "OPERATORS");
       })
@@ -267,7 +254,6 @@ export default function TransactionsTable({
 
   useEffect(() => {
     setLoading(true);
-    fetchBankAccounts();
     fetchOperators();
     fetchTransactionsType();
     fetchMerchantTerminals();
@@ -287,7 +273,6 @@ export default function TransactionsTable({
 
   const data = transactions;
   const pageCount = transactionsPagination?.totalPages ?? 1;
-  console.log("ACC", pOperator);
   const columns = React.useMemo<ColumnDef<ITransaction, unknown>[]>(
     () => getColumns(lang, accounts),
     []

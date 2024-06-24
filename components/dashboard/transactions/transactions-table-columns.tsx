@@ -52,14 +52,20 @@ export function getColumns(
   lang: string,
   accounts: IAccount[]
 ): ColumnDef<ITransaction>[] {
-  //   console.log("ACC1", accounts);
-  const getBankAccount = (bankAccountId: string): IAccount => {
-    const searchAccount = accounts.filter(
-      (account) => account.id == bankAccountId
+  console.log("ACC1", accounts);
+  const getBankAccount = (bankAccountId: string): any => {
+    const searchAccount = accounts.find(
+      (account: IAccount) => account.id == bankAccountId
     );
-    // console.log(accounts, searchAccount, "SEARCH");
-    return searchAccount.length > 0 ? searchAccount[0] : defaultAccount;
+    return searchAccount !== undefined
+      ? {
+          coreBankId: searchAccount.coreBankId,
+          name: searchAccount.isMain ? "Compte Principal" : searchAccount.name,
+        }
+      : { coreBankId: "-", name: "-" };
   };
+
+  console.log("TEST", getBankAccount("baff465b-b1c3-406a-975b-941934575560"));
 
   return [
     // {
@@ -209,15 +215,13 @@ export function getColumns(
           <div className="max-w-[12rem]">
             <div className={`inline-flex flex-col space-y-0`}>
               <h3 className={`leading-4`}>
-                {getBankAccount(row.original?.bankAccountId).isMain
-                  ? "Compte Principal"
-                  : getBankAccount(row.original?.bankAccountId).name}
+                {getBankAccount(row.original?.bankAccountId).name}
               </h3>
               {/* <h3 className={`leading-4`}>Compte Principal</h3> */}
               <div>
                 <span className={`block -mt-0.5 text-[11px] text-[#6F7070]`}>
+                  {getBankAccount(row.original.bankAccountId).coreBankId}
                   {/* 12342323223 */}
-                  {getBankAccount(row.original?.bankAccountId).coreBankId}
                 </span>
               </div>
             </div>

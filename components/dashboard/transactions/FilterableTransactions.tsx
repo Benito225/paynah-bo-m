@@ -1,7 +1,7 @@
 "use client";
 
 import { Locale } from "@/i18n.config";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TransactionsTable from "@/components/dashboard/transactions/TransactionsTable";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
@@ -12,6 +12,7 @@ import Link from "next/link";
 import Routes from "@/components/Routes";
 import { ChevronRight } from "lucide-react";
 import SupportShortcut from "@/components/dashboard/serenity-space/SupportShortcut";
+import { IAccount } from "@/core/interfaces/account";
 
 interface FilterableTransactionsProps {
   lang: Locale;
@@ -29,12 +30,14 @@ interface FilterableTransactionsProps {
     operator?: string;
   };
   merchant: IUser;
+  accounts: IAccount[];
 }
 
 export default function FilterableTransactions({
   lang,
   searchItems,
   merchant,
+  accounts,
 }: FilterableTransactionsProps) {
   const [selectedAccount, setSelectedAccount] = useState("all");
 
@@ -56,6 +59,7 @@ export default function FilterableTransactions({
         lang={lang}
         selectedAccount={selectedAccount}
         merchant={merchant}
+        accounts={accounts}
       />
     </>
   );
