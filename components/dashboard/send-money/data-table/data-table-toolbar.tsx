@@ -49,6 +49,7 @@ interface DataTableToolbarProps<TData> {
   exportTransactionsData: (e: any) => void;
   isExportDataLoading: boolean;
   totalCount: string;
+  setSelectedAccount: (value: ((prevState: string) => string) | string) => void;
 }
 
 export function DataTableToolbar<TData>({
@@ -65,6 +66,7 @@ export function DataTableToolbar<TData>({
   exportTransactionsData,
   isExportDataLoading,
   totalCount,
+  setSelectedAccount,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
   const [isDeletePending, startDeleteTransition] = React.useTransition();
@@ -99,7 +101,10 @@ export function DataTableToolbar<TData>({
                   type={`text`}
                   className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-full 2xl:w-full`}
                   placeholder="Recherche"
-                  onChange={(e) => setPSearch(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedAccount("all");
+                    setPSearch(e.target.value);
+                  }}
                 />
                 <Search className={`absolute h-4 w-4 top-3 left-3`} />
               </div>

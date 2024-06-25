@@ -38,6 +38,7 @@ interface TransactionsTableProps {
   lang: string;
   selectedAccount: string;
   merchant: IUser;
+  setSelectedAccount: (value: ((prevState: string) => string) | string) => void;
 }
 
 // export type TransactionsDataType = {
@@ -55,6 +56,7 @@ export default function TransactionsTable({
   lang,
   selectedAccount,
   merchant,
+  setSelectedAccount,
 }: TransactionsTableProps) {
   let currentDate = new Date();
   currentDate.setDate(currentDate.getDate() + 1);
@@ -207,6 +209,7 @@ export default function TransactionsTable({
         exportTransactionsData={exportTransactionsData}
         isExportDataLoading={isExportDataLoading}
         totalCount={formatNumber(transactionsPagination?.totalCount ?? 0)}
+        setSelectedAccount={setSelectedAccount}
       />
     </div>
   );
