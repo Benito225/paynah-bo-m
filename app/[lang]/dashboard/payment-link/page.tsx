@@ -32,11 +32,6 @@ export default async function PaymentLinkPage({
     merchant = {} as IUser;
   }
 
-  const transactionTypeList = await getTransactionsType(
-    "/transaction-types?keyword=PAYIN",
-    String(merchant.accessToken)
-  );
-
   return (
     <>
       <div
@@ -81,7 +76,6 @@ export default async function PaymentLinkPage({
               lang={lang}
               searchItems={searchItems}
               merchant={merchant}
-              transactionType={transactionTypeList.data[0]}
             />
           </div>
         </div>

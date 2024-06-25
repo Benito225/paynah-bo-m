@@ -31,14 +31,12 @@ interface AccountListAndTransactionsProps {
     status?: string;
   };
   merchant: IUser;
-  transactionType: ITransactionType;
 }
 
 export default function AccountListAndTransactions({
   lang,
   searchItems,
   merchant,
-  transactionType,
 }: AccountListAndTransactionsProps) {
   const [selectedAccount, setSelectedAccount] = useState("all");
   const [balance, setBalance] = useState(0);
@@ -375,7 +373,6 @@ export default function AccountListAndTransactions({
             lang={lang}
             selectedAccount={selectedAccount}
             merchant={merchant}
-            transactionType={transactionType}
           />
         </div>
       </div>

@@ -37,7 +37,6 @@ interface TransactionsTableProps {
   lang: string;
   selectedAccount: string;
   merchant: IUser;
-  transactionType: ITransactionType;
 }
 
 export type TransactionsDataType = {
@@ -56,7 +55,6 @@ export default function TransactionsTable({
   lang,
   selectedAccount,
   merchant,
-  transactionType,
 }: TransactionsTableProps) {
   let currentDate = new Date();
   currentDate.setDate(currentDate.getDate() + 1);
@@ -102,17 +100,13 @@ export default function TransactionsTable({
     query.merchantId
   }&status=${query.status ?? ""}&page=${query.page}&perPage=${
     query.perPage
-  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false&searchTerm=${searchTerm}&type=${
-    transactionType?.id
-  }`;
+  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false&searchTerm=${searchTerm}&type=PAYIN`;
 
   const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${
     query.merchantId
   }&status=${query.status ?? ""}&page=${query.page}&perPage=${
     query.perPage
-  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true&searchTerm=${searchTerm}&type=${
-    transactionType?.id
-  }`;
+  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true&searchTerm=${searchTerm}&type=PAYIN`;
   console.log(url, selectedAccount, query.search);
   const exportTransactionsData = (e: any) => {
     setExportDataLoading(true);
