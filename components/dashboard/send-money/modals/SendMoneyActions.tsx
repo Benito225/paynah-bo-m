@@ -518,6 +518,7 @@ export default function SendMoneyActions({
     setTotalAmount("");
     setReason("");
     setPercentage("w-1/6");
+    setDisplayBeneficiaryForm(false);
 
     setConfirmStep(0);
     setShowPassword(false);
@@ -525,6 +526,11 @@ export default function SendMoneyActions({
     setErrorMessage("");
     setIsSendLoading(false);
     setShowConError(false);
+
+    setValue("lastName", "");
+    setValue("firstName", "");
+    setValue("email", "");
+    setValue("accountNumber", "");
   }
 
   function searchAccount(e: React.ChangeEvent<HTMLInputElement>) {
