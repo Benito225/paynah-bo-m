@@ -373,6 +373,7 @@ export default function AccountListAndTransactions({
             lang={lang}
             selectedAccount={selectedAccount}
             merchant={merchant}
+            setSelectedAccount={setSelectedAccount}
           />
         </div>
       </div>
