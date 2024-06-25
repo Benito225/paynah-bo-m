@@ -34,11 +34,6 @@ export default async function SendMoneyPage({
     merchant = {} as IUser;
   }
 
-  const transactionTypeList = await getTransactionsType(
-    "/transaction-types?keyword=PAYOUT",
-    String(merchant.accessToken)
-  );
-
   return (
     <>
       <div
@@ -83,7 +78,6 @@ export default async function SendMoneyPage({
               lang={lang}
               searchItems={searchItems}
               merchant={merchant}
-              transactionType={transactionTypeList.data[0]}
             />
           </div>
         </div>
