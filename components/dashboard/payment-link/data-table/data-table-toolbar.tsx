@@ -96,17 +96,19 @@ export function DataTableToolbar<TData>({
           <form action="" className={`w-full`}>
             <div className={`grid grid-cols-12 gap-4`}>
               <div className={`col-span-7 2xl:col-span-4`}>
-                <Input
-                  value={pSearch}
-                  type={`text`}
-                  className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.8rem] w-full 2xl:w-full`}
-                  placeholder="Recherche"
-                  onChange={(e) => {
-                    setSelectedAccount("all");
-                    setPSearch(e.target.value);
-                  }}
-                />
-                <Search className={`absolute h-4 w-4 top-3 left-3`} />
+                <div className={`relative`}>
+                  <Input
+                    value={pSearch}
+                    type={`text`}
+                    className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.5rem] w-full`}
+                    placeholder="Recherchez"
+                    onChange={(e) => {
+                      setSelectedAccount("all");
+                      setPSearch(e.target.value);
+                    }}
+                  />
+                  <Search className={`absolute h-4 w-4 top-3 left-3`} />
+                </div>
               </div>
               <div className={`col-span-4 2xl:col-span-2`}>
                 <Select
