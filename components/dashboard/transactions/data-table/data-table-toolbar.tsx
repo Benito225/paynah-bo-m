@@ -321,7 +321,7 @@ export function DataTableToolbar<TData>({
                   </Label>
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger>
+                      <TooltipTrigger disabled={true}>
                         <div className="mb-1">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -335,10 +335,10 @@ export function DataTableToolbar<TData>({
                           </svg>
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent className="translate-x-40">
                         <div className="break-all">
                           Recherchez par ID transaction, numéro de compte,
-                          référence opérateur
+                          référence opérateur, numéro de téléphone
                         </div>
                       </TooltipContent>
                     </Tooltip>

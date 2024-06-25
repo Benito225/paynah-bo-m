@@ -40,7 +40,7 @@ export default async function TransactionsPage({
           lang={lang}
           searchItems={searchItems}
           merchant={merchant}
-          accounts={accountsInfos.accounts}
+          accounts={accountsInfos.accounts ?? []}
         />
       </div>
     </>
