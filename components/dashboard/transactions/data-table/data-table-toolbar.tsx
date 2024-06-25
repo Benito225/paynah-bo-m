@@ -47,6 +47,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { IOperator } from "@/core/interfaces/operator";
+import { left } from "@popperjs/core";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -142,10 +143,7 @@ export function DataTableToolbar<TData>({
     // {key: 'Expired', value: 'Expiré'},
   ];
 
-  const transactionsOperators = [
-    { key: "all", value: "Tous Opérateurs" },
-    { key: "CI_WAVE", value: "WAVE" },
-  ];
+  const transactionsOperators = [{ key: "all", value: "Tous Opérateurs" }];
 
   const periodeOptions = [
     { key: "today", value: "Aujourd'hui" },
@@ -319,7 +317,7 @@ export function DataTableToolbar<TData>({
                   <Label className={`font-normal text-sm block mb-1 mr-1`}>
                     Filtrer par :{" "}
                   </Label>
-                  <TooltipProvider>
+                  <TooltipProvider delayDuration={0}>
                     <Tooltip>
                       <TooltipTrigger disabled={true}>
                         <div className="mb-1">
@@ -425,6 +423,12 @@ export function DataTableToolbar<TData>({
                         <SelectValue placeholder="Opérateur" />
                       </SelectTrigger>
                       <SelectContent className={`bg-[#f0f0f0]`}>
+                        <SelectItem
+                          className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
+                          value={`all`}
+                        >
+                          Tous les opérateurs
+                        </SelectItem>
                         {operators.map((item, index) => (
                           <SelectItem
                             key={index}

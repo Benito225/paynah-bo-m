@@ -459,6 +459,7 @@ export default function PointOfSaleListAndOperations({
                   <span className={`text-[12px] font-light text-[#afafaf]`}>
                     ID:{" "}
                     {
+                      // @ts-ignore
                       merchant.merchantsIds[0]["bank-account"][0]
                         .coreBankId as string
                     }

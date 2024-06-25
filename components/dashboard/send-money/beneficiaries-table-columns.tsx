@@ -80,9 +80,9 @@ export function getColumns(lang: string): ColumnDef<IBeneficiary>[] {
       cell: ({ row }) => {
         return (
           <div className="">
-            {row.original.infos[0].paynahAccountNumber == null
+            {row.original.infos && row.original.infos[0].paynahAccountNumber == null
               ? "-"
-              : row.original.infos[0].paynahAccountNumber}
+              : (row.original.infos ? row.original.infos[0].paynahAccountNumber : "-")}
           </div>
         );
       },
@@ -95,9 +95,9 @@ export function getColumns(lang: string): ColumnDef<IBeneficiary>[] {
       cell: ({ row }) => {
         return (
           <div className="">
-            {row.original.infos[0].number == null
-              ? "-"
-              : row.original.infos[0].number}
+            {row.original.infos && row.original.infos[0].number == null
+                ? "-"
+                : (row.original.infos ? row.original.infos[0].number : "-")}
           </div>
         );
       },
@@ -110,9 +110,9 @@ export function getColumns(lang: string): ColumnDef<IBeneficiary>[] {
       cell: ({ row }) => {
         return (
           <div className="">
-            {row.original.infos[0].paynahAccountNumber == null
-              ? "-"
-              : row.original.infos[0].paynahAccountNumber}
+            {row.original.infos && row.original.infos[0].paynahAccountNumber == null
+                ? "-"
+                : (row.original.infos ? row.original.infos[0].paynahAccountNumber : "-")}
           </div>
         );
       },
