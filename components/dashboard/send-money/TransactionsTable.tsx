@@ -10,7 +10,7 @@ import {
 } from "@/components/dashboard/send-money/transactions-table-columns";
 import { useDataTable } from "@/hooks/use-data-table";
 import { TDataTable } from "@/components/dashboard/send-money/data-table/DataTable";
-import { ITransaction } from "@/core/interfaces/transaction";
+import { ITransaction, ITransactionType } from "@/core/interfaces/transaction";
 import { IUser } from "@/core/interfaces/user";
 import { DateRange } from "react-day-picker";
 import { addDays, startOfYear, endOfDay, format } from "date-fns";
@@ -38,6 +38,7 @@ interface TransactionsTableProps {
   lang: string;
   selectedAccount: string;
   merchant: IUser;
+  transactionType: ITransactionType;
 }
 
 // export type TransactionsDataType = {
@@ -55,6 +56,7 @@ export default function TransactionsTable({
   lang,
   selectedAccount,
   merchant,
+  transactionType,
 }: TransactionsTableProps) {
   let currentDate = new Date();
   currentDate.setDate(currentDate.getDate() + 1);
@@ -90,21 +92,31 @@ export default function TransactionsTable({
   const endPeriod = new Date(query.to ?? "");
   const formatStartPeriod = startPeriod.toLocaleDateString("en-GB");
   const formatEndPeriod = endPeriod.toLocaleDateString("en-GB");
+  const searchTerm =
+    query.search !== undefined && query?.search?.trim() !== ""
+      ? query.search
+      : selectedAccount == "all"
+      ? ""
+      : selectedAccount;
   const url = `/transactions/all-transactions/with-filters?merchantId=${
     query.merchantId
-  }&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${
+  }&searchTerm=${searchTerm}&status=${query.status ?? ""}&page=${
     query.page
   }&perPage=${
     query.perPage
-  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false`;
+  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=false&type=${
+    transactionType?.id
+  }`;
 
   const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${
     query.merchantId
-  }&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${
+  }&searchTerm=${searchTerm}&status=${query.status ?? ""}&page=${
     query.page
   }&perPage=${
     query.perPage
-  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true`;
+  }&from=${formatStartPeriod}&to=${formatEndPeriod}&csv=true&type=${
+    transactionType?.id
+  }`;
   const exportTransactionsData = (e: any) => {
     setExportDataLoading(true);
     e.preventDefault();
