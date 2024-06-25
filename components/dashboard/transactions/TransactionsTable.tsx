@@ -145,8 +145,9 @@ export default function TransactionsTable({
     (query.terminalId == "all" || query.terminalId == "Tous TPE"
       ? ""
       : query.terminalId) ?? ""
-  }&csv=false&operator=${query.operator ?? ""}`;
+  }&csv=false&operator=${(query.operator == "all" ? "" : query.operator) ?? ""}`;
   console.log(url, query);
+
   const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${
     query.merchantId
   }&searchTerm=${query.search ?? ""}&status=${query.status ?? ""}&page=${
@@ -163,7 +164,8 @@ export default function TransactionsTable({
     (query.terminalId == "all" || query.terminalId == "Tous TPE"
       ? ""
       : query.terminalId) ?? ""
-  }&csv=true&operator=${query.operator ?? ""}`;
+  }&csv=true&operator=${(query.operator == "all" ? "" : query.operator) ?? ""}`;
+  console.log('query.operator', (query.operator == "all" ? "" : query.operator) ?? "");
   function exportTransactionsData() {
     setExportDataLoading(true);
 

@@ -653,7 +653,7 @@ export default function BeneficiaryActions({
                         (beneficiary: IBeneficiarySchema, index: number) => (
                           <div
                             key={index}
-                            className={`snap-end shrink-0 w-[14rem] 2xl:w-[14rem] bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}
+                            className={`snap-end shrink-0 w-[13.3rem] 2xl:w-[14rem] bg-white flex flex-col justify-between space-y-8 2xl:space-y-8 p-4 rounded-3xl`}
                           >
                             <div className={`flex justify-between items-start`}>
                               <div>
@@ -690,7 +690,7 @@ export default function BeneficiaryActions({
                                   >
                                     Numéro Compte bancaire
                                   </h3>
-                                  <span className={`text-base font-semibold`}>
+                                  <span className={`text-base break-all leading-4 font-semibold`}>
                                     {beneficiary.bankAccount}
                                   </span>
                                 </>
@@ -698,11 +698,11 @@ export default function BeneficiaryActions({
                               {beneficiary.type == "PAYNAH" && (
                                 <>
                                   <h3
-                                    className={`text-[10px] font-normal text-[#afafaf]`}
+                                    className={`text-[10px] mb-0.5 font-normal text-[#afafaf]`}
                                   >
                                     Numéro Compte Paynah
                                   </h3>
-                                  <span className={`text-base font-semibold`}>
+                                  <span className={`text-base break-all leading-4 font-semibold`}>
                                     {beneficiary.paynahAccountNumber}
                                   </span>
                                 </>
@@ -710,19 +710,19 @@ export default function BeneficiaryActions({
                               {beneficiary.type == "MOBILE" && (
                                 <>
                                   <h3
-                                    className={`text-[10px] font-normal text-[#afafaf]`}
+                                    className={`text-[10px] mb-0.5 font-normal text-[#afafaf]`}
                                   >
                                     Opérateur Mobile
                                   </h3>
-                                  <span className={`text-base font-semibold`}>
+                                  <span className={`text-base break-all leading-4 font-semibold`}>
                                     {beneficiary.operator}
                                   </span>
                                   <h3
-                                    className={`text-[10px] font-normal text-[#afafaf]`}
+                                    className={`text-[10px] mt-1 mb-0.5 font-normal text-[#afafaf]`}
                                   >
                                     Numéro de téléphone
                                   </h3>
-                                  <span className={`text-base font-semibold`}>
+                                  <span className={`text-base break-all leading-4 font-semibold`}>
                                     {beneficiary.number}
                                   </span>
                                 </>

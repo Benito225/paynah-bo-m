@@ -135,6 +135,7 @@ export function TDataTable<TData, TValue>({
   };
 
   // @ts-ignore
+  // @ts-ignore
   return (
     <div className="w-full space-y-2.5 overflow-auto">
       <DataTableToolbar
@@ -197,6 +198,7 @@ export function TDataTable<TData, TValue>({
                     // @ts-ignore
                     className={`border-[#fafafa] ${
                       row.getIsSelected() &&
+                      // @ts-ignore
                       (row.original.transaction_type.name == "PAYIN"
                         ? "!bg-[#f6ecec]"
                         : "!bg-[#F5FDFF]")
