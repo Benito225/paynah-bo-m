@@ -91,7 +91,7 @@ export default function OperationsTable({
   const formatStartPeriod = startPeriod.toLocaleDateString("en-GB");
   const formatEndPeriod = endPeriod.toLocaleDateString("en-GB");
   const searchTerm =
-    query?.search?.trim() !== ""
+    query.search !== undefined && query?.search?.trim() !== ""
       ? query.search
       : selectedAccount == "all"
       ? ""
