@@ -66,6 +66,11 @@ import { getBankName } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { ScaleLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
+import {
+  PhoneInput,
+  PhoneInputRefType,
+  CountryData,
+} from "react-international-phone";
 
 interface MainActionsProps {
   lang: string;
@@ -179,7 +184,7 @@ export default function BeneficiaryActions({
     .refine(
       (data) => {
         if (data.type == "MOBILE") {
-          return data.number.trim().length > 0;
+          return data.number.trim().length > 4;
         }
         return true;
       },
@@ -690,7 +695,9 @@ export default function BeneficiaryActions({
                                   >
                                     Numéro Compte bancaire
                                   </h3>
-                                  <span className={`text-base break-all leading-4 font-semibold`}>
+                                  <span
+                                    className={`text-base break-all leading-4 font-semibold`}
+                                  >
                                     {beneficiary.bankAccount}
                                   </span>
                                 </>
@@ -702,7 +709,9 @@ export default function BeneficiaryActions({
                                   >
                                     Numéro Compte Paynah
                                   </h3>
-                                  <span className={`text-base break-all leading-4 font-semibold`}>
+                                  <span
+                                    className={`text-base break-all leading-4 font-semibold`}
+                                  >
                                     {beneficiary.paynahAccountNumber}
                                   </span>
                                 </>
@@ -714,7 +723,9 @@ export default function BeneficiaryActions({
                                   >
                                     Opérateur Mobile
                                   </h3>
-                                  <span className={`text-base break-all leading-4 font-semibold`}>
+                                  <span
+                                    className={`text-base break-all leading-4 font-semibold`}
+                                  >
                                     {beneficiary.operator}
                                   </span>
                                   <h3
@@ -722,7 +733,9 @@ export default function BeneficiaryActions({
                                   >
                                     Numéro de téléphone
                                   </h3>
-                                  <span className={`text-base break-all leading-4 font-semibold`}>
+                                  <span
+                                    className={`text-base break-all leading-4 font-semibold`}
+                                  >
                                     {beneficiary.number}
                                   </span>
                                 </>
@@ -914,6 +927,48 @@ export default function BeneficiaryActions({
                                   Numéro de téléphone
                                 </h3>
                               </div>
+                              <FormControl>
+                                <PhoneInput
+                                  {...field}
+                                  className={`font-light ${
+                                    showConError && "!border-[#e95d5d]"
+                                  }`}
+                                  style={
+                                    {
+                                      "--react-international-phone-text-color":
+                                        "#000",
+                                      "--react-international-phone-border-color":
+                                        showConError ? "#e95d5d" : "#f0f0f0",
+                                      "--react-international-phone-height":
+                                        "3.3rem",
+                                      "--react-international-phone-font-size":
+                                        "14px",
+                                      "--react-international-phone-border-radius":
+                                        "0.75rem",
+                                    } as React.CSSProperties
+                                  }
+                                  defaultCountry="ci"
+                                  placeholder="Numéro de téléphone"
+                                />
+                              </FormControl>
+                              <FormMessage className={`text-xs`}>
+                                {beneficiaryFormInfo.formState.errors.number &&
+                                  (beneficiaryFormInfo.formState.errors.number
+                                    .message as string)}
+                              </FormMessage>
+                            </FormItem>
+                          )}
+                        />
+                        {/* <FormField
+                          control={beneficiaryFormInfo.control}
+                          name="number"
+                          render={({ field }) => (
+                            <FormItem>
+                              <div className={`inline-flex space-x-3`}>
+                                <h3 className={`text-sm font-medium`}>
+                                  Numéro de téléphone
+                                </h3>
+                              </div>
                               <FormControl className={""}>
                                 <div>
                                   <Input
@@ -938,7 +993,7 @@ export default function BeneficiaryActions({
                               </FormMessage>
                             </FormItem>
                           )}
-                        />
+                        /> */}
                       </div>
                     </div>
                   )}
