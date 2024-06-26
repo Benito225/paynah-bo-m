@@ -201,7 +201,7 @@ export default function SendMoneyActions({
       },
       {
         message: "veuillez choisir un opérateur",
-        path: ["mmAccountNumber"],
+        path: ["mmOperator"],
       }
     )
     .refine(
@@ -573,6 +573,7 @@ export default function SendMoneyActions({
         : [];
     const countryId = countryFilter[0]?.id;
     // console.log(countryId);
+    setLoading(true);
     getCountryOperators(String(countryId), String(merchant.accessToken))
       .then((data) => {
         // console.log(1, data);
@@ -589,6 +590,8 @@ export default function SendMoneyActions({
     setAccounts(accounts);
     setBeneficiaries(beneficiaries);
     fetchCountryOperators("CI");
+    setValue("mmOperator", "WAVE");
+    setValue("country", "CIV");
     if (payFees) {
       const amountWithoutString = amount.match(/\d+/g)?.join("");
       const amountNumber = parseInt(amountWithoutString ?? "0");
@@ -851,7 +854,7 @@ export default function SendMoneyActions({
                           onSubmit={undefined}
                           className={`${step == 2 && "hidden"} space-y-5 gap-6`}
                         >
-                          <div className={`flex items-center gap-5`}>
+                          <div className={`grid grid-cols-2 gap-5`}>
                             <div className={"w-full"}>
                               <FormField
                                 control={sendMoneyForm.control}
@@ -930,11 +933,87 @@ export default function SendMoneyActions({
                                 )}
                               />
                             </div>
-                            <div
-                              className={
-                                "w-full relative flex items-center justify-center"
-                              }
-                            >
+                            <div className={"w-full"}>
+                              <FormField
+                                control={sendMoneyForm.control}
+                                name="mmOperator"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <div className={`inline-flex space-x-3`}>
+                                      <h3 className={`text-sm font-medium`}>
+                                        Opérateur
+                                      </h3>
+                                    </div>
+                                    <FormControl>
+                                      <div>
+                                        <Select
+                                          onValueChange={(value) => {
+                                            setOperator(value);
+                                            setValue("mmOperator", value);
+                                          }}
+                                          defaultValue={"WAVE"}
+                                          disabled={isLoading}
+                                        >
+                                          <SelectTrigger
+                                            className={`w-full ${
+                                              showConError &&
+                                              "!border-[#e95d5d]"
+                                            } px-4 font-light text-sm ${
+                                              showConError && "border-[#e95d5d]"
+                                            }`}
+                                            style={{
+                                              backgroundColor: field.value
+                                                ? "#fff"
+                                                : "#f0f0f0",
+                                            }}
+                                          >
+                                            <SelectValue placeholder="Choisir un opérateur" />
+                                          </SelectTrigger>
+                                          <SelectContent
+                                            className={`z-[999] bg-[#f0f0f0]`}
+                                          >
+                                            {operators &&
+                                              operators.map(
+                                                (operator: IOperator) => (
+                                                  <SelectItem
+                                                    key={operator.id}
+                                                    className={`h-[3.1rem] inline-flex items-center font-light focus:bg-gray-100 cursor-pointer`}
+                                                    value={String(
+                                                      operator.code
+                                                    )}
+                                                  >
+                                                    <div
+                                                      className={`inline-flex items-center space-x-2.5`}
+                                                    >
+                                                      <Image
+                                                        className={`h-[1.6rem] w-[1.6rem]`}
+                                                        src={operator.logoUrl}
+                                                        alt={operator.code}
+                                                        height={512}
+                                                        width={512}
+                                                      />
+                                                      <span
+                                                        className={`mm-label`}
+                                                      >
+                                                        {operator.name}
+                                                      </span>
+                                                    </div>
+                                                  </SelectItem>
+                                                )
+                                              )}
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                    </FormControl>
+                                    <FormMessage className={`text-xs`}>
+                                      {errors.mmOperator &&
+                                        (errors.mmOperator.message as string)}
+                                    </FormMessage>
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            <div className={"w-full col-span-2"}>
                               <FormField
                                 control={sendMoneyForm.control}
                                 name="mmAccountNumber"
@@ -942,126 +1021,40 @@ export default function SendMoneyActions({
                                   <FormItem>
                                     <div className={`inline-flex space-x-3`}>
                                       <h3 className={`text-sm font-medium`}>
-                                        Numéro de compte
+                                        Numéro de téléphone
                                       </h3>
                                     </div>
                                     <FormControl>
-                                      <div>
-                                        <div className="relative">
-                                          <PhoneInput
-                                            {...field}
-                                            className={`mt-[.5rem] op-tel`}
-                                            style={
-                                              {
-                                                "--react-international-phone-text-color":
-                                                  "#000",
-                                                "--react-international-phone-border-color":
-                                                  "#f0f0f0",
-                                                "--react-international-phone-height":
-                                                  "2.8rem",
-                                                "--react-international-phone-font-size":
-                                                  "14px",
-                                                "--react-international-phone-border-radius":
-                                                  "0.5rem",
-                                              } as React.CSSProperties
-                                            }
-                                            defaultCountry={country}
-                                            forceDialCode={true}
-                                            ref={refPhone}
-                                            hideDropdown={true}
-                                            placeholder=" "
-                                          />
-                                          <div
-                                            className={`absolute top-0 left-0`}
-                                          >
-                                            <FormField
-                                              control={sendMoneyForm.control}
-                                              name="mmOperator"
-                                              render={({ field }) => (
-                                                <FormItem>
-                                                  <FormControl>
-                                                    <div>
-                                                      <Select
-                                                        onValueChange={
-                                                          field.onChange
-                                                        }
-                                                        defaultValue={operator}
-                                                      >
-                                                        <SelectTrigger
-                                                          className={`w-[4rem] selectedItemMM h-[2.8rem] rounded-l-lg !pb-[0px] rounded-r-none border border-[#e4e4e4] pl-2.5 pr-1 font-light`}
-                                                          style={{
-                                                            backgroundColor:
-                                                              field.value
-                                                                ? "#fff"
-                                                                : "#fff",
-                                                          }}
-                                                        >
-                                                          <SelectValue placeholder="Opérateur" />
-                                                        </SelectTrigger>
-                                                        <SelectContent
-                                                          className={`bg-[#f0f0f0] !w-[10rem] z-[999]`}
-                                                        >
-                                                          {operators &&
-                                                            operators.map(
-                                                              (
-                                                                operator: IOperator
-                                                              ) => (
-                                                                <SelectItem
-                                                                  key={
-                                                                    operator.id
-                                                                  }
-                                                                  className={`font-normal px-7 flex items-center focus:bg-gray-100 h-[2.4rem] cursor-pointer`}
-                                                                  value={
-                                                                    operator.code
-                                                                  }
-                                                                >
-                                                                  <div
-                                                                    className={`inline-flex items-center space-x-2.5`}
-                                                                  >
-                                                                    <Image
-                                                                      className={`h-[1.6rem] w-[1.6rem]`}
-                                                                      src={
-                                                                        operator.logoUrl
-                                                                      }
-                                                                      alt={
-                                                                        operator.code
-                                                                      }
-                                                                      height={
-                                                                        512
-                                                                      }
-                                                                      width={
-                                                                        512
-                                                                      }
-                                                                    />
-                                                                    <span
-                                                                      className={`mm-label`}
-                                                                    >
-                                                                      {
-                                                                        operator.name
-                                                                      }
-                                                                    </span>
-                                                                  </div>
-                                                                </SelectItem>
-                                                              )
-                                                            )}
-                                                        </SelectContent>
-                                                      </Select>
-                                                    </div>
-                                                  </FormControl>
-                                                  <FormMessage
-                                                    className={`text-xs`}
-                                                  >
-                                                    {errors.mmAccountNumber &&
-                                                      (errors.mmAccountNumber
-                                                        .message as string)}
-                                                  </FormMessage>
-                                                </FormItem>
-                                              )}
-                                            />
-                                          </div>
-                                        </div>
-                                      </div>
+                                      <PhoneInput
+                                        {...field}
+                                        className={`font-light ${
+                                          showConError && "!border-[#e95d5d]"
+                                        }`}
+                                        style={
+                                          {
+                                            "--react-international-phone-text-color":
+                                              "#000",
+                                            "--react-international-phone-border-color":
+                                              showConError
+                                                ? "#e95d5d"
+                                                : "#f0f0f0",
+                                            "--react-international-phone-height":
+                                              "3.3rem",
+                                            "--react-international-phone-font-size":
+                                              "14px",
+                                            "--react-international-phone-border-radius":
+                                              "0.75rem",
+                                          } as React.CSSProperties
+                                        }
+                                        defaultCountry="ci"
+                                        placeholder="Numéro de téléphone"
+                                      />
                                     </FormControl>
+                                    <FormMessage className={`text-xs`}>
+                                      {errors.mmAccountNumber &&
+                                        (errors.mmAccountNumber
+                                          .message as string)}
+                                    </FormMessage>
                                   </FormItem>
                                 )}
                               />
