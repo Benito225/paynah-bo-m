@@ -1,28 +1,27 @@
-import { Locale } from "@/i18n.config";
-import SupportShortcut from "@/components/dashboard/serenity-space/SupportShortcut";
-import { ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Beneficiary from "@/components/dashboard/send-money/Beneficiary";
-import AccountListAndTransactions from "@/components/dashboard/send-money/AccountListAndTransactions";
-import CustomOperations from "@/components/dashboard/send-money/CustomOperations";
 import { SearchParams } from "@/core/interfaces";
+import { Locale } from "@/i18n.config";
 import { searchParamsSchema } from "@/components/dashboard/send-money/validations";
-import MainActions from "@/components/dashboard/send-money/modals/MainActions";
 import Link from "next/link";
 import Routes from "@/components/Routes";
+import { ChevronRight } from "lucide-react";
+import SupportShortcut from "@/components/dashboard/serenity-space/SupportShortcut";
+import MainActions from "@/components/dashboard/payment-link/modals/MainActions";
+import Recipients from "@/components/dashboard/payment-link/Recipients";
+import SendModeListAndSupplies from "@/components/dashboard/supply/SendModeListAndSupplies";
+import CustomOperations from "@/components/dashboard/supply/CustomOperations";
+import PointOfSales from "@/components/dashboard/integrations/PointOfSales";
 import { auth, signOut } from "@/auth";
 import { IUser } from "@/core/interfaces/user";
-import { getTransactionsType } from "@/core/apis/transaction";
 
-export interface IndexPageProps {
+export interface PaymentLinkProps {
   searchParams: SearchParams;
   params: { lang: Locale };
 }
 
-export default async function SendMoneyPage({
+export default async function SupplyPage({
   params: { lang },
   searchParams,
-}: IndexPageProps) {
+}: PaymentLinkProps) {
   const searchItems = searchParamsSchema.parse(searchParams);
 
   const session = await auth();
@@ -50,7 +49,7 @@ export default async function SendMoneyPage({
             <ChevronRight className={`h-4 w-4 text-[#767676]`} />
             <h2
               className={`text-base text-black tracking-tight`}
-            >{`Envoi d'argent`}</h2>
+            >{`Intégration`}</h2>
           </div>
           <div
             className={`py-2 px-3 bg-white rounded-xl inline-flex items-center space-x-3`}
@@ -60,21 +59,8 @@ export default async function SendMoneyPage({
           </div>
         </div>
         <div className={`flex gap-3 mt-2.5 flex-grow`}>
-          <div className={`w-[28%] 2xl:w-[26%]`}>
-            {/* <div className={`h-full bg-white px-6 py-8 rounded-2xl`}>
-                            <div className={`flex flex-col space-y-2.5`}>
-                               <MainActions lang={lang} merchant={merchant}/>
-                            </div>
-                            <Beneficiary lang={lang} merchant={merchant}/>
-                        </div> */}
-            <CustomOperations
-              lang={lang}
-              searchItems={searchItems}
-              merchant={merchant}
-            />
-          </div>
-          <div className={`w-[72%] 2xl:w-[74%]`}>
-            <AccountListAndTransactions
+          <div className={`w-[100%] 2xl:w-[100%]`}>
+            <PointOfSales
               lang={lang}
               searchItems={searchItems}
               merchant={merchant}
