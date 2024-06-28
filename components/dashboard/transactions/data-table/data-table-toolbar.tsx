@@ -374,7 +374,7 @@ export function DataTableToolbar<TData>({
                             <SelectItem
                               key={index}
                               className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                              value={item.id}
+                              value={item.name}
                             >
                               {rewriteTransactionTypeName(item.name)}
                             </SelectItem>
