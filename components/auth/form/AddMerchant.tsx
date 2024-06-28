@@ -26,7 +26,7 @@ import SignUpOK from "@/components/auth/form/SignUpOK";
 import {addMerchant} from "@/core/apis/signup";
 import {IUser} from "@/core/interfaces/user";
 import {redirect} from "next/navigation";
-import {signIn} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
 import {generateNewToken} from "@/core/apis/login";
 
 interface AddMerchantProps {
@@ -188,6 +188,8 @@ export default function AddMerchant({ lang, legalForms, merchant }: AddMerchantP
     const [showErrorONGProfile, setShowErrorONGProfile] = useState(false);
     const [showConErrorONGProfile, setShowConErrorONGProfile] = useState(false);
 
+    const { data: session, status, update } : any  = useSession();
+
     const router = useRouter();
 
 
@@ -282,11 +284,20 @@ export default function AddMerchant({ lang, legalForms, merchant }: AddMerchantP
             // @ts-ignore
             const newToken = await generateNewToken(merchant.refreshToken);
 
-            await signIn("merchant", {
-                accessToken: newToken.accessToken,
-                refreshToken: merchant.refreshToken,
-                redirect: false
+            await update({
+                ...session,
+                user: {
+                    ...session?.user,
+                    accessToken: newToken.accessToken,
+                    refreshToken: newToken.refreshToken
+                }
             });
+
+            // await signIn("merchant", {
+            //     accessToken: newToken.accessToken,
+            //     refreshToken: merchant.refreshToken,
+            //     redirect: false
+            // });
 
             router.push(Routes.auth.onboardingKyc.replace('{lang}', lang));
         }
