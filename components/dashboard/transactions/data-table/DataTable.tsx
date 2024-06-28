@@ -25,7 +25,7 @@ import { DateRange } from "react-day-picker";
 import Lottie from "react-lottie";
 import loadingData from "@/components/dashboard/lottie/loading-2.json";
 import { ITransactionType } from "@/core/interfaces/transaction";
-import { ITerminal } from "@/core/interfaces/pointOfSale";
+import { IPointOfSale } from "@/core/interfaces/pointOfSale";
 import { IOperator } from "@/core/interfaces/operator";
 
 interface TDataTableProps<TData, TValue> {
@@ -93,7 +93,8 @@ interface TDataTableProps<TData, TValue> {
   lang: string;
   isLoading?: boolean;
   transactionsTypes: ITransactionType[];
-  terminals: ITerminal[];
+  physicalPointOfServices: IPointOfSale[];
+  onlinePointOfServices: IPointOfSale[];
   operators: IOperator[];
 }
 
@@ -114,7 +115,8 @@ export function TDataTable<TData, TValue>({
   lang,
   isLoading,
   transactionsTypes,
-  terminals,
+  physicalPointOfServices,
+  onlinePointOfServices,
   pType,
   setPType,
   pTerminalId,
@@ -150,7 +152,8 @@ export function TDataTable<TData, TValue>({
         newRowLink={newRowLink}
         deleteRowsAction={deleteRowsAction}
         transactionsTypes={transactionsTypes}
-        terminals={terminals}
+        physicalPointOfServices={physicalPointOfServices}
+        onlinePointOfServices={onlinePointOfServices}
         pType={pType}
         setPType={setPType}
         pTerminalId={pTerminalId}

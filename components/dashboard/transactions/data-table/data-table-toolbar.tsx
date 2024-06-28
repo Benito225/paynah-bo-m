@@ -38,7 +38,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Routes from "@/components/Routes";
 import { ITransactionType } from "@/core/interfaces/transaction";
-import { ITerminal } from "@/core/interfaces/pointOfSale";
+import { IPointOfSale } from "@/core/interfaces/pointOfSale";
 // import { Tooltip } from "@/components/custom/tooltip";
 import {
   Tooltip,
@@ -74,7 +74,8 @@ interface DataTableToolbarProps<TData> {
   ) => void;
   lang: string;
   transactionsTypes: ITransactionType[];
-  terminals: ITerminal[];
+  physicalPointOfServices: IPointOfSale[];
+  onlinePointOfServices: IPointOfSale[];
   operators: IOperator[];
 }
 
@@ -90,7 +91,8 @@ export function DataTableToolbar<TData>({
   setDate,
   lang,
   transactionsTypes,
-  terminals,
+  physicalPointOfServices,
+  onlinePointOfServices,
   pType,
   setPType,
   pTerminalId,
@@ -164,7 +166,7 @@ export function DataTableToolbar<TData>({
     { key: "id", value: "Service 1" },
   ];
 
-  console.log("terminals", terminals);
+  console.log("physicalPointOfServices", physicalPointOfServices);
 
   const handlePeriodeOptionChange = (value: string) => {
     if (value == "today") {
@@ -548,11 +550,11 @@ export function DataTableToolbar<TData>({
                         <SelectValue placeholder="TPE" />
                       </SelectTrigger>
                       <SelectContent className={`bg-[#f0f0f0]`}>
-                        {terminals.map((item, index) => (
+                        {physicalPointOfServices.map((item, index) => (
                           <SelectItem
-                            key={index}
+                            key={item.id}
                             className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                            value={item.name}
+                            value={item.id}
                           >
                             {item.name}
                           </SelectItem>
@@ -571,13 +573,13 @@ export function DataTableToolbar<TData>({
                         <SelectValue placeholder="Point en ligne" />
                       </SelectTrigger>
                       <SelectContent className={`bg-[#f0f0f0]`}>
-                        {Services.map((item, index) => (
+                        {onlinePointOfServices.map((item, index) => (
                           <SelectItem
-                            key={index}
+                            key={item.id}
                             className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                            value={item.key}
+                            value={item.id}
                           >
-                            {item.value}
+                            {item.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

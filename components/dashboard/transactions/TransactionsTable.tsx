@@ -18,8 +18,8 @@ import {
   getFilterableTransactions,
   getTransactionsType,
 } from "@/core/apis/transaction";
-import { ITerminal } from "@/core/interfaces/pointOfSale";
-import { getMerchantTerminals } from "@/core/apis/pointOfSale";
+import { IPointOfSale } from "@/core/interfaces/pointOfSale";
+import { getMerchantPointOfSales } from "@/core/apis/pointOfSale";
 import { TransactionsStatus } from "@/components/dashboard/serenity-space/LastTransactions";
 import Link from "next/link";
 import Routes from "@/components/Routes";
@@ -95,13 +95,20 @@ export default function TransactionsTable({
   const [pStatus, setPStatus] = useState(searchItems.status ?? "");
   const [pType, setPType] = useState(searchItems.type ?? "");
   const [pPeriod, setPPeriod] = useState(searchItems.period ?? "");
-  const [pTerminalId, setPTerminalId] = useState(searchItems.terminalId ?? "");
+  const [pTerminalId, setPTerminalId] = useState(
+    searchItems.terminalId ?? "all"
+  );
   const [pOperator, setPOperator] = useState(searchItems.operator ?? "");
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [transactionsTypes, setTransactionsType] = useState<ITransactionType[]>(
     []
   );
-  const [terminals, setTerminals] = useState<ITerminal[]>([]);
+  const [physicalPointOfServices, setPhysicalPointOfServices] = useState<
+    IPointOfSale[]
+  >([]);
+  const [onlinePointOfServices, setOnlinePointOfServices] = useState<
+    IPointOfSale[]
+  >([]);
   const [operators, setOperators] = useState<IOperator[]>([]);
   //   const [accounts, setAccounts] = useState<IAccount[]>([]);
   const [transactionsPagination, setTransactionsPagination] = useState<any>();
@@ -145,7 +152,9 @@ export default function TransactionsTable({
     (query.terminalId == "all" || query.terminalId == "Tous TPE"
       ? ""
       : query.terminalId) ?? ""
-  }&csv=false&operator=${(query.operator == "all" ? "" : query.operator) ?? ""}`;
+  }&csv=false&operator=${
+    (query.operator == "all" ? "" : query.operator) ?? ""
+  }`;
   console.log(url, query);
 
   const urlDownload = `/transactions/all-transactions/with-filters?merchantId=${
@@ -165,7 +174,10 @@ export default function TransactionsTable({
       ? ""
       : query.terminalId) ?? ""
   }&csv=true&operator=${(query.operator == "all" ? "" : query.operator) ?? ""}`;
-  console.log('query.operator', (query.operator == "all" ? "" : query.operator) ?? "");
+  console.log(
+    "query.operator",
+    (query.operator == "all" ? "" : query.operator) ?? ""
+  );
   function exportTransactionsData() {
     setExportDataLoading(true);
 
@@ -190,26 +202,6 @@ export default function TransactionsTable({
             "!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium",
         });
       });
-
-    // exportTransactions(urlDownload, String(merchant.accessToken))
-    //     .then(blob => {
-    //         const downloadUrl = window.URL.createObjectURL(blob);
-    //         const a = document.createElement('a');
-    //         a.href = downloadUrl;
-    //         a.download = 'data.csv';
-    //         document.body.appendChild(a);
-    //         a.click();
-    //         document.body.removeChild(a);
-    //
-    //         setExportDataLoading(false);
-    //     })
-    //     .catch(err => {
-    //         setExportDataLoading(false);
-    //
-    //         return toast.error(err.message, {
-    //             className: '!bg-red-50 !max-w-xl !text-red-600 !shadow-2xl !shadow-red-50/50 text-sm font-medium'
-    //         });
-    //     });
   }
 
   const fetchOperators = () => {
@@ -238,16 +230,35 @@ export default function TransactionsTable({
       });
   };
 
-  const fetchMerchantTerminals = () => {
-    getMerchantTerminals(
-      `/merchants/${String(merchant.merchantsIds[0].id)}/terminals`,
+  const fetchMerchantPointOfService = () => {
+    getMerchantPointOfSales(
+      `/merchants/${String(merchant.merchantsIds[0].id)}/pos`,
       String(merchant.accessToken)
     )
       .then((res) => {
         console.log(res.data);
-        const defaultTerminals = [{ id: "all", name: "Tous TPE" }];
-        const terminals = [...defaultTerminals, ...res.data];
-        setTerminals(terminals);
+        const defaultPhysicalPointOfServices = [
+          { id: "all", name: "Tous TPE" },
+        ];
+        const defaultOnlinePointOfServices = [
+          { id: "all", name: "Tous Points en ligne" },
+        ];
+        const getPhysicalPointsOfServices = res.data.filter(
+          (service: IPointOfSale) => service.posType.name === "Physical"
+        );
+        const getOnlinePointsOfServices = res.data.filter(
+          (service: IPointOfSale) => service.posType.name === "Online"
+        );
+        const physicalPointOfServices = [
+          ...defaultPhysicalPointOfServices,
+          ...getPhysicalPointsOfServices,
+        ];
+        const onlinePointOfServices = [
+          ...defaultOnlinePointOfServices,
+          ...getOnlinePointsOfServices,
+        ];
+        setPhysicalPointOfServices(physicalPointOfServices);
+        setOnlinePointOfServices(onlinePointOfServices);
       })
       .catch((err) => {
         setTransactionsType([]);
@@ -258,7 +269,7 @@ export default function TransactionsTable({
     setLoading(true);
     fetchOperators();
     fetchTransactionsType();
-    fetchMerchantTerminals();
+    fetchMerchantPointOfService();
     getFilterableTransactions(url, query, String(merchant.accessToken))
       .then((res) => {
         console.log(res.data);
@@ -378,7 +389,8 @@ export default function TransactionsTable({
                   setDate={setDate}
                   lang={lang}
                   transactionsTypes={transactionsTypes}
-                  terminals={terminals}
+                  physicalPointOfServices={physicalPointOfServices}
+                  onlinePointOfServices={onlinePointOfServices}
                   pType={pType}
                   setPType={setPType}
                   pTerminalId={pTerminalId}
