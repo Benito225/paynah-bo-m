@@ -28,7 +28,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { IUser } from "@/core/interfaces/user";
-import { IAccount } from "@/core/interfaces/account";
+import { IAccount, ITotalAccount } from "@/core/interfaces/account";
 import { getMerchantBankAccounts } from "@/core/apis/bank-account";
 import { Skeleton } from "@/components/ui/skeleton";
 import AccountsAction from "@/components/dashboard/serenity-space/modals/AccountsAction";
@@ -45,17 +45,20 @@ interface AccountListAndOperationsProps {
     status?: string;
   };
   merchant: IUser;
+  accountsInfos: ITotalAccount;
 }
 
 export default function AccountListAndOperations({
   lang,
   searchItems,
   merchant,
+  accountsInfos,
 }: AccountListAndOperationsProps) {
   const [selectedAccount, setSelectedAccount] = useState("all");
   const [pSearch, setPSearch] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState<IAccount[]>([]);
+  const [totalAcount, setTotalAccount] = useState<ITotalAccount>();
   const [accountsSearch, setAccountsSearch] = useState<IAccount[]>([]);
   const [mode, setMode] = useState("");
   const [isAccountActionLoading, setAccountActionLoading] = useState(false);
@@ -102,6 +105,7 @@ export default function AccountListAndOperations({
     )
       .then((data) => {
         setAccounts(data.accounts);
+        setTotalAccount(data);
         setAccountsSearch(data.accounts);
         setLoading(false);
       })
@@ -152,7 +156,7 @@ export default function AccountListAndOperations({
     fetchMerchantBankAccounts();
   }, [isAccountActionLoading]);
 
-  console.log(selectedAccount);
+  console.log(selectedAccount, totalAcount);
 
   return (
     <div className={`flex flex-col h-full space-y-3`}>
@@ -210,6 +214,7 @@ export default function AccountListAndOperations({
             merchant={merchant}
             onClick={() => setSelectedAccount("all")}
             lang={lang}
+            accountsInfos={accountsInfos}
             className={`snap-end shrink-0 w-[28.5%] 2xl:w-[23%] cursor-pointer rounded-3xl ${
               selectedAccount == "all" &&
               "outline outline-offset-2 outline-2 outline-[#3c3c3c]"
