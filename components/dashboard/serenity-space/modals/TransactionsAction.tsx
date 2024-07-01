@@ -19,6 +19,10 @@ import {
   getTransactionModeType,
   getTransactionType,
   TStatus,
+  getFees,
+  getAmountLabelFromPaynah,
+  getAmountLabelFromMerchant,
+  getAmountDebited,
 } from "@/lib/utils";
 import {
   Tooltip,
@@ -105,17 +109,29 @@ export default function TransactionsAction({
               <div>
                 <div className={`inline-flex flex-col`}>
                   <h3 className={`font-light text-[#626262] text-xs mb-0.5`}>
-                    Montant
+                    {getAmountLabelFromPaynah(
+                      transaction?.transaction_type.name
+                    )}
                   </h3>
                   <span className={`text-sm font-medium leading-4`}>
-                    {formatCFA(transaction?.amount)}
+                    {formatCFA(
+                      getAmountDebited(
+                        transaction?.amount,
+                        getFees(
+                          transaction?.transaction_type?.name,
+                          transaction?.operator
+                        )
+                      )
+                    )}
                   </span>
                 </div>
               </div>
               <div>
                 <div className={`inline-flex flex-col`}>
                   <h3 className={`font-light text-[#626262] text-xs mb-0.5`}>
-                    Montant envoyé
+                    {getAmountLabelFromMerchant(
+                      transaction?.transaction_type.name
+                    )}
                   </h3>
                   <span className={`text-sm font-medium leading-4`}>
                     {formatCFA(transaction?.amount)}
@@ -127,7 +143,10 @@ export default function TransactionsAction({
                   <h3 className={`font-light text-[#626262] text-xs mb-0.5`}>
                     Frais de transaction
                   </h3>
-                  <span className={`text-sm font-medium`}>{"-"}</span>
+                  <span className={`text-sm font-medium`}>{`${getFees(
+                    transaction?.transaction_type.name,
+                    transaction?.operator
+                  )}%`}</span>
                 </div>
               </div>
             </div>
