@@ -19,6 +19,10 @@ import {
   getTransactionModeType,
   getTransactionType,
   TStatus,
+  getFees,
+  getAmountLabelFromPaynah,
+  getAmountLabelFromMerchant,
+  getAmountDebited,
 } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { TransactionsType } from "../serenity-space/LastTransactions";
@@ -41,47 +45,6 @@ export const TransactionDetailsDropdown = ({
     // if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
     // setIsOpen(false);
     // }
-  };
-
-  const getAmountLabelFromPaynah = (transactionType: string) => {
-    let label = "";
-    if (transactionType === "PAYIN") {
-      label = "Montant reçu";
-    }
-    if (transactionType === "PAYOUT") {
-      label = "Montant débité";
-    }
-    return label;
-  };
-
-  const getAmountLabelFromMerchant = (transactionType: string) => {
-    let label = "";
-    if (transactionType === "PAYIN") {
-      label = "Montant débité";
-    }
-    if (transactionType === "PAYOUT") {
-      label = "Montant envoyé";
-    }
-    return label;
-  };
-
-  const getFees = (transactionType: string, operator: string) => {
-    let fees: number = 1;
-    if (transactionType === "PAYIN") {
-      fees = 3;
-    }
-    if (transactionType === "PAYOUT") {
-      if (operator == "WAVE") {
-        fees = 0.01;
-      } else if (operator == "MTN") {
-        fees = 0.005;
-      }
-    }
-    return fees;
-  };
-
-  const getAmountDebited = (amount: number, fees: number) => {
-    return amount + Math.ceil(fees * (amount / 100));
   };
 
   useEffect(() => {
