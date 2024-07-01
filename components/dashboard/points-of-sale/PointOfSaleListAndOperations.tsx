@@ -522,9 +522,9 @@ export default function PointOfSaleListAndOperations({
                 return (
                   <div
                     key={pointOfSale.id}
-                    onClick={() => setSelectedAccount(pointOfSale.name)}
+                    onClick={() => setSelectedAccount(pointOfSale.id)}
                     className={`snap-end shrink-0 w-[23%] 2xl:w-[20%] bg-white flex flex-col justify-between cursor-pointer ${
-                      selectedAccount == pointOfSale.name &&
+                      selectedAccount == pointOfSale.id &&
                       `outline outline-offset-2 outline-2 outline-${getPosTypeColor(
                         pointOfSale.posType.name
                       )}`
