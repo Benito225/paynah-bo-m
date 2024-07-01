@@ -82,6 +82,9 @@ export default function PointOfSaleListAndOperations({
   const [pStatus, setPStatus] = useState("all");
   const [pServices, setPServices] = useState("all");
   const [pointOfSales, setPointOfSales] = useState<IPointOfSale[]>([]);
+  const [pointOfSalesSearch, setPointOfSalesSearch] = useState<IPointOfSale[]>(
+    []
+  );
   const [accounts, setAccounts] = useState<IAccount[]>([]);
 
   const query = {
@@ -146,11 +149,13 @@ export default function PointOfSaleListAndOperations({
         console.log(pos);
         setPosLoading(false);
         pos.data != null && setPointOfSales(pos.data);
+        setPointOfSalesSearch(pos.data);
       })
       .catch((e) => {
         setPosLoading(false);
         console.log(e);
         setPointOfSales([]);
+        setPointOfSalesSearch([]);
       });
   };
 
@@ -211,19 +216,29 @@ export default function PointOfSaleListAndOperations({
     }
   };
 
-  const getPosTypeColor = (posType: string) => {
-    console.log(posType);
-    if (posType === "Online") {
-      return "yellow-200";
-    } else if (posType === "Physical") {
-      return "purple-300";
-    }
-  };
+  function searchPosByStatus(status: string) {
+    const pointsOfSales = [...pointOfSales];
+    const filteredPos =
+      status !== "all"
+        ? pointsOfSales.filter((pos) => pos.status === status)
+        : [...pointOfSales];
+    setPointOfSalesSearch(filteredPos);
+  }
 
-  // const matchPointOfSalesAndMerchantBankAccounts = () => {
-  //     const intersection = accounts.filter(account => pointOfSales.some(pointOfSale => pointOfSale.bankAccountId == account.id));
-  //     console.log(intersection);
-  // }
+  function searchPosByKeyword(e: React.ChangeEvent<HTMLInputElement>) {
+    const keyword = e.target.value;
+    setPSearch(keyword);
+    let pointsOfSales = [...pointOfSales];
+    if (keyword.trim().length > 0 && keyword.trim().length < 3) {
+      pointsOfSales = [...pointOfSales];
+    } else {
+      pointsOfSales = pointOfSales.filter(
+        (pos) => pos.name.search(keyword) !== -1
+      );
+    }
+    console.log(pointsOfSales);
+    setPointOfSalesSearch(pointsOfSales);
+  }
 
   const getPosBankAccount = (bankAccountId: string) => {
     const searchAccount = accounts.filter(
@@ -269,7 +284,7 @@ export default function PointOfSaleListAndOperations({
   useEffect(() => {
     fetchAccounts();
     fetchPointOfSales();
-  }, [pSearch, isPoasActionLoading]);
+  }, [isPoasActionLoading]);
 
   return (
     <div className={`flex flex-col h-full space-y-3`}>
@@ -296,7 +311,7 @@ export default function PointOfSaleListAndOperations({
                           type={`text`}
                           className={`font-normal pl-9 bg-white text-xs rounded-full h-[2.5rem] w-full`}
                           placeholder="Recherchez"
-                          onChange={(e) => setPSearch(e.target.value)}
+                          onChange={(e) => searchPosByKeyword(e)}
                         />
                         <Search className={`absolute h-4 w-4 top-3 left-3`} />
                       </div>
@@ -349,7 +364,10 @@ export default function PointOfSaleListAndOperations({
                     </div>
                     <div className={`w-[10%]`}>
                       <Select
-                        onValueChange={(value) => setPStatus(value)}
+                        onValueChange={(value) => {
+                          searchPosByStatus(value);
+                          setPStatus(value);
+                        }}
                         defaultValue={pStatus}
                       >
                         <SelectTrigger
@@ -518,8 +536,8 @@ export default function PointOfSaleListAndOperations({
           </div>
           {isPosLoading
             ? showLoader()
-            : pointOfSales &&
-              pointOfSales.map((pointOfSale, index) => {
+            : pointOfSalesSearch &&
+              pointOfSalesSearch.map((pointOfSale, index) => {
                 return (
                   <div
                     key={pointOfSale.id}
