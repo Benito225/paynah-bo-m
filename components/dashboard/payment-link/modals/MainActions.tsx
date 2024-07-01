@@ -188,7 +188,7 @@ export default function MainActions({
         beneficiaries={beneficiaries}
         selectedBeneficiary={defaultBeneficiary}
       >
-        <Button className={`w-full`}>{`Nouveau lien de paiement`}</Button>
+        <Button className={`w-full py-6`}>{`Nouveau lien de paiement`}</Button>
       </PaymentLinkActions>
       <BeneficiaryActions lang={lang} merchant={merchant}>
         <Button
