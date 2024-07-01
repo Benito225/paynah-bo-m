@@ -75,6 +75,7 @@ export default function PointOfSaleListAndOperations({
   bankAccountsRes,
 }: PointOfSaleListAndOperationsProps) {
   const [isPosLoading, setPosLoading] = useState(false);
+  const [isPoasActionLoading, setPosActionLoading] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState("");
   const [pSearch, setPSearch] = useState(searchItems.search ?? "");
   const [pTpe, setPTpe] = useState("all");
@@ -139,7 +140,7 @@ export default function PointOfSaleListAndOperations({
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchPointOfSales = () => {
-    // setPosLoading(true);
+    setPosLoading(true);
     getMerchantPointOfSales(url, String(merchant.accessToken))
       .then((pos) => {
         console.log(pos);
@@ -268,7 +269,7 @@ export default function PointOfSaleListAndOperations({
   useEffect(() => {
     fetchAccounts();
     fetchPointOfSales();
-  }, [pSearch, isPosLoading]);
+  }, [pSearch, isPoasActionLoading]);
 
   return (
     <div className={`flex flex-col h-full space-y-3`}>
@@ -376,7 +377,7 @@ export default function PointOfSaleListAndOperations({
                         lang={lang}
                         merchant={merchant}
                         bankAccountsRes={bankAccountsRes}
-                        setPosLoading={setPosLoading}
+                        setPosLoading={setPosActionLoading}
                       >
                         <Button
                           type={"button"}
@@ -390,7 +391,7 @@ export default function PointOfSaleListAndOperations({
                         lang={lang}
                         merchant={merchant}
                         bankAccountsRes={bankAccountsRes}
-                        setPosLoading={setPosLoading}
+                        setPosLoading={setPosActionLoading}
                       >
                         <Button
                           type={"button"}
