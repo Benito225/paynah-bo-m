@@ -85,6 +85,8 @@ export default function PointOfSaleListAndOperations({
   const [pointOfSalesSearch, setPointOfSalesSearch] = useState<IPointOfSale[]>(
     []
   );
+  const [Tpe, setTpe] = useState<IPointOfSale[]>([]);
+  const [Services, setServices] = useState<IPointOfSale[]>([]);
   const [accounts, setAccounts] = useState<IAccount[]>([]);
 
   const query = {
@@ -111,15 +113,15 @@ export default function PointOfSaleListAndOperations({
     // {key: 'Expired', value: 'Expiré'},
   ];
 
-  const Tpe = [
-    { key: "all", value: "Terminal ID" },
-    { key: "id", value: "T909E88RR" },
-  ];
+  // const Tpe = [
+  //   { key: "all", value: "Terminal ID" },
+  //   { key: "id", value: "T909E88RR" },
+  // ];
 
-  const Services = [
-    { key: "all", value: "Points de vente en ligne" },
-    { key: "id", value: "Service 1" },
-  ];
+  // const Services = [
+  //   { key: "all", value: "Points de vente en ligne" },
+  //   { key: "id", value: "Service 1" },
+  // ];
 
   const url = `/merchants/${query.merchantId}/pos?keyword=${
     query.search ?? ""
@@ -148,8 +150,21 @@ export default function PointOfSaleListAndOperations({
       .then((pos) => {
         console.log(pos);
         setPosLoading(false);
-        pos.data != null && setPointOfSales(pos.data);
-        setPointOfSalesSearch(pos.data);
+        if (pos.data !== null) {
+          setPointOfSales(pos.data);
+          setPointOfSalesSearch(pos.data);
+          const Tpe = pos.data.filter(
+            (pos: IPointOfSale) => pos.posType.name === "Physical"
+          );
+          setTpe([...[{ id: "all", name: "Terminal ID" }], ...Tpe]);
+          const Services = pos.data.filter(
+            (pos: IPointOfSale) => pos.posType.name === "Online"
+          );
+          setServices([
+            ...[{ id: "all", name: "Points de vente en ligne" }],
+            ...Services,
+          ]);
+        }
       })
       .catch((e) => {
         setPosLoading(false);
@@ -331,9 +346,9 @@ export default function PointOfSaleListAndOperations({
                             <SelectItem
                               key={index}
                               className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                              value={item.key}
+                              value={item.id}
                             >
-                              {item.value}
+                              {item.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -354,9 +369,9 @@ export default function PointOfSaleListAndOperations({
                             <SelectItem
                               key={index}
                               className={`text-xs px-7 flex items-center focus:bg-gray-100 font-normal`}
-                              value={item.key}
+                              value={item.id}
                             >
-                              {item.value}
+                              {item.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
