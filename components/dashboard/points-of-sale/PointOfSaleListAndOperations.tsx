@@ -525,18 +525,22 @@ export default function PointOfSaleListAndOperations({
                     onClick={() => setSelectedAccount(pointOfSale.id)}
                     className={`snap-end shrink-0 w-[23%] 2xl:w-[20%] bg-white flex flex-col justify-between cursor-pointer ${
                       selectedAccount == pointOfSale.id &&
-                      `outline outline-offset-2 outline-2 outline-${getPosTypeColor(
-                        pointOfSale.posType.name
-                      )}`
+                      `outline outline-offset-2 outline-2 ${
+                        pointOfSale.posType.name === "Online"
+                          ? "outline-yellow-200"
+                          : "outline-purple-300"
+                      }`
                     } space-y-7 2xl:space-y-7 px-4 pb-4 pt-4 rounded-3xl`}
                   >
                     <div className={`flex justify-between items-start`}>
                       <div>
                         <div className={`inline-flex flex-col`}>
                           <div
-                            className={`mb-2.5 aspect-square rounded-xl p-2 bg-${getPosTypeColor(
-                              pointOfSale.posType.name
-                            )} w-[2.56em] h-[2.5rem] inline-flex justify-center items-center relative`}
+                            className={`mb-2.5 aspect-square rounded-xl p-2 ${
+                              pointOfSale.posType.name === "Online"
+                                ? "bg-yellow-200"
+                                : "bg-purple-300"
+                            } w-[2.56em] h-[2.5rem] inline-flex justify-center items-center relative`}
                           >
                             {displayPosLogo(pointOfSale.posType.name)}
                           </div>
