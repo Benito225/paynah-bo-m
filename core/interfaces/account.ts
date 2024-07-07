@@ -9,3 +9,9 @@ export interface IAccount {
     isMain: boolean;
     skaleet_balance: number;
 }
+
+export interface ITotalAccount {
+    total_balance: number;
+    total_skaleet_balance: number;
+    accounts: IAccount[];
+}

@@ -26,7 +26,8 @@ export function balanceOffset(balance: number, skaleetBalance: number) {
 
     const nonCompensatedBalance = balance - skaleetBalance;
 
-    const proportion = ((nonCompensatedBalance / balance) * 100) / (balance + skaleetBalance);
+    // const proportion = ((nonCompensatedBalance / balance) * 100) / (balance + skaleetBalance);
+    const proportion = balance == 0 ? 100 : (1 - (Math.abs(nonCompensatedBalance) / Math.abs(balance)))* 100 ;
     const proportionString = parseFloat(proportion.toFixed(2)).toString();
 
     return {
@@ -347,3 +348,43 @@ export const activePayouts = () => {
     ];
 }
 
+export const getFees = (transactionType: string, operator: string) => {
+    let fees: number = 1;
+    if (transactionType === "PAYIN") {
+      fees = 3;
+    }
+    if (transactionType === "PAYOUT") {
+      if (operator == "WAVE") {
+        fees = 0.01;
+      } else if (operator == "MTN") {
+        fees = 0.005;
+      }
+    }
+    return fees;
+};
+
+export const getAmountLabelFromPaynah = (transactionType: string) => {
+    let label = "";
+    if (transactionType === "PAYIN") {
+      label = "Montant reçu";
+    }
+    if (transactionType === "PAYOUT") {
+      label = "Montant débité";
+    }
+    return label;
+};
+
+export const getAmountLabelFromMerchant = (transactionType: string) => {
+    let label = "";
+    if (transactionType === "PAYIN") {
+      label = "Montant débité";
+    }
+    if (transactionType === "PAYOUT") {
+      label = "Montant envoyé";
+    }
+    return label;
+};
+
+export const getAmountDebited = (amount: number, fees: number) => {
+    return amount + Math.ceil(fees * (amount / 100));
+};
